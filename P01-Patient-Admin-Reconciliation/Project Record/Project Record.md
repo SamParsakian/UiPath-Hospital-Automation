@@ -100,3 +100,38 @@ The workflow ran without errors in about three seconds. The log shows the patien
 ![The test workflow in Studio and its output log](Screenshots/staff-portal-test-workflow.png)
 
 *Figure 5. The test workflow in UiPath Studio (left) and the output log of the run (right).*
+
+## 4. Test Data and Expected Results
+
+Before building the process, the test data was prepared. In this way, it is clear what the automation must find, and the result can be checked afterwards.
+
+### 4.1 Checking the Records in the Hospital Systems
+
+Every record that is used in the test was searched manually in the Staff Portal and in Coordination, because the data can change. A referral is linked to Coordination through the patient and not through the referral number, so the personnummer is used to find the matching case.
+
+### 4.2 The Test File
+
+A CSV file with ten rows was created (`TestData/patient_admin_input.csv`). The columns are separated by semicolons and the file is saved as UTF-8, so Swedish letters such as å, ä and ö are shown correctly in Excel. A practice Excel workbook with the same data was also made, because no ready Excel file exists.
+
+The rows cover the normal case and every problem the automation must find:
+
+| Row | Referral | Test case | Expected result |
+|---|---|---|---|
+| 1 | R-2026-0098 | Referral and case agree | OK |
+| 2 | R-2026-0008 | No case in Coordination | Missing in Coordination |
+| 3 | R-2026-0018 | No case in Coordination | Missing in Coordination |
+| 4 | R-2026-0055 | Two cases for the same patient and sender | Duplicate case |
+| 5 | R-2026-0004 | Referral is Bokad, case is Klar | Status conflict |
+| 6 | R-2026-0006 | Patient P-000201 also exists as P-000002 | Duplicate patient |
+| 7 | R-2026-9309 | Case C-2026-00105 has no referral | Orphan case |
+| 8 | (empty) | Referral number is missing | Rejected |
+| 9 | R-26-98 | Referral number has the wrong format | Rejected |
+| 10 | R-2026-0098 | Same row as row 1 | Rejected, duplicate row |
+
+![The test CSV file opened in Excel](Screenshots/test-csv-in-excel.png)
+
+*Figure 6. The test file opened in Excel. The columns are separated correctly and the letter ö in "Bergström" is shown correctly.*
+
+### 4.3 Expected Results
+
+The expected result of each row was written down before anything was built (`TestData/expected_results.csv`). Each row ends as processed, needs review or rejected, with a short reason. The same file is used in the end to compare the real report with what was expected.
