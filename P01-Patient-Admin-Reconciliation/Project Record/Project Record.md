@@ -67,3 +67,36 @@ The lab also contains mismatches that were planted on purpose, according to the 
 ### 2.5 Read-Only Approach
 
 Hospital data is sensitive, so the automation only reads data and never changes it.
+
+## 3. First Browser Test in the Staff Portal
+
+Before building the real process, a very small workflow was created to prove that UiPath can control the hospital web application. If this works, the same method can be used later for the real lookups.
+
+### 3.1 UI Automation Package
+
+To control a web page, the UI Automation package (`UiPath.UIAutomation.Activities`) is needed, so it was installed in Manage Packages.
+
+![Manage Packages window in Studio](Screenshots/manage-packages.png)
+
+*Figure 4. The packages of the project in Manage Packages: the standard System package and the UI Automation package.*
+
+### 3.2 The Test Workflow
+
+The workflow `Main.xaml` has four steps:
+
+1. **Use Browser** attaches to the Staff Portal page in Chrome.
+2. **Go To URL** opens the Referrals page with the search `R-2026-0098`.
+3. **Get Text** reads the patient name from the first row of the result table.
+4. **Log Message** writes the name to the output log.
+
+The patient name is selected by its place in the table (the Patient column of the first data row) and not by the patient's name or ID. In this way the same selector still works when another referral is searched.
+
+The browser was already signed in, so the workflow does not handle a password. The test only reads data and does not change anything in the hospital system.
+
+### 3.3 Result
+
+The workflow ran without errors in about three seconds. The log shows the patient name `Hugo Henriksson`, which is the same patient that was found manually for referral `R-2026-0098`. This shows that UiPath can find and read an element in the Staff Portal.
+
+![The test workflow in Studio and its output log](Screenshots/staff-portal-test-workflow.png)
+
+*Figure 5. The test workflow in UiPath Studio (left) and the output log of the run (right).*
