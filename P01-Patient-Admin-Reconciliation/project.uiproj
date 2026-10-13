@@ -1,0 +1,6 @@
+{
+  "Name": "Project1-",
+  "ProjectType": "Process",
+  "Description": "UiPath automation that compares fictional hospital patient administration records across two web applications, identifies missing, duplicate and conflicting data, and generates a reconciliation report with error handling and logging.",
+  "MainFile": "Main.xaml"
+}
