@@ -1,0 +1,28 @@
+# Private incoming screenshots
+_Screenshots/
+
+# Credentials and local settings
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+secrets.*
+*.local.json
+.vscode/
+.idea/
+
+# UiPath local data and caches
+.local/
+.screenshots/
+.objects/
+
+# Logs, temp files, caches
+*.log
+*.tmp
+*.bak
+~$*
+Thumbs.db
+desktop.ini
+.DS_Store
+__pycache__/
