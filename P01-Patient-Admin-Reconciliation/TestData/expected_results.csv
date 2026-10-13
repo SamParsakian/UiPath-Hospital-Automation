@@ -1,0 +1,11 @@
+﻿row_no;referral_id;result;outcome;reason
+1;R-2026-0098;OK;processed;Referral in Staff Portal and case C-2026-00082 in Coordination agree
+2;R-2026-0008;MISSING_IN_COORDINATION;needs-review;No case for this patient in Coordination
+3;R-2026-0018;MISSING_IN_COORDINATION;needs-review;No case for this patient in Coordination
+4;R-2026-0055;DUPLICATE_CASE;needs-review;Cases C-2026-00101 and C-2026-00046 for the same patient and sender
+5;R-2026-0004;STATUS_CONFLICT;needs-review;Referral status Bokad but case C-2026-00004 status Klar
+6;R-2026-0006;DUPLICATE_PATIENT;needs-review;Patient P-000201 is a duplicate of P-000002 and has no personnummer
+7;R-2026-9309;ORPHAN_CASE;needs-review;Case C-2026-00105 has no referral in Staff Portal
+8;;REJECTED_INVALID_INPUT;rejected;referral_id is empty
+9;R-26-98;REJECTED_INVALID_INPUT;rejected;referral_id has the wrong format
+10;R-2026-0098;REJECTED_DUPLICATE_ROW;rejected;Same row appears earlier in the file (row 1)
