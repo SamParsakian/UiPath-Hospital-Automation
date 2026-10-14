@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Main" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sdt="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:p="http://schemas.uipath.com/workflow/activities/credentials" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" mc:Ignorable="sap sap2010" x:Class="Main" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
       <x:String>System.Activities</x:String>
@@ -49,60 +49,87 @@
       <AssemblyReference>System.Xaml</AssemblyReference>
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
       <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Credentials.Activities</AssemblyReference>
       <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
       <AssemblyReference>System.Net.Mail</AssemblyReference>
       <AssemblyReference>System.ObjectModel</AssemblyReference>
       <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Main Sequence" sap:VirtualizedContainerService.HintSize="848,777.6566666666666" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="Main Sequence" sap2010:WorkflowViewState.IdRef="Sequence_600">
+<TryCatch DisplayName="Run the Process" sap2010:WorkflowViewState.IdRef="TryCatch_610">
+  <TryCatch.Try>
+    <Sequence DisplayName="Process Steps" sap2010:WorkflowViewState.IdRef="Sequence_611">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="patientName" />
+      <Variable x:TypeArguments="x:String" Name="inputPath" />
+      <Variable x:TypeArguments="x:String" Name="reportPath" />
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtValid" />
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtRejected" />
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtResults" />
     </Sequence.Variables>
-    <sap:WorkflowViewStateService.ViewState>
-      <scg:Dictionary x:TypeArguments="x:String, x:Object">
-        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-      </scg:Dictionary>
-    </sap:WorkflowViewStateService.ViewState>
-    <uix:NApplicationCard AttachMode="ByInstance" DisplayName="Staff Portal" HealingAgentBehavior="Job" sap:VirtualizedContainerService.HintSize="452,522" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" ScopeGuid="244bf043-c2a6-454d-9f7d-5e69f739a87a" Version="V2">
-      <uix:NApplicationCard.Body>
-        <ActivityAction x:TypeArguments="x:Object">
-          <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
-          </ActivityAction.Argument>
-          <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="450,318" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <sap:WorkflowViewStateService.ViewState>
-              <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-              </scg:Dictionary>
-            </sap:WorkflowViewStateService.ViewState>
-            <uix:NGoToUrl DisplayName="Go To Referrals page" sap:VirtualizedContainerService.HintSize="416,124" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="244bf043-c2a6-454d-9f7d-5e69f739a87a" Url="http://100.99.72.90:8080/remisser?q=R-2026-0098" Version="V5" />
-            <uix:NGetText DisplayName="Get Patient Name" HealingAgentBehavior="SameAsCard" sap:VirtualizedContainerService.HintSize="416,134" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="244bf043-c2a6-454d-9f7d-5e69f739a87a" TextString="[patientName]" Version="V5">
-              <uix:NGetText.Target>
-                <uix:TargetAnchorable ContentHash="CRWAxfICJ0ymWDYk2lGIeg" DesignTimeRectangle="704, 550, 114, 19" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='referral-table' tag='TABLE' /&gt;&lt;webctrl colName='Patient' tableRow='2' tag='A' /&gt;" Guid="a2f63969-20f5-43b9-b58e-e656252a3ea6" InformativeScreenshot="c1ac840e03cb4168a506163aaa4565c0.jpg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/AdaZMUj7XkOQfjGbxRZ31g" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
-              </uix:NGetText.Target>
-            </uix:NGetText>
-          </Sequence>
-        </ActivityAction>
-      </uix:NApplicationCard.Body>
-      <uix:NApplicationCard.OCREngine>
-        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
-          <ActivityFunc.Argument>
-            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
-          </ActivityFunc.Argument>
-        </ActivityFunc>
-      </uix:NApplicationCard.OCREngine>
-      <uix:NApplicationCard.TargetApp>
-        <uix:TargetApp Area="-12, -12, 2512, 1464" BrowserType="Chrome" ContentHash="JKC6VsMJkUq_pB7VMcOM5A" InformativeScreenshot="d39f0ac3f5596874aac519198b0f6c32.jpg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/E0oGLTrpEEKjguwcXzj6iQ" Selector="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/*' /&gt;" Url="http://100.99.72.90:8080/remisser?q=R-2026-0098" Version="V3">
-          <uix:TargetApp.Arguments>
-            <InArgument x:TypeArguments="x:String" />
-          </uix:TargetApp.Arguments>
-          <uix:TargetApp.WorkingDirectory>
-            <InArgument x:TypeArguments="x:String" />
-          </uix:TargetApp.WorkingDirectory>
-        </uix:TargetApp>
-      </uix:NApplicationCard.TargetApp>
-    </uix:NApplicationCard>
-    <ui:LogMessage DisplayName="Log Patient Name" sap:VirtualizedContainerService.HintSize="452,167.33333333333334" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Patient name read from the Staff Portal: &quot; &amp; patientName]" />
+<Assign x:TypeArguments="x:String" DisplayName="Input File Path" sap2010:WorkflowViewState.IdRef="Assign_601">
+  <Assign.To><OutArgument x:TypeArguments="x:String">[inputPath]</OutArgument></Assign.To>
+  <Assign.Value><InArgument x:TypeArguments="x:String">[&quot;TestData\patient_admin_input.csv&quot;]</InArgument></Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Report File Path" sap2010:WorkflowViewState.IdRef="Assign_602">
+  <Assign.To><OutArgument x:TypeArguments="x:String">[reportPath]</OutArgument></Assign.To>
+  <Assign.Value><InArgument x:TypeArguments="x:String">[&quot;Output\reconciliation_report.csv&quot;]</InArgument></Assign.Value>
+</Assign>
+<ui:LogMessage DisplayName="Log Start" Level="Info" Message="[&quot;Process started. Input file: &quot; &amp; inputPath]" sap2010:WorkflowViewState.IdRef="LogMessage_603" />
+<ui:InvokeWorkflowFile DisplayName="Log In to Staff Portal" UnSafe="False" WorkflowFileName="Workflows\Login_StaffPortal.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_604">
+  <ui:InvokeWorkflowFile.Arguments>
+    <scg:Dictionary x:TypeArguments="x:String, Argument">
+
+    </scg:Dictionary>
+  </ui:InvokeWorkflowFile.Arguments>
+</ui:InvokeWorkflowFile>
+<ui:InvokeWorkflowFile DisplayName="Log In to Coordination" UnSafe="False" WorkflowFileName="Workflows\Login_Coordination.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_605">
+  <ui:InvokeWorkflowFile.Arguments>
+    <scg:Dictionary x:TypeArguments="x:String, Argument">
+
+    </scg:Dictionary>
+  </ui:InvokeWorkflowFile.Arguments>
+</ui:InvokeWorkflowFile>
+<ui:InvokeWorkflowFile DisplayName="Read and Validate Input" UnSafe="False" WorkflowFileName="Workflows\ReadAndValidateInput.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_606">
+  <ui:InvokeWorkflowFile.Arguments>
+    <scg:Dictionary x:TypeArguments="x:String, Argument">
+      <InArgument x:TypeArguments="x:String" x:Key="in_CsvPath">[inputPath]</InArgument>
+      <OutArgument x:TypeArguments="sdt:DataTable" x:Key="out_ValidRows">[dtValid]</OutArgument>
+      <OutArgument x:TypeArguments="sdt:DataTable" x:Key="out_RejectedRows">[dtRejected]</OutArgument>
+    </scg:Dictionary>
+  </ui:InvokeWorkflowFile.Arguments>
+</ui:InvokeWorkflowFile>
+<ui:InvokeWorkflowFile DisplayName="Reconcile Rows" UnSafe="False" WorkflowFileName="Workflows\ReconcileRows.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_607">
+  <ui:InvokeWorkflowFile.Arguments>
+    <scg:Dictionary x:TypeArguments="x:String, Argument">
+      <InArgument x:TypeArguments="sdt:DataTable" x:Key="in_ValidRows">[dtValid]</InArgument>
+      <OutArgument x:TypeArguments="sdt:DataTable" x:Key="out_Results">[dtResults]</OutArgument>
+    </scg:Dictionary>
+  </ui:InvokeWorkflowFile.Arguments>
+</ui:InvokeWorkflowFile>
+<ui:InvokeWorkflowFile DisplayName="Create Report" UnSafe="False" WorkflowFileName="Workflows\CreateReport.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_608">
+  <ui:InvokeWorkflowFile.Arguments>
+    <scg:Dictionary x:TypeArguments="x:String, Argument">
+      <InArgument x:TypeArguments="sdt:DataTable" x:Key="in_Results">[dtResults]</InArgument>
+      <InArgument x:TypeArguments="sdt:DataTable" x:Key="in_RejectedRows">[dtRejected]</InArgument>
+      <InArgument x:TypeArguments="x:String" x:Key="in_ReportPath">[reportPath]</InArgument>
+    </scg:Dictionary>
+  </ui:InvokeWorkflowFile.Arguments>
+</ui:InvokeWorkflowFile>
+<ui:LogMessage DisplayName="Log Summary" Level="Info" Message="[&quot;Process finished. Processed: &quot; &amp; dtResults.AsEnumerable().Count(Function(r) r(&quot;outcome&quot;).ToString() = &quot;processed&quot;).ToString() &amp; &quot;, needs review: &quot; &amp; dtResults.AsEnumerable().Count(Function(r) r(&quot;outcome&quot;).ToString() = &quot;needs-review&quot;).ToString() &amp; &quot;, rejected: &quot; &amp; dtRejected.Rows.Count.ToString() &amp; &quot;. Report: &quot; &amp; reportPath]" sap2010:WorkflowViewState.IdRef="LogMessage_609" />
+    </Sequence>
+  </TryCatch.Try>
+  <TryCatch.Catches>
+    <Catch x:TypeArguments="s:Exception">
+      <ActivityAction x:TypeArguments="s:Exception">
+        <ActivityAction.Argument><DelegateInArgument x:TypeArguments="s:Exception" Name="exception" /></ActivityAction.Argument>
+        <Sequence DisplayName="Stop With Error" sap2010:WorkflowViewState.IdRef="Sequence_612">
+<ui:LogMessage DisplayName="Log Process Failed" Level="Error" Message="[&quot;Process stopped: &quot; &amp; exception.Message]" sap2010:WorkflowViewState.IdRef="LogMessage_613" />
+          <Rethrow DisplayName="Rethrow" sap2010:WorkflowViewState.IdRef="Rethrow_614" />
+        </Sequence>
+      </ActivityAction>
+    </Catch>
+  </TryCatch.Catches>
+</TryCatch>
   </Sequence>
 </Activity>

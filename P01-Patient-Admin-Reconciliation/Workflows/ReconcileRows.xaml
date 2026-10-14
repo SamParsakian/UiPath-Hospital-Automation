@@ -93,8 +93,67 @@
       <Variable x:TypeArguments="x:String" Name="refStatus" />
       <Variable x:TypeArguments="x:String" Name="result" />
       <Variable x:TypeArguments="x:String" Name="reason" />
+      <Variable x:TypeArguments="x:Int32" Name="attempts" />
+      <Variable x:TypeArguments="x:Boolean" Name="done" />
+      <Variable x:TypeArguments="x:Boolean" Name="referralExpired" />
+      <Variable x:TypeArguments="x:Boolean" Name="casesExpired" />
+      <Variable x:TypeArguments="x:Boolean" Name="failed" />
+      <Variable x:TypeArguments="x:String" Name="failureReason" />
 
         </Sequence.Variables>
+<Assign x:TypeArguments="x:Int32" DisplayName="Start Attempts" sap2010:WorkflowViewState.IdRef="Assign_234">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Int32">[attempts]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Int32">[0]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:Boolean" DisplayName="Row Not Finished" sap2010:WorkflowViewState.IdRef="Assign_235">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Boolean">[done]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Boolean">[False]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Start With No Result" sap2010:WorkflowViewState.IdRef="Assign_236">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Start With No Reason" sap2010:WorkflowViewState.IdRef="Assign_237">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<While DisplayName="Try Until the Row Is Finished" Condition="[Not done]" sap2010:WorkflowViewState.IdRef="While_233">
+<Sequence DisplayName="One Attempt" sap2010:WorkflowViewState.IdRef="Sequence_260">
+<TryCatch DisplayName="Check the Row" sap2010:WorkflowViewState.IdRef="TryCatch_229">
+  <TryCatch.Try>
+    <Sequence DisplayName="Check the Row" sap2010:WorkflowViewState.IdRef="Sequence_230">
+<Assign x:TypeArguments="x:Boolean" DisplayName="No Failure Yet" sap2010:WorkflowViewState.IdRef="Assign_240">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Boolean">[failed]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Boolean">[False]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:Boolean" DisplayName="Cases Session Not Expired Yet" sap2010:WorkflowViewState.IdRef="Assign_241">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Boolean">[casesExpired]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Boolean">[False]</InArgument>
+  </Assign.Value>
+</Assign>
 <Assign x:TypeArguments="x:String" DisplayName="Read Personnummer Digits" sap2010:WorkflowViewState.IdRef="Assign_201">
   <Assign.To>
     <OutArgument x:TypeArguments="x:String">[pnrDigits]</OutArgument>
@@ -119,6 +178,7 @@
       <OutArgument x:TypeArguments="x:String" x:Key="out_PatientName">[refPatientName]</OutArgument>
       <OutArgument x:TypeArguments="x:String" x:Key="out_SenderUnit">[refSender]</OutArgument>
       <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[refStatus]</OutArgument>
+      <OutArgument x:TypeArguments="x:Boolean" x:Key="out_SessionExpired">[referralExpired]</OutArgument>
     </scg:Dictionary>
   </ui:InvokeWorkflowFile.Arguments>
 </ui:InvokeWorkflowFile>
@@ -129,6 +189,7 @@
     <scg:Dictionary x:TypeArguments="x:String, Argument">
       <InArgument x:TypeArguments="x:String" x:Key="in_Query">[If(referralFound, CurrentRow(&quot;referral_id&quot;).ToString().Trim(), CurrentRow(&quot;case_id&quot;).ToString().Trim())]</InArgument>
       <OutArgument x:TypeArguments="sdt:DataTable" x:Key="out_Cases">[dtCases]</OutArgument>
+      <OutArgument x:TypeArguments="x:Boolean" x:Key="out_SessionExpired">[casesExpired]</OutArgument>
     </scg:Dictionary>
   </ui:InvokeWorkflowFile.Arguments>
 </ui:InvokeWorkflowFile>
@@ -144,6 +205,29 @@
 </Assign>
   </If.Else>
 </If>
+<If DisplayName="Did a Session Expire?" Condition="[referralExpired OrElse casesExpired]" sap2010:WorkflowViewState.IdRef="If_242">
+  <If.Then>
+    <Sequence DisplayName="Session Expired" sap2010:WorkflowViewState.IdRef="Sequence_243">
+<Assign x:TypeArguments="x:Boolean" DisplayName="Mark the Row as Failed" sap2010:WorkflowViewState.IdRef="Assign_244">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Boolean">[failed]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Boolean">[True]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set the Failure Reason" sap2010:WorkflowViewState.IdRef="Assign_245">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[failureReason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;the login page is shown&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Then>
+  <If.Else>
+    <Sequence DisplayName="Finish the Row" sap2010:WorkflowViewState.IdRef="Sequence_246">
 <ui:InvokeWorkflowFile DisplayName="Classify Row" UnSafe="False" WorkflowFileName="Workflows\ClassifyRow.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_207">
   <ui:InvokeWorkflowFile.Arguments>
     <scg:Dictionary x:TypeArguments="x:String, Argument">
@@ -161,6 +245,122 @@
     </scg:Dictionary>
   </ui:InvokeWorkflowFile.Arguments>
 </ui:InvokeWorkflowFile>
+<Assign x:TypeArguments="x:Boolean" DisplayName="Row Is Finished" sap2010:WorkflowViewState.IdRef="Assign_231">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Boolean">[done]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Boolean">[True]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Else>
+</If>
+    </Sequence>
+  </TryCatch.Try>
+  <TryCatch.Catches>
+    <Catch x:TypeArguments="s:Exception">
+      <ActivityAction x:TypeArguments="s:Exception">
+        <ActivityAction.Argument><DelegateInArgument x:TypeArguments="s:Exception" Name="exception" /></ActivityAction.Argument>
+        <Sequence DisplayName="Handle the Failure" sap2010:WorkflowViewState.IdRef="Sequence_232">
+<Assign x:TypeArguments="x:Boolean" DisplayName="Mark the Row as Failed" sap2010:WorkflowViewState.IdRef="Assign_250">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Boolean">[failed]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Boolean">[True]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set the Failure Reason" sap2010:WorkflowViewState.IdRef="Assign_251">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[failureReason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[exception.Message]</InArgument>
+  </Assign.Value>
+</Assign>
+        </Sequence>
+      </ActivityAction>
+    </Catch>
+  </TryCatch.Catches>
+</TryCatch>
+<If DisplayName="Did the Row Fail?" Condition="[failed]" sap2010:WorkflowViewState.IdRef="If_222">
+  <If.Then>
+    <Sequence DisplayName="Handle the Failed Row" sap2010:WorkflowViewState.IdRef="Sequence_252">
+<Assign x:TypeArguments="x:Int32" DisplayName="Count the Attempt" sap2010:WorkflowViewState.IdRef="Assign_220">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Int32">[attempts]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Int32">[attempts + 1]</InArgument>
+  </Assign.Value>
+</Assign>
+<ui:LogMessage DisplayName="Log Row Failed" Level="Warn" Message="[&quot;Row &quot; &amp; CurrentRow(&quot;row_no&quot;).ToString() &amp; &quot; &quot; &amp; CurrentRow(&quot;referral_id&quot;).ToString().Trim() &amp; &quot; failed (attempt &quot; &amp; attempts.ToString() &amp; &quot;): &quot; &amp; failureReason]" sap2010:WorkflowViewState.IdRef="LogMessage_221" />
+<If DisplayName="Can the Row Be Tried Again?" Condition="[attempts &lt; 2]" sap2010:WorkflowViewState.IdRef="If_253">
+  <If.Then>
+    <TryCatch DisplayName="Log In Again" sap2010:WorkflowViewState.IdRef="TryCatch_223">
+      <TryCatch.Try>
+        <Sequence DisplayName="Log In Again" sap2010:WorkflowViewState.IdRef="Sequence_224">
+<ui:InvokeWorkflowFile DisplayName="Log In to Staff Portal Again" UnSafe="False" WorkflowFileName="Workflows\Login_StaffPortal.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_217">
+  <ui:InvokeWorkflowFile.Arguments>
+    <scg:Dictionary x:TypeArguments="x:String, Argument">
+
+    </scg:Dictionary>
+  </ui:InvokeWorkflowFile.Arguments>
+</ui:InvokeWorkflowFile>
+<ui:InvokeWorkflowFile DisplayName="Log In to Coordination Again" UnSafe="False" WorkflowFileName="Workflows\Login_Coordination.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_218">
+  <ui:InvokeWorkflowFile.Arguments>
+    <scg:Dictionary x:TypeArguments="x:String, Argument">
+
+    </scg:Dictionary>
+  </ui:InvokeWorkflowFile.Arguments>
+</ui:InvokeWorkflowFile>
+        </Sequence>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="s:Exception">
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument><DelegateInArgument x:TypeArguments="s:Exception" Name="loginException" /></ActivityAction.Argument>
+<ui:LogMessage DisplayName="Log Login Failed" Level="Error" Message="[&quot;Logging in again failed: &quot; &amp; loginException.Message]" sap2010:WorkflowViewState.IdRef="LogMessage_219" />
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+    </TryCatch>
+  </If.Then>
+  <If.Else>
+    <Sequence DisplayName="Give Up on the Row" sap2010:WorkflowViewState.IdRef="Sequence_225">
+<Assign x:TypeArguments="x:String" DisplayName="Set Technical Error" sap2010:WorkflowViewState.IdRef="Assign_226">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;TECHNICAL_ERROR&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set Technical Reason" sap2010:WorkflowViewState.IdRef="Assign_227">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;Technical error: &quot; &amp; failureReason]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:Boolean" DisplayName="Row Is Finished" sap2010:WorkflowViewState.IdRef="Assign_228">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Boolean">[done]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Boolean">[True]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Else>
+</If>
+    </Sequence>
+  </If.Then>
+</If>
+</Sequence>
+</While>
 <ui:AddDataRow DisplayName="Add to Results" DataTable="[out_Results]" sap2010:WorkflowViewState.IdRef="AddDataRow_208">
   <ui:AddDataRow.ArrayRow>
     <InArgument x:TypeArguments="s:Object[]">[New Object() {CurrentRow(&quot;row_no&quot;).ToString(), CurrentRow(&quot;referral_id&quot;).ToString().Trim(), result, If(result = &quot;OK&quot;, &quot;processed&quot;, &quot;needs-review&quot;), reason}]</InArgument>

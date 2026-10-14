@@ -57,11 +57,6 @@
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="Log In to Staff Portal" sap2010:WorkflowViewState.IdRef="Sequence_20">
-    <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="username" />
-      <Variable x:TypeArguments="ss:SecureString" Name="password" />
-    </Sequence.Variables>
-    <p:GetSecureCredential DisplayName="Get Hospital Login" CredentialType="Generic" PersistanceType="Enterprise" Target="P01_HospitalDemo" Username="[username]" Password="[password]" sap2010:WorkflowViewState.IdRef="GetSecureCredential_1" />
     <uix:NApplicationCard AttachMode="ByInstance" DisplayName="Staff Portal Login" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_20" ScopeGuid="5a1c7e0e-2b0f-4f43-9a55-3c0b1c9a7d11" Version="V2">
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
@@ -69,6 +64,14 @@
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_21">
+            <uix:NCheckState DisplayName="Is the Login Form Shown?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_8080" ScopeIdentifier="5a1c7e0e-2b0f-4f43-9a55-3c0b1c9a7d11" Timeout="3" Version="V5">
+              <uix:NCheckState.IfExists>
+                <Sequence DisplayName="Log In" sap2010:WorkflowViewState.IdRef="Sequence_8080">
+                  <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="username" />
+      <Variable x:TypeArguments="ss:SecureString" Name="password" />
+                  </Sequence.Variables>
+                  <p:GetSecureCredential DisplayName="Get Hospital Login" CredentialType="Generic" PersistanceType="Enterprise" Target="P01_HospitalDemo" Username="[username]" Password="[password]" sap2010:WorkflowViewState.IdRef="GetSecureCredential_1" />
             <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="Single" DisplayName="Type Username" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NTypeInto_20" ScopeIdentifier="5a1c7e0e-2b0f-4f43-9a55-3c0b1c9a7d11" Text="[username]" Version="V5">
               <uix:NTypeInto.Target>
                 <uix:TargetAnchorable DesignTimeScaleFactor="1" ElementType="InputBox" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='username' tag='INPUT' /&gt;" Guid="68c4b7ae-f159-4c37-beee-af75324e599f" Reference="gXLf1IiL0EC9LGC4vtpo9Q/MiRtBtN8oECz8sn7mQg9wQ" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
@@ -84,6 +87,15 @@
                 <uix:TargetAnchorable DesignTimeScaleFactor="1" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='login-button' tag='BUTTON' /&gt;" Guid="def5625f-a83d-408d-b25e-c6442117a7e4" Reference="gXLf1IiL0EC9LGC4vtpo9Q/Xa-nwiJbQkWGQLjuOWHYew" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
               </uix:NClick.Target>
             </uix:NClick>
+                </Sequence>
+              </uix:NCheckState.IfExists>
+              <uix:NCheckState.IfNotExists>
+                <ui:LogMessage DisplayName="Log Already Logged In" Level="Info" Message="Already logged in" sap2010:WorkflowViewState.IdRef="LogMessage_8080" />
+              </uix:NCheckState.IfNotExists>
+              <uix:NCheckState.Target>
+                <uix:TargetAnchorable DesignTimeScaleFactor="1" ElementType="InputBox" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='username' tag='INPUT' /&gt;" Guid="a9b2c1da-d9c9-43eb-bc0c-6486a214b9d2" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NCheckState.Target>
+            </uix:NCheckState>
           </Sequence>
         </ActivityAction>
       </uix:NApplicationCard.Body>
