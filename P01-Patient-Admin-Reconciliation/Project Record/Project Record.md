@@ -1,18 +1,59 @@
-# Hospital UiPath Project
+# P01 - Patient Administration Reconciliation
 
 ## 1. Project Goal
 
-The goal of this project is to build a UiPath automation that helps hospital administrative staff check that two separate systems agree with each other. The first system is a patient administration system. The second is a referral coordination system.
+The goal of this project is to build a UiPath automation that replaces a repetitive daily check in a fictional Swedish hospital. The check compares referral records between two hospital systems and finds records that are missing, duplicated or in conflict.
 
-The automation reads a daily CSV or Excel file and checks the related patient and referral records in both systems. It finds information that is missing, duplicated or in conflict.
+### 1.1 Scenario
 
-After the check, a reconciliation report is created. Authorized staff can use this report to investigate and correct the problems.
+Every morning, a Patient Administration Officer checks the referral records in two systems:
 
-The project uses fictional Swedish hospital data. The robot only reads data. It never changes patient records and never makes clinical decisions.
+- **Personalportalen (Staff Portal):** manages patient administration and referrals.
+- **Journalsamordning (Coordination):** manages the coordination cases that belong to the referrals.
+
+### 1.2 Before Automation - Manual Process
+
+1. **Get the referrals:** The officer receives the daily CSV or Excel file with the referrals.
+2. **Open the Staff Portal:** Each referral from the file is searched in Personalportalen, under Remisser.
+3. **Open Coordination:** The cases of the same patient are searched in Journalsamordning.
+4. **Compare the information:** The patient, the sending unit and the status of the referral and the case are compared.
+5. **Record the problems:** Missing, duplicate and conflicting records are noted by hand.
+6. **Repeat:** The steps are repeated until every referral is checked, and a report is prepared for follow-up.
+
+In Personalportalen, the daily file is downloaded from the Remisser page with the Exportera CSV button. The red rectangle shows where the button is.
+
+![Referrals page in Personalportalen with the Exportera CSV button](Screenshots/staff-portal-referrals-export.png)
+
+*Figure 1. The Remisser page in Personalportalen. The daily file is downloaded with the Exportera CSV button.*
+
+In Journalsamordning, the cases are searched on the Inkomna ärenden page. An ID is typed in the search field, and the matching case is shown in the list below it.
+
+![Case search in Journalsamordning](Screenshots/coordination-case-search.png)
+
+*Figure 2. The Inkomna ärenden page in Journalsamordning. The searched ID is typed in the search field, and the matching case is shown below.*
+
+The problem is repetitive work, slow checks and a risk of human mistakes.
+
+### 1.3 After Automation - UiPath Process
+
+1. **Load the referrals:** UiPath reads a CSV file with fictional referral records.
+2. **Open the hospital systems:** UiPath uses browser automation to open Personalportalen and Journalsamordning.
+3. **Search automatically:** Each row of the file is processed, and the matching records are searched in both systems.
+4. **Compare the information:** Fixed rules are used to find matches, missing records, duplicates and conflicts.
+5. **Create the report:** A CSV report is created with the result, the reason and the time of each record.
+6. **Handle exceptions:** Technical failures are logged, and records that could not be decided are marked for manual review.
+
+The result is less repetitive work, the same checks every time, clear error reporting, and more time for the staff to handle the cases that need attention.
+
+The picture below shows the whole process in five steps, from the input file to the report for the staff.
 
 ![Overview of the reconciliation process](Screenshots/project-overview.png)
 
-*Figure 1. Overview of the process: a daily file is read by the UiPath robot, the records are checked in both hospital systems, and a report is created for staff review.*
+*Figure 3. Overview of the process: a daily file is read by the UiPath robot, the records are checked in both hospital systems, and a report is created for staff review.*
+
+### 1.4 Project Scope
+
+This is a read-only automation with synthetic hospital data. It finds differences, but it never changes hospital records and never makes clinical decisions. A prepared test file is used as input. Downloading the file from Personalportalen is not part of this project.
 
 ## 2. Checking the Working Environment
 
@@ -38,7 +79,7 @@ The REST API has its own documentation page, which lists all available endpoints
 
 ![REST API documentation page](Screenshots/api-documentation.png)
 
-*Figure 2. The documentation page of the hospital REST API.*
+*Figure 4. The documentation page of the hospital REST API.*
 
 In this project, the work is done through the web applications, and the API is not used by UiPath. It was only opened to see what the lab offers.
 
@@ -48,7 +89,7 @@ Orchestrator is the part of UiPath Cloud where packages are published and jobs a
 
 ![Orchestrator Processes page](Screenshots/orchestrator-processes.png)
 
-*Figure 3. The Processes page in Orchestrator. It is empty because no process has been published.*
+*Figure 5. The Processes page in Orchestrator. It is empty because no process has been published.*
 
 ### 2.4 Sample Records
 
@@ -78,7 +119,7 @@ To control a web page, the UI Automation package (`UiPath.UIAutomation.Activitie
 
 ![Manage Packages window in Studio](Screenshots/manage-packages.png)
 
-*Figure 4. The packages of the project in Manage Packages: the standard System package and the UI Automation package.*
+*Figure 6. The packages of the project in Manage Packages: the standard System package and the UI Automation package.*
 
 ### 3.2 The Test Workflow
 
@@ -99,7 +140,7 @@ The workflow ran without errors in about three seconds. The log shows the patien
 
 ![The test workflow in Studio and its output log](Screenshots/staff-portal-test-workflow.png)
 
-*Figure 5. The test workflow in UiPath Studio (left) and the output log of the run (right).*
+*Figure 7. The test workflow in UiPath Studio (left) and the output log of the run (right).*
 
 ## 4. Test Data and Expected Results
 
@@ -109,11 +150,17 @@ Before building the process, the test data was prepared. In this way, it is clea
 
 Every record that is used in the test was searched manually in the Staff Portal and in Coordination, because the data can change. A referral is linked to Coordination through the patient and not through the referral number, so the personnummer is used to find the matching case.
 
-### 4.2 The Test File
+### 4.2 Why a Small Test File Is Used
 
-A CSV file with ten rows was created (`TestData/patient_admin_input.csv`). The columns are separated by semicolons and the file is saved as UTF-8, so Swedish letters such as å, ä and ö are shown correctly in Excel. A practice Excel workbook with the same data was also made, because no ready Excel file exists.
+The full referral export of Personalportalen (the blue hospital application) contains 120 referrals. Before a file like this is processed, a smaller CSV with 10 carefully selected test records was prepared (`TestData/patient_admin_input.csv`).
 
-The rows cover the normal case and every problem the automation must find:
+A small file makes it possible to build and test the UiPath workflow with known results. It contains normal records and intentionally incorrect records, such as missing records, duplicates and status conflicts, so it can be checked that each problem is found.
+
+Testing on a small file first shows that the automation works before it is used on a larger one.
+
+The columns are separated by semicolons and the file is saved as UTF-8, so Swedish letters such as å, ä and ö are shown correctly in Excel. A practice Excel workbook with the same data was also made, because no ready Excel file exists.
+
+The rows cover one normal case and every problem the automation must find:
 
 | Row | Referral | Test case | Expected result |
 |---|---|---|---|
@@ -128,10 +175,58 @@ The rows cover the normal case and every problem the automation must find:
 | 9 | R-26-98 | Referral number has the wrong format | Rejected |
 | 10 | R-2026-0098 | Same row as row 1 | Rejected, duplicate row |
 
+The test file can be opened in Excel to check it. The columns must be separated correctly, and Swedish letters must be shown correctly.
+
 ![The test CSV file opened in Excel](Screenshots/test-csv-in-excel.png)
 
-*Figure 6. The test file opened in Excel. The columns are separated correctly and the letter ö in "Bergström" is shown correctly.*
+*Figure 8. The test file opened in Excel. The columns are separated correctly and the letter ö in "Bergström" is shown correctly.*
 
 ### 4.3 Expected Results
 
 The expected result of each row was written down before anything was built (`TestData/expected_results.csv`). Each row ends as processed, needs review or rejected, with a short reason. The same file is used in the end to compare the real report with what was expected.
+
+## 5. Reading and Checking the Input File
+
+### 5.1 Why the Input File Is Checked First
+
+The automation starts with the input file. If a row in the file is wrong, the lookups in the hospital systems for that row would only waste time or give confusing results. For this reason, every row is checked before anything is searched.
+
+The Excel package (`UiPath.Excel.Activities`) is needed to read a CSV file in UiPath, so it was installed.
+
+### 5.2 How the File Is Read and Checked
+
+The workflow `Workflows/ReadAndValidateInput.xaml` has nine steps. The file is read into a table, two empty result tables are prepared, and then each row is checked in this order:
+
+1. The referral ID must not be empty.
+2. The referral ID must have the format `R-2026-0098` (the letter R, four digits for the year and four digits for the number).
+3. The row must not be a copy of an earlier row.
+
+A row that passes all three checks is put in the table of valid rows. A row that fails gets a reason and is put in the table of rejected rows. Both tables keep the row number of the file, so it is always clear which row is meant.
+
+![The workflow that reads and checks the input file](Screenshots/read-and-validate-workflow.png)
+
+*Figure 9. The workflow `ReadAndValidateInput.xaml` with a short explanation of each step. The details of the checks are inside the activity For Each Input Row, and can be seen in the file.*
+
+### 5.3 Input and Output of the Workflow
+
+The workflow gets one input, the path of the CSV file. It gives back two outputs: a table with the valid rows and a table with the rejected rows. Both tables have the columns of the file and a column with the row number. The table of rejected rows also has a column with the reason.
+
+![Input and output of the workflow](Screenshots/read-and-validate-arguments.png)
+
+*Figure 10. The arguments of the workflow, as they are given by the test. `in_CsvPath` is the input, and `out_ValidRows` and `out_RejectedRows` are the outputs.*
+
+### 5.4 Testing the Check
+
+The test `Tests/Test_ReadAndValidateInput.xaml` runs the workflow with the test file and compares the result with the expected result from section 4. It expects rows 1 to 7 to be valid. It also expects rows 8, 9 and 10 to be rejected with the reasons "referral_id is empty", "referral_id has the wrong format" and "Same row appears earlier in the file".
+
+If the result is the same as expected, the message TEST PASSED is logged. If not, the test stops with an error that shows the real values.
+
+![The test workflow and its output](Screenshots/read-and-validate-test-passed.png)
+
+*Figure 11. The test workflow in UiPath Studio and its output. The three rejected rows are listed and the test passed.*
+
+The test makes its decision with three expressions. The first one compares the real result with the expected result, and both texts must be exactly the same. If even one row or one reason is different, the test fails. The other two expressions are the messages for a passed and a failed test.
+
+![The expressions of the test](Screenshots/read-and-validate-test-expressions.png)
+
+*Figure 12. The three expressions of the test: the condition that compares the result with the expected result, and the two messages for passed and failed.*
