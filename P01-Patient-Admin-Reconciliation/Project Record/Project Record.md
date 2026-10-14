@@ -148,7 +148,7 @@ Before building the process, the test data was prepared. In this way, it is clea
 
 ### 4.1 Checking the Records in the Hospital Systems
 
-Every record that is used in the test was searched manually in the Staff Portal and in Coordination, because the data can change. A referral is linked to Coordination through the patient and not through the referral number, so the personnummer is used to find the matching case.
+Every record that is used in the test was searched manually in the Staff Portal and in Coordination, because the data can change. The search field of Coordination also accepts a referral number, so the matching case can be found with it.
 
 ### 4.2 Why a Small Test File Is Used
 
@@ -230,3 +230,68 @@ The test makes its decision with three expressions. The first one compares the r
 ![The expressions of the test](Screenshots/read-and-validate-test-expressions.png)
 
 *Figure 12. The three expressions of the test: the condition that compares the result with the expected result, and the two messages for passed and failed.*
+
+## 6. Checking the Rows in Both Hospital Systems
+
+### 6.1 Why the Systems Are Checked Row by Row
+
+After the input file is checked, every valid row must be compared with the real data in the two hospital systems. This is the part of the work that the officer does by hand every morning, so it is the core of the automation.
+
+Both systems need a login, so the robot logs in to each of them first. After that, each valid row is searched in the Staff Portal (blue) and in Coordination (pink), and the two answers are compared with fixed rules.
+
+The result of the comparison is one of the problem types from section 4, or OK when everything agrees.
+
+### 6.2 Logging In
+
+Two small workflows, `Workflows/Login_StaffPortal.xaml` and `Workflows/Login_Coordination.xaml`, open the login page of each system, type the user name and the password, and click the login button. Each of them waits until the first page after the login is shown, so the next step never starts too early. Neither workflow has inputs or outputs.
+
+![The login workflow of the Staff Portal](Screenshots/login-staff-portal-workflow.png)
+
+*Figure 13. The workflow `Login_StaffPortal.xaml`, with a short note on each step.*
+
+The workflow for Coordination has the same steps, but it works on the pink application on port 8081.
+
+![The login workflow of Coordination](Screenshots/login-coordination-workflow.png)
+
+*Figure 14. The workflow `Login_Coordination.xaml`.*
+
+### 6.3 Searching and Deciding
+
+Three workflows read data from the systems, and one workflow decides:
+
+| Workflow | What it does |
+|---|---|
+| `LookupReferral.xaml` | Searches the referral ID in the Staff Portal and reads the patient, the sending unit and the status. |
+| `LookupPatients.xaml` | Searches the patient name in the Staff Portal and reads every patient with that name. Two patients with the same name and birth date are a duplicate patient. |
+| `LookupCoordination.xaml` | Searches the referral ID in Coordination and reads every case that is found. If the referral is not in the Staff Portal, the case ID from the file is searched instead. |
+| `ClassifyRow.xaml` | Compares the answers and decides the result and the reason of the row. |
+
+The statuses of the two systems have different names, so they are mapped before they are compared: Ny is Inkommen, Mottagen is Registrerad, Under utredning and Bokad are Under handläggning, Avslutad is Klar and Avvisad is Avvisad. The workflow `ReconcileRows.xaml` goes through all valid rows, calls the other workflows for each row and collects one result per row in a table.
+
+### 6.4 Testing the Check
+
+The test `Tests/Test_ReconcileRows.xaml` reads and checks the test file, runs the check of the seven valid rows in the real systems, and compares the result of every row with `expected_results.csv`. Both the result and the reason must be the same.
+
+The picture below shows the steps of the test. The first workflow checks the input file, the second one checks the valid rows in both systems, and the result is compared with the expected results.
+
+![The test workflow with a note on each step](Screenshots/reconcile-rows-test-workflow.png)
+
+*Figure 15. The test `Test_ReconcileRows.xaml` in UiPath Studio, with a short note on each step.*
+
+The first step gets the path of the CSV file and gives back the valid and the rejected rows. This is the input and the output of the invoked workflow, as they are set in the test.
+
+![Input and output of the invoked workflow](Screenshots/reconcile-rows-test-arguments.png)
+
+*Figure 16. The arguments of the first step. `in_CsvPath` is the input, and `out_ValidRows` and `out_RejectedRows` are the outputs.*
+
+The test makes its decision by comparing the actual and the expected results as texts. If they are equal, a message with the number of rows is logged. If not, the test stops with an error that shows both texts.
+
+![The two messages of the test](Screenshots/reconcile-rows-test-expressions.png)
+
+*Figure 17. The message of a passed test and the error of a failed test.*
+
+The test passed. All seven rows got the expected result, and the whole run took 1 minute and 57 seconds. The Output panel shows the lookups of the last rows and the message TEST PASSED.
+
+![The test of the row check and its output](Screenshots/reconcile-rows-test-passed.png)
+
+*Figure 18. The test in UiPath Studio and its output. The seven valid rows were checked in both systems and the test passed.*
