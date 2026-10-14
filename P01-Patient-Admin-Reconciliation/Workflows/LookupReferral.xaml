@@ -5,6 +5,7 @@
     <x:Property Name="out_PatientName" Type="OutArgument(x:String)" />
     <x:Property Name="out_SenderUnit" Type="OutArgument(x:String)" />
     <x:Property Name="out_Status" Type="OutArgument(x:String)" />
+    <x:Property Name="out_SessionExpired" Type="OutArgument(x:Boolean)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -73,6 +74,14 @@
         <InArgument x:TypeArguments="x:Boolean">[False]</InArgument>
       </Assign.Value>
     </Assign>
+    <Assign x:TypeArguments="x:Boolean" DisplayName="Session Not Expired Yet" sap2010:WorkflowViewState.IdRef="Assign_59">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Boolean">[out_SessionExpired]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Boolean">[False]</InArgument>
+      </Assign.Value>
+    </Assign>
     <uix:NApplicationCard AttachMode="ByInstance" DisplayName="Staff Portal" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_50" ScopeGuid="4e7a9b20-8c3d-4f15-a6e1-0b2c3d4e5f60" Version="V2">
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
@@ -117,11 +126,14 @@
               <If.Then>
                 <uix:NCheckState DisplayName="Is the Login Page Shown?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_900" ScopeIdentifier="4e7a9b20-8c3d-4f15-a6e1-0b2c3d4e5f60" Timeout="1" Version="V5">
                   <uix:NCheckState.IfExists>
-                    <Throw DisplayName="Throw Session Expired" sap2010:WorkflowViewState.IdRef="Throw_900">
-                      <Throw.Exception>
-                        <InArgument x:TypeArguments="s:Exception">[New Exception("Session expired: the login page is shown")]</InArgument>
-                      </Throw.Exception>
-                    </Throw>
+                    <Assign x:TypeArguments="x:Boolean" DisplayName="Session Expired" sap2010:WorkflowViewState.IdRef="Assign_900">
+                      <Assign.To>
+                        <OutArgument x:TypeArguments="x:Boolean">[out_SessionExpired]</OutArgument>
+                      </Assign.To>
+                      <Assign.Value>
+                        <InArgument x:TypeArguments="x:Boolean">[True]</InArgument>
+                      </Assign.Value>
+                    </Assign>
                   </uix:NCheckState.IfExists>
                   <uix:NCheckState.Target>
                     <uix:TargetAnchorable ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='login-button' tag='BUTTON' /&gt;" Guid="7fcc7c2f-f061-4800-948f-8d47c1d54851" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
@@ -150,6 +162,10 @@
         </uix:TargetApp>
       </uix:NApplicationCard.TargetApp>
     </uix:NApplicationCard>
-    <ui:LogMessage DisplayName="Log Result" Level="Info" Message="[&quot;Referral found: &quot; &amp; out_Found.ToString() &amp; &quot;, status: &quot; &amp; out_Status]" sap2010:WorkflowViewState.IdRef="LogMessage_51" />
+    <If DisplayName="Was the Search Done?" Condition="[Not out_SessionExpired]" sap2010:WorkflowViewState.IdRef="If_59">
+      <If.Then>
+        <ui:LogMessage DisplayName="Log Result" Level="Info" Message="[&quot;Referral found: &quot; &amp; out_Found.ToString() &amp; &quot;, status: &quot; &amp; out_Status]" sap2010:WorkflowViewState.IdRef="LogMessage_51" />
+      </If.Then>
+    </If>
   </Sequence>
 </Activity>

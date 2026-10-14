@@ -2,6 +2,7 @@
   <x:Members>
     <x:Property Name="in_Query" Type="InArgument(x:String)" />
     <x:Property Name="out_Cases" Type="OutArgument(sd:DataTable)" />
+    <x:Property Name="out_SessionExpired" Type="OutArgument(x:Boolean)" />
   </x:Members>
   <VisualBasic.Settings>
     <x:Null />
@@ -80,6 +81,7 @@
     </sap:WorkflowViewStateService.ViewState>
     <ui:LogMessage DisplayName="Log Start" sap:VirtualizedContainerService.HintSize="734.6666666666666,176.66666666666666" sap2010:WorkflowViewState.IdRef="LogMessage_40" Level="Info" Message="[&quot;Looking up cases in Coordination for &quot; &amp; in_Query]" />
     <Assign x:TypeArguments="sd:DataTable" DisplayName="Create Cases Table" sap:VirtualizedContainerService.HintSize="734.6666666666666,54" sap2010:WorkflowViewState.IdRef="Assign_40" To="[out_Cases]" Value="[New DataTable()]" />
+    <Assign x:TypeArguments="x:Boolean" DisplayName="Session Not Expired Yet" sap:VirtualizedContainerService.HintSize="734.6666666666666,54" sap2010:WorkflowViewState.IdRef="Assign_49" To="[out_SessionExpired]" Value="[False]" />
     <ui:AddDataColumn x:TypeArguments="x:String" AllowDBNull="{x:Null}" AutoIncrement="{x:Null}" Column="{x:Null}" DefaultValue="{x:Null}" MaxLength="{x:Null}" Unique="{x:Null}" ColumnName="case_id" DataTable="[out_Cases]" DisplayName="Add case_id" sap:VirtualizedContainerService.HintSize="734.6666666666666,223.33333333333334" sap2010:WorkflowViewState.IdRef="AddDataColumn_40" />
     <ui:AddDataColumn x:TypeArguments="x:String" AllowDBNull="{x:Null}" AutoIncrement="{x:Null}" Column="{x:Null}" DefaultValue="{x:Null}" MaxLength="{x:Null}" Unique="{x:Null}" ColumnName="sender" DataTable="[out_Cases]" DisplayName="Add sender" sap:VirtualizedContainerService.HintSize="734.6666666666666,223.33333333333334" sap2010:WorkflowViewState.IdRef="AddDataColumn_41" />
     <ui:AddDataColumn x:TypeArguments="x:String" AllowDBNull="{x:Null}" AutoIncrement="{x:Null}" Column="{x:Null}" DefaultValue="{x:Null}" MaxLength="{x:Null}" Unique="{x:Null}" ColumnName="status" DataTable="[out_Cases]" DisplayName="Add status" sap:VirtualizedContainerService.HintSize="734.6666666666666,223.33333333333334" sap2010:WorkflowViewState.IdRef="AddDataColumn_42" />
@@ -136,7 +138,7 @@
               <If.Then>
                 <uix:NCheckState DisplayName="Is the Login Page Shown?" HealingAgentBehavior="Disabled" sap:VirtualizedContainerService.HintSize="652,522" sap2010:WorkflowViewState.IdRef="NCheckState_901" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Timeout="1" Version="V5">
                   <uix:NCheckState.IfExists>
-                    <Throw DisplayName="Throw Session Expired" Exception="[New Exception(&quot;Session expired: the login page is shown&quot;)]" sap:VirtualizedContainerService.HintSize="650,92" sap2010:WorkflowViewState.IdRef="Throw_901" />
+                    <Assign x:TypeArguments="x:Boolean" DisplayName="Session Expired" sap:VirtualizedContainerService.HintSize="650,54" sap2010:WorkflowViewState.IdRef="Assign_901" To="[out_SessionExpired]" Value="[True]" />
                   </uix:NCheckState.IfExists>
                   <uix:NCheckState.IfNotExists>
                     <Sequence DisplayName="Target does not appear" sap:VirtualizedContainerService.HintSize="650,90.66666666666667" sap2010:WorkflowViewState.IdRef="Sequence_43">
@@ -174,6 +176,10 @@
         </uix:TargetApp>
       </uix:NApplicationCard.TargetApp>
     </uix:NApplicationCard>
-    <ui:LogMessage DisplayName="Log Result" sap:VirtualizedContainerService.HintSize="734.6666666666666,167.33333333333334" sap2010:WorkflowViewState.IdRef="LogMessage_41" Level="Info" Message="[&quot;Cases found: &quot; &amp; out_Cases.Rows.Count.ToString()]" />
+    <If DisplayName="Was the Search Done?" Condition="[Not out_SessionExpired]" sap2010:WorkflowViewState.IdRef="If_49">
+      <If.Then>
+        <ui:LogMessage DisplayName="Log Result" sap:VirtualizedContainerService.HintSize="734.6666666666666,167.33333333333334" sap2010:WorkflowViewState.IdRef="LogMessage_41" Level="Info" Message="[&quot;Cases found: &quot; &amp; out_Cases.Rows.Count.ToString()]" />
+      </If.Then>
+    </If>
   </Sequence>
 </Activity>
