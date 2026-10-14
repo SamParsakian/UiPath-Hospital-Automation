@@ -1,0 +1,120 @@
+<Activity xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sdt="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:p="http://schemas.uipath.com/workflow/activities/credentials" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" mc:Ignorable="sap sap2010" x:Class="Workflows_CreateReport" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_11" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Results" Type="InArgument(sdt:DataTable)" />
+    <x:Property Name="in_RejectedRows" Type="InArgument(sdt:DataTable)" />
+    <x:Property Name="in_ReportPath" Type="InArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Credentials.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Create the Report" sap2010:WorkflowViewState.IdRef="Sequence_400">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtReport" />
+      <Variable x:TypeArguments="x:String" Name="checkedAt" />
+      <Variable x:TypeArguments="x:Boolean" Name="folderReady" />
+    </Sequence.Variables>
+<ui:LogMessage DisplayName="Log Start" Level="Info" Message="[&quot;Creating the report: &quot; &amp; in_ReportPath]" sap2010:WorkflowViewState.IdRef="LogMessage_401" />
+<Assign x:TypeArguments="x:String" DisplayName="Read Time" sap2010:WorkflowViewState.IdRef="Assign_402">
+  <Assign.To><OutArgument x:TypeArguments="x:String">[checkedAt]</OutArgument></Assign.To>
+  <Assign.Value><InArgument x:TypeArguments="x:String">[DateTime.Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)]</InArgument></Assign.Value>
+</Assign>
+<Assign x:TypeArguments="sdt:DataTable" DisplayName="Create Report Table" sap2010:WorkflowViewState.IdRef="Assign_403">
+  <Assign.To><OutArgument x:TypeArguments="sdt:DataTable">[dtReport]</OutArgument></Assign.To>
+  <Assign.Value><InArgument x:TypeArguments="sdt:DataTable">[New DataTable()]</InArgument></Assign.Value>
+</Assign>
+<ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add row_no" ColumnName="row_no" DataTable="[dtReport]" sap2010:WorkflowViewState.IdRef="AddDataColumn_404" />
+<ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add referral_id" ColumnName="referral_id" DataTable="[dtReport]" sap2010:WorkflowViewState.IdRef="AddDataColumn_405" />
+<ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add result" ColumnName="result" DataTable="[dtReport]" sap2010:WorkflowViewState.IdRef="AddDataColumn_406" />
+<ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add outcome" ColumnName="outcome" DataTable="[dtReport]" sap2010:WorkflowViewState.IdRef="AddDataColumn_407" />
+<ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add reason" ColumnName="reason" DataTable="[dtReport]" sap2010:WorkflowViewState.IdRef="AddDataColumn_408" />
+<ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add checked_at" ColumnName="checked_at" DataTable="[dtReport]" sap2010:WorkflowViewState.IdRef="AddDataColumn_409" />
+<ui:ForEachRow DisplayName="For Each Checked Row" DataTable="[in_Results]" sap2010:WorkflowViewState.IdRef="ForEachRow_411">
+  <ui:ForEachRow.Body>
+    <ActivityAction x:TypeArguments="sdt:DataRow">
+      <ActivityAction.Argument><DelegateInArgument x:TypeArguments="sdt:DataRow" Name="CurrentRow" /></ActivityAction.Argument>
+      <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_412">
+<ui:AddDataRow DisplayName="Add Checked Row" DataTable="[dtReport]" sap2010:WorkflowViewState.IdRef="AddDataRow_410">
+  <ui:AddDataRow.ArrayRow><InArgument x:TypeArguments="s:Object[]">[New Object() {CurrentRow(&quot;row_no&quot;).ToString(), CurrentRow(&quot;referral_id&quot;).ToString(), CurrentRow(&quot;result&quot;).ToString(), CurrentRow(&quot;outcome&quot;).ToString(), CurrentRow(&quot;reason&quot;).ToString(), checkedAt}]</InArgument></ui:AddDataRow.ArrayRow>
+</ui:AddDataRow>
+      </Sequence>
+    </ActivityAction>
+  </ui:ForEachRow.Body>
+</ui:ForEachRow>
+<ui:ForEachRow DisplayName="For Each Rejected Row" DataTable="[in_RejectedRows]" sap2010:WorkflowViewState.IdRef="ForEachRow_414">
+  <ui:ForEachRow.Body>
+    <ActivityAction x:TypeArguments="sdt:DataRow">
+      <ActivityAction.Argument><DelegateInArgument x:TypeArguments="sdt:DataRow" Name="CurrentRow" /></ActivityAction.Argument>
+      <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_415">
+<ui:AddDataRow DisplayName="Add Rejected Row" DataTable="[dtReport]" sap2010:WorkflowViewState.IdRef="AddDataRow_413">
+  <ui:AddDataRow.ArrayRow><InArgument x:TypeArguments="s:Object[]">[New Object() {CurrentRow(&quot;row_no&quot;).ToString(), CurrentRow(&quot;referral_id&quot;).ToString(), If(CurrentRow(&quot;reject_reason&quot;).ToString() = &quot;Same row appears earlier in the file&quot;, &quot;REJECTED_DUPLICATE_ROW&quot;, &quot;REJECTED_INVALID_INPUT&quot;), &quot;rejected&quot;, CurrentRow(&quot;reject_reason&quot;).ToString(), checkedAt}]</InArgument></ui:AddDataRow.ArrayRow>
+</ui:AddDataRow>
+      </Sequence>
+    </ActivityAction>
+  </ui:ForEachRow.Body>
+</ui:ForEachRow>
+<Assign x:TypeArguments="sdt:DataTable" DisplayName="Sort by Row Number" sap2010:WorkflowViewState.IdRef="Assign_416">
+  <Assign.To><OutArgument x:TypeArguments="sdt:DataTable">[dtReport]</OutArgument></Assign.To>
+  <Assign.Value><InArgument x:TypeArguments="sdt:DataTable">[dtReport.AsEnumerable().OrderBy(Function(r) CInt(r(&quot;row_no&quot;))).CopyToDataTable()]</InArgument></Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:Boolean" DisplayName="Create Report Folder" sap2010:WorkflowViewState.IdRef="Assign_417">
+  <Assign.To><OutArgument x:TypeArguments="x:Boolean">[folderReady]</OutArgument></Assign.To>
+  <Assign.Value><InArgument x:TypeArguments="x:Boolean">[Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(in_ReportPath))) IsNot Nothing]</InArgument></Assign.Value>
+</Assign>
+<ui:WriteCsvFile DisplayName="Write Report CSV" AddHeaders="True" DataTable="[dtReport]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" Encoding="utf-8" FilePath="[in_ReportPath]" ShouldQuote="False" sap2010:WorkflowViewState.IdRef="WriteCsvFile_418" />
+<ui:LogMessage DisplayName="Log Summary" Level="Info" Message="[&quot;Report written: &quot; &amp; dtReport.Rows.Count.ToString() &amp; &quot; rows&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_419" />
+  </Sequence>
+</Activity>

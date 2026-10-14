@@ -1,0 +1,126 @@
+<Activity xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sdt="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:p="http://schemas.uipath.com/workflow/activities/credentials" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" mc:Ignorable="sap sap2010" x:Class="Tests_Test_CreateReport" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_12" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Credentials.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Test Create Report" sap2010:WorkflowViewState.IdRef="Sequence_500">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtValid" />
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtRejected" />
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtResults" />
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtExpected" />
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtReport" />
+      <Variable x:TypeArguments="x:String" Name="actualText" />
+      <Variable x:TypeArguments="x:String" Name="expectedText" />
+    </Sequence.Variables>
+    <ui:InvokeWorkflowFile DisplayName="Run Read and Validate Input" UnSafe="False" WorkflowFileName="Workflows\ReadAndValidateInput.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_300">
+      <ui:InvokeWorkflowFile.Arguments>
+        <scg:Dictionary x:TypeArguments="x:String, Argument">
+          <InArgument x:TypeArguments="x:String" x:Key="in_CsvPath">["TestData\patient_admin_input.csv"]</InArgument>
+          <OutArgument x:TypeArguments="sdt:DataTable" x:Key="out_ValidRows">[dtValid]</OutArgument>
+          <OutArgument x:TypeArguments="sdt:DataTable" x:Key="out_RejectedRows">[dtRejected]</OutArgument>
+        </scg:Dictionary>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:InvokeWorkflowFile DisplayName="Run Reconcile Rows" UnSafe="False" WorkflowFileName="Workflows\ReconcileRows.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_301">
+      <ui:InvokeWorkflowFile.Arguments>
+        <scg:Dictionary x:TypeArguments="x:String, Argument">
+          <InArgument x:TypeArguments="sdt:DataTable" x:Key="in_ValidRows">[dtValid]</InArgument>
+          <OutArgument x:TypeArguments="sdt:DataTable" x:Key="out_Results">[dtResults]</OutArgument>
+        </scg:Dictionary>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:InvokeWorkflowFile DisplayName="Run Create Report" UnSafe="False" WorkflowFileName="Workflows\CreateReport.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_302">
+      <ui:InvokeWorkflowFile.Arguments>
+        <scg:Dictionary x:TypeArguments="x:String, Argument">
+          <InArgument x:TypeArguments="sdt:DataTable" x:Key="in_Results">[dtResults]</InArgument>
+          <InArgument x:TypeArguments="sdt:DataTable" x:Key="in_RejectedRows">[dtRejected]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_ReportPath">["Output\test_report.csv"]</InArgument>
+        </scg:Dictionary>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:ReadCsvFile DisplayName="Read Report" DataTable="[dtReport]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" Encoding="utf-8" FilePath="Output\test_report.csv" IncludeColumnNames="True" sap2010:WorkflowViewState.IdRef="ReadCsvFile_301" />
+    <ui:ReadCsvFile DisplayName="Read Expected Results" DataTable="[dtExpected]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" Encoding="utf-8" FilePath="TestData\expected_results.csv" IncludeColumnNames="True" sap2010:WorkflowViewState.IdRef="ReadCsvFile_300" />
+    <Assign x:TypeArguments="x:String" DisplayName="Actual Results" sap2010:WorkflowViewState.IdRef="Assign_300">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[actualText]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[String.Join(" | ", dtReport.AsEnumerable().Select(Function(r) r("row_no").ToString() &amp; ":" &amp; r("referral_id").ToString() &amp; ":" &amp; r("result").ToString() &amp; ":" &amp; r("outcome").ToString() &amp; ":" &amp; r("reason").ToString() &amp; If(r("checked_at").ToString() = "", ":NO-TIME", "")))]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign x:TypeArguments="x:String" DisplayName="Expected Results" sap2010:WorkflowViewState.IdRef="Assign_301">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[expectedText]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[String.Join(" | ", dtExpected.AsEnumerable().Select(Function(e) e("row_no").ToString() &amp; ":" &amp; e("referral_id").ToString() &amp; ":" &amp; e("result").ToString() &amp; ":" &amp; e("outcome").ToString() &amp; ":" &amp; e("reason").ToString()))]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <If DisplayName="Are the Results as Expected?" Condition="[actualText = expectedText]" sap2010:WorkflowViewState.IdRef="If_300">
+      <If.Then>
+        <ui:LogMessage DisplayName="Log Test Passed" Level="Info" Message="[&quot;TEST PASSED: Report (&quot; &amp; dtReport.Rows.Count.ToString() &amp; &quot; rows)&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_300" />
+      </If.Then>
+      <If.Else>
+        <Throw DisplayName="Throw Test Failed" sap2010:WorkflowViewState.IdRef="Throw_300">
+          <Throw.Exception>
+            <InArgument x:TypeArguments="s:Exception">[New Exception("TEST FAILED. Expected: " &amp; expectedText &amp; ". Actual: " &amp; actualText)]</InArgument>
+          </Throw.Exception>
+        </Throw>
+      </If.Else>
+    </If>
+  </Sequence>
+</Activity>
