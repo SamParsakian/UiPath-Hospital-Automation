@@ -1,0 +1,315 @@
+<Activity xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sdt="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:p="http://schemas.uipath.com/workflow/activities/credentials" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" mc:Ignorable="sap sap2010" x:Class="Workflows_ClassifyRow" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_8" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_PatientId" Type="InArgument(x:String)" />
+    <x:Property Name="in_PatientName" Type="InArgument(x:String)" />
+    <x:Property Name="in_Personnummer" Type="InArgument(x:String)" />
+    <x:Property Name="in_CsvCaseId" Type="InArgument(x:String)" />
+    <x:Property Name="in_ReferralFound" Type="InArgument(x:Boolean)" />
+    <x:Property Name="in_RefSender" Type="InArgument(x:String)" />
+    <x:Property Name="in_RefStatus" Type="InArgument(x:String)" />
+    <x:Property Name="in_Patients" Type="InArgument(sdt:DataTable)" />
+    <x:Property Name="in_Cases" Type="InArgument(sdt:DataTable)" />
+    <x:Property Name="out_Result" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Reason" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Credentials.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Classify One Row" sap2010:WorkflowViewState.IdRef="Sequence_100">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="ownBirth" />
+      <Variable x:TypeArguments="x:String" Name="dupIds" />
+      <Variable x:TypeArguments="x:String" Name="sameSenderIds" />
+      <Variable x:TypeArguments="x:Int32" Name="sameSenderCount" />
+      <Variable x:TypeArguments="x:String" Name="allCaseIds" />
+      <Variable x:TypeArguments="x:String" Name="caseStatus" />
+      <Variable x:TypeArguments="x:String" Name="expectedCaseStatus" />
+    </Sequence.Variables>
+<Assign x:TypeArguments="x:String" DisplayName="Find Own Birth Date" sap2010:WorkflowViewState.IdRef="Assign_101">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[ownBirth]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[If(in_Patients IsNot Nothing, String.Join(&quot;&quot;, in_Patients.AsEnumerable().Where(Function(r) r(&quot;patient_id&quot;).ToString() = in_PatientId).Select(Function(r) r(&quot;birth_date&quot;).ToString())), &quot;&quot;)]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Find Duplicate Patients" sap2010:WorkflowViewState.IdRef="Assign_102">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[dupIds]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[If(in_Patients IsNot Nothing AndAlso ownBirth &lt;&gt; &quot;&quot;, String.Join(&quot;, &quot;, in_Patients.AsEnumerable().Where(Function(r) r(&quot;patient_name&quot;).ToString() = in_PatientName AndAlso r(&quot;birth_date&quot;).ToString() = ownBirth AndAlso r(&quot;patient_id&quot;).ToString() &lt;&gt; in_PatientId).Select(Function(r) r(&quot;patient_id&quot;).ToString())), &quot;&quot;)]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Find Cases From Same Sender" sap2010:WorkflowViewState.IdRef="Assign_103">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[sameSenderIds]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[If(in_Cases IsNot Nothing, String.Join(&quot; and &quot;, in_Cases.AsEnumerable().Where(Function(r) r(&quot;sender&quot;).ToString() = in_RefSender).Select(Function(r) r(&quot;case_id&quot;).ToString())), &quot;&quot;)]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:Int32" DisplayName="Count Cases From Same Sender" sap2010:WorkflowViewState.IdRef="Assign_104">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:Int32">[sameSenderCount]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:Int32">[If(in_Cases IsNot Nothing, in_Cases.AsEnumerable().Count(Function(r) r(&quot;sender&quot;).ToString() = in_RefSender), 0)]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Find All Case Ids" sap2010:WorkflowViewState.IdRef="Assign_105">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[allCaseIds]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[If(in_Cases IsNot Nothing, String.Join(&quot;|&quot;, in_Cases.AsEnumerable().Select(Function(r) r(&quot;case_id&quot;).ToString())), &quot;&quot;)]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Find Case Status" sap2010:WorkflowViewState.IdRef="Assign_106">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[caseStatus]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[If(sameSenderCount = 1, in_Cases.AsEnumerable().Where(Function(r) r(&quot;sender&quot;).ToString() = in_RefSender).Select(Function(r) r(&quot;status&quot;).ToString()).First(), &quot;&quot;)]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Map Referral Status" sap2010:WorkflowViewState.IdRef="Assign_107">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[expectedCaseStatus]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[If(in_RefStatus = &quot;Ny&quot;, &quot;Inkommen&quot;, If(in_RefStatus = &quot;Mottagen&quot;, &quot;Registrerad&quot;, If(in_RefStatus = &quot;Under utredning&quot; OrElse in_RefStatus = &quot;Bokad&quot;, &quot;Under handläggning&quot;, If(in_RefStatus = &quot;Avslutad&quot;, &quot;Klar&quot;, If(in_RefStatus = &quot;Avvisad&quot;, &quot;Avvisad&quot;, &quot;&quot;)))))]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Start With No Result" sap2010:WorkflowViewState.IdRef="Assign_108">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Start With No Reason" sap2010:WorkflowViewState.IdRef="Assign_109">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<If DisplayName="Is the Patient a Duplicate?" Condition="[dupIds &lt;&gt; &quot;&quot;]" sap2010:WorkflowViewState.IdRef="If_112">
+  <If.Then>
+    <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_113">
+<Assign x:TypeArguments="x:String" DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Assign_110">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;DUPLICATE_PATIENT&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_111">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;Patient &quot; &amp; in_PatientId &amp; &quot; is a duplicate of &quot; &amp; dupIds &amp; If(in_Personnummer = &quot;&quot;, &quot; and has no personnummer&quot;, &quot;&quot;)]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Then>
+</If>
+<If DisplayName="Is the Referral Missing?" Condition="[out_Result = &quot;&quot; AndAlso Not in_ReferralFound]" sap2010:WorkflowViewState.IdRef="If_122">
+  <If.Then>
+    <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_123">
+<If DisplayName="Does the Case Exist?" Condition="[in_CsvCaseId &lt;&gt; &quot;&quot; AndAlso (&quot;|&quot; &amp; allCaseIds &amp; &quot;|&quot;).Contains(&quot;|&quot; &amp; in_CsvCaseId &amp; &quot;|&quot;)]" sap2010:WorkflowViewState.IdRef="If_116">
+  <If.Then>
+    <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_117">
+<Assign x:TypeArguments="x:String" DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Assign_114">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;ORPHAN_CASE&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_115">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;Case &quot; &amp; in_CsvCaseId &amp; &quot; has no referral in Staff Portal&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Then>
+</If>
+<If DisplayName="Is Nothing Found?" Condition="[out_Result = &quot;&quot;]" sap2010:WorkflowViewState.IdRef="If_120">
+  <If.Then>
+    <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_121">
+<Assign x:TypeArguments="x:String" DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Assign_118">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;MISSING_IN_STAFF_PORTAL&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_119">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;Referral is not found in Staff Portal&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Then>
+</If>
+    </Sequence>
+  </If.Then>
+</If>
+<If DisplayName="Are There Several Cases?" Condition="[out_Result = &quot;&quot; AndAlso sameSenderCount &gt; 1]" sap2010:WorkflowViewState.IdRef="If_126">
+  <If.Then>
+    <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_127">
+<Assign x:TypeArguments="x:String" DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Assign_124">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;DUPLICATE_CASE&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_125">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;Cases &quot; &amp; sameSenderIds &amp; &quot; for the same patient and sender&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Then>
+</If>
+<If DisplayName="Is There No Case?" Condition="[out_Result = &quot;&quot; AndAlso sameSenderCount = 0]" sap2010:WorkflowViewState.IdRef="If_130">
+  <If.Then>
+    <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_131">
+<Assign x:TypeArguments="x:String" DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Assign_128">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;MISSING_IN_COORDINATION&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_129">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;No case for this patient in Coordination&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Then>
+</If>
+<If DisplayName="Do the Statuses Disagree?" Condition="[out_Result = &quot;&quot; AndAlso caseStatus &lt;&gt; expectedCaseStatus]" sap2010:WorkflowViewState.IdRef="If_134">
+  <If.Then>
+    <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_135">
+<Assign x:TypeArguments="x:String" DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Assign_132">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;STATUS_CONFLICT&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_133">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;Referral status &quot; &amp; in_RefStatus &amp; &quot; but case &quot; &amp; sameSenderIds &amp; &quot; status &quot; &amp; caseStatus]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Then>
+</If>
+<If DisplayName="Is Everything Fine?" Condition="[out_Result = &quot;&quot;]" sap2010:WorkflowViewState.IdRef="If_138">
+  <If.Then>
+    <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_139">
+<Assign x:TypeArguments="x:String" DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Assign_136">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;OK&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+<Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_137">
+  <Assign.To>
+    <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
+  </Assign.To>
+  <Assign.Value>
+    <InArgument x:TypeArguments="x:String">[&quot;Referral in Staff Portal and case &quot; &amp; sameSenderIds &amp; &quot; in Coordination agree&quot;]</InArgument>
+  </Assign.Value>
+</Assign>
+    </Sequence>
+  </If.Then>
+</If>
+  </Sequence>
+</Activity>
