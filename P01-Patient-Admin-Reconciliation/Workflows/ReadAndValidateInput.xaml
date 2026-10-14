@@ -1,0 +1,136 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadAndValidateInput" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_2" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sdt="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_CsvPath" Type="InArgument(x:String)" />
+    <x:Property Name="out_ValidRows" Type="OutArgument(sdt:DataTable)" />
+    <x:Property Name="out_RejectedRows" Type="OutArgument(sdt:DataTable)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Text.RegularExpressions</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Read and Validate Input" sap2010:WorkflowViewState.IdRef="Sequence_10">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sdt:DataTable" Name="dtInput" />
+      <Variable x:TypeArguments="x:Int32" Name="rowIndex" />
+      <Variable x:TypeArguments="x:String" Name="rejectReason" />
+    </Sequence.Variables>
+    <ui:LogMessage DisplayName="Log Start" Level="Info" Message="[&quot;Reading input file: &quot; &amp; in_CsvPath]" sap2010:WorkflowViewState.IdRef="LogMessage_10" />
+    <ui:ReadCsvFile DisplayName="Read Input CSV" DataTable="[dtInput]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" Encoding="utf-8" FilePath="[in_CsvPath]" IncludeColumnNames="True" sap2010:WorkflowViewState.IdRef="ReadCsvFile_10" />
+    <Assign x:TypeArguments="sdt:DataTable" DisplayName="Create Valid Rows Table" sap2010:WorkflowViewState.IdRef="Assign_10">
+      <Assign.To>
+        <OutArgument x:TypeArguments="sdt:DataTable">[out_ValidRows]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="sdt:DataTable">[dtInput.Clone()]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign x:TypeArguments="sdt:DataTable" DisplayName="Create Rejected Rows Table" sap2010:WorkflowViewState.IdRef="Assign_11">
+      <Assign.To>
+        <OutArgument x:TypeArguments="sdt:DataTable">[out_RejectedRows]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="sdt:DataTable">[dtInput.Clone()]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add row_no to Valid Rows" ColumnName="row_no" DataTable="[out_ValidRows]" sap2010:WorkflowViewState.IdRef="AddDataColumn_10" />
+    <ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add row_no to Rejected Rows" ColumnName="row_no" DataTable="[out_RejectedRows]" sap2010:WorkflowViewState.IdRef="AddDataColumn_11" />
+    <ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add reject_reason to Rejected Rows" ColumnName="reject_reason" DataTable="[out_RejectedRows]" sap2010:WorkflowViewState.IdRef="AddDataColumn_12" />
+    <ui:ForEachRow DisplayName="For Each Input Row" CurrentIndex="[rowIndex]" DataTable="[dtInput]" sap2010:WorkflowViewState.IdRef="ForEachRow_10">
+      <ui:ForEachRow.Body>
+        <ActivityAction x:TypeArguments="sdt:DataRow">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="sdt:DataRow" Name="CurrentRow" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_11">
+            <Assign x:TypeArguments="x:String" DisplayName="Find Reject Reason" sap2010:WorkflowViewState.IdRef="Assign_12">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:String">[rejectReason]</OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:String">[If(String.IsNullOrWhiteSpace(CurrentRow("referral_id").ToString()), "referral_id is empty", If(Not Regex.IsMatch(CurrentRow("referral_id").ToString().Trim(), "^R-\d{4}-\d{4}$"), "referral_id has the wrong format", If(dtInput.AsEnumerable().Take(rowIndex).Any(Function(r) String.Join("|", r.ItemArray) = String.Join("|", CurrentRow.ItemArray)), "Same row appears earlier in the file", "")))]</InArgument>
+              </Assign.Value>
+            </Assign>
+            <If DisplayName="Is the Row Valid?" sap2010:WorkflowViewState.IdRef="If_10">
+              <If.Condition>
+                <InArgument x:TypeArguments="x:Boolean">[rejectReason = ""]</InArgument>
+              </If.Condition>
+              <If.Then>
+                <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_12">
+                  <ui:AddDataRow DisplayName="Add to Valid Rows" DataTable="[out_ValidRows]" sap2010:WorkflowViewState.IdRef="AddDataRow_10">
+                    <ui:AddDataRow.ArrayRow>
+                      <InArgument x:TypeArguments="s:Object[]">[CurrentRow.ItemArray.Concat(New Object() {(rowIndex + 1).ToString()}).ToArray()]</InArgument>
+                    </ui:AddDataRow.ArrayRow>
+                  </ui:AddDataRow>
+                </Sequence>
+              </If.Then>
+              <If.Else>
+                <Sequence DisplayName="Else" sap2010:WorkflowViewState.IdRef="Sequence_13">
+                  <ui:AddDataRow DisplayName="Add to Rejected Rows" DataTable="[out_RejectedRows]" sap2010:WorkflowViewState.IdRef="AddDataRow_11">
+                    <ui:AddDataRow.ArrayRow>
+                      <InArgument x:TypeArguments="s:Object[]">[CurrentRow.ItemArray.Concat(New Object() {(rowIndex + 1).ToString(), rejectReason}).ToArray()]</InArgument>
+                    </ui:AddDataRow.ArrayRow>
+                  </ui:AddDataRow>
+                  <ui:LogMessage DisplayName="Log Rejected Row" Level="Warn" Message="[&quot;Row &quot; &amp; (rowIndex + 1).ToString() &amp; &quot; rejected: &quot; &amp; rejectReason]" sap2010:WorkflowViewState.IdRef="LogMessage_11" />
+                </Sequence>
+              </If.Else>
+            </If>
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEachRow.Body>
+    </ui:ForEachRow>
+    <ui:LogMessage DisplayName="Log Summary" Level="Info" Message="[&quot;Input rows: &quot; &amp; dtInput.Rows.Count.ToString() &amp; &quot;, valid: &quot; &amp; out_ValidRows.Rows.Count.ToString() &amp; &quot;, rejected: &quot; &amp; out_RejectedRows.Rows.Count.ToString()]" sap2010:WorkflowViewState.IdRef="LogMessage_12" />
+  </Sequence>
+</Activity>

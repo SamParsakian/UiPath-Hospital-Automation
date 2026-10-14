@@ -8,4 +8,4 @@
 7;R-2026-9309;ORPHAN_CASE;needs-review;Case C-2026-00105 has no referral in Staff Portal
 8;;REJECTED_INVALID_INPUT;rejected;referral_id is empty
 9;R-26-98;REJECTED_INVALID_INPUT;rejected;referral_id has the wrong format
-10;R-2026-0098;REJECTED_DUPLICATE_ROW;rejected;Same row appears earlier in the file (row 1)
+10;R-2026-0098;REJECTED_DUPLICATE_ROW;rejected;Same row appears earlier in the file
