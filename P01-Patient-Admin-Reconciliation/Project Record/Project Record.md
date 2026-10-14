@@ -295,3 +295,47 @@ The test passed. All seven rows got the expected result, and the whole run took 
 ![The test of the row check and its output](Screenshots/reconcile-rows-test-passed.png)
 
 *Figure 18. The test in UiPath Studio and its output. The seven valid rows were checked in both systems and the test passed.*
+
+## 7. Creating the Report
+
+### 7.1 Why a Report Is Needed
+
+The result of the check must reach the staff in a form that is easy to read and to keep. For this reason, the result of every row is written to a CSV report that can be opened in Excel.
+
+The report contains the rows that were checked in both systems and also the rows that were rejected at the start, so no row of the input file is missing. Each row has the result, the reason and the time of the check.
+
+In this way, the staff can see at once which records are fine and which ones need a manual follow-up.
+
+### 7.2 How the Report Is Created
+
+The workflow `Workflows/CreateReport.xaml` takes the time of the check and makes an empty table with six columns: `row_no`, `referral_id`, `result`, `outcome`, `reason` and `checked_at`. A row is added for every checked row and for every rejected row. A rejected row gets the code `REJECTED_DUPLICATE_ROW` if it is a copy of an earlier row, and `REJECTED_INVALID_INPUT` in the other cases. At the end, the rows are sorted by the row number and the table is written to a CSV file.
+
+![The workflow that creates the report](Screenshots/create-report-workflow.png)
+
+*Figure 19. The workflow `CreateReport.xaml` with a short explanation of each step.*
+
+The only decision in this workflow is made when a rejected row is added to the report. The code depends on the reason of the rejection, as the expression below shows.
+
+![The expression that sets the code of a rejected row](Screenshots/create-report-rejected-expression.png)
+
+*Figure 20. The expression of the activity Add Rejected Row. The marked part chooses between the two codes.*
+
+### 7.3 Input and Output of the Workflow
+
+The workflow has three inputs and no output, because the result is the report file itself. The inputs are the table of the checked rows (`in_Results`), the table of the rejected rows (`in_RejectedRows`) and the path of the report file (`in_ReportPath`).
+
+### 7.4 Testing the Report
+
+The test `Tests/Test_CreateReport.xaml` runs the whole check with the test file, creates the report, reads it again and compares all ten rows with `expected_results.csv`. The result, the outcome and the reason must be the same, and each row must have a time.
+
+The test passed. The log shows that 10 rows were written, and the whole run took 1 minute and 56 seconds.
+
+![The test of the report and its output](Screenshots/create-report-test-passed.png)
+
+*Figure 21. The test in UiPath Studio and its output. The report has 10 rows and the test passed.*
+
+The report file was also opened in Excel. The seven checked rows come first, then the three rejected rows (marked in yellow and green), and every row has the time of the check.
+
+![The report opened in Excel](Screenshots/report-in-excel.png)
+
+*Figure 22. The report opened in Excel. The rejected rows 8, 9 and 10 are marked.*
