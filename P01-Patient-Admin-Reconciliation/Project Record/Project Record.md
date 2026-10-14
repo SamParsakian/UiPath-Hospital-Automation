@@ -339,3 +339,54 @@ The report file was also opened in Excel. The seven checked rows come first, the
 ![The report opened in Excel](Screenshots/report-in-excel.png)
 
 *Figure 22. The report opened in Excel. The rejected rows 8, 9 and 10 are marked.*
+
+## 8. Running the Whole Process and Handling Errors
+
+### 8.1 Why Error Handling Is Needed
+
+The whole check takes about two minutes and works in two web systems at the same time. During this time, a login can expire or a page can fail to load. Without error handling, one such problem would stop the run, and no report would be created.
+
+For this reason, a problem with one row is handled inside the row check, and the other rows are still checked. Only a problem outside the row check stops the run.
+
+### 8.2 The Main Workflow
+
+The workflow `Main.xaml` connects all parts of the process. It logs in to both systems, reads and validates the input file, checks the valid rows, creates the report and writes a short summary to the log. All steps are placed in a Try Catch, so an unexpected error is written to the log before the run stops.
+
+![The main workflow](Screenshots/main-workflow.png)
+
+*Figure 23. The workflow `Main.xaml` with a short explanation of each step.*
+
+### 8.3 Trying a Row Again
+
+In `ReconcileRows.xaml`, each row is checked inside a loop. When the Staff Portal or Coordination shows the login page instead of the data, the lookup workflow reports that the session has expired. The row is then marked as failed. The same happens when an activity stops with an error.
+
+![One attempt to check a row](Screenshots/reconcile-rows-one-attempt.png)
+
+*Figure 24. One attempt to check a row, with a short explanation of each step.*
+
+After a failed attempt, the robot logs in to both systems again and checks the row once more. A row can be tried two times. If the second attempt also fails, the row gets the result `TECHNICAL_ERROR` and the outcome needs review, and the next row is checked.
+
+![Trying the row again or giving up](Screenshots/reconcile-rows-retry.png)
+
+*Figure 25. What happens after a failed attempt. The condition `attempts < 2` decides between trying again and giving up.*
+
+### 8.4 Testing the Whole Process
+
+The whole process was started from `Main.xaml` with the test file. The report was written with 10 rows, and the summary in the log matched the expected result: 1 row processed, 6 rows that need review and 3 rejected rows. The run took 2 minutes and 4 seconds.
+
+![The output of the whole process](Screenshots/main-run-output.png)
+
+*Figure 26. The output of `Main.xaml`. The last lines show the summary of the run.*
+
+The handling of an expired login was tested by hand. Before the test `Test_ReconcileRows.xaml` was started, the user was logged out of Coordination in Chrome. The log showed that the first row failed, the robot logged in again, and the row was checked once more:
+
+```
+Looking up cases in Coordination for R-2026-0098
+Row 1 R-2026-0098 failed (attempt 1): the login page is shown
+Already logged in
+Logged in to the Staff Portal
+Logged in to Coordination
+Looking up patients in the Staff Portal: Hugo Henriksson
+```
+
+The Staff Portal was still logged in, so only Coordination needed a new login. After this, all seven rows were checked, and the test passed in 2 minutes and 20 seconds. No error was written to the log.
