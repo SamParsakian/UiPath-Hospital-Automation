@@ -1,8 +1,12 @@
-<Activity xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sdt="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:p="http://schemas.uipath.com/workflow/activities/credentials" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" mc:Ignorable="sap sap2010" x:Class="Workflows_LookupCoordination" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_5" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_LookupCoordination" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd2="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_Query" Type="InArgument(x:String)" />
-    <x:Property Name="out_Cases" Type="OutArgument(sdt:DataTable)" />
+    <x:Property Name="out_Cases" Type="OutArgument(sd:DataTable)" />
   </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_5</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
       <x:String>System.Activities</x:String>
@@ -58,97 +62,109 @@
       <AssemblyReference>System.Net.Mail</AssemblyReference>
       <AssemblyReference>System.ObjectModel</AssemblyReference>
       <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Look Up Cases in Coordination" sap2010:WorkflowViewState.IdRef="Sequence_40">
+  <Sequence DisplayName="Look Up Cases in Coordination" sap:VirtualizedContainerService.HintSize="953.3333333333333,3557.3333333333335" sap2010:WorkflowViewState.IdRef="Sequence_40">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:Int32" Name="rowIdx" Default="2" />
-      <Variable x:TypeArguments="x:Boolean" Name="moreRows" Default="True" />
+      <Variable x:TypeArguments="x:Int32" Default="2" Name="rowIdx" />
+      <Variable x:TypeArguments="x:Boolean" Default="True" Name="moreRows" />
       <Variable x:TypeArguments="x:String" Name="caseId" />
       <Variable x:TypeArguments="x:String" Name="sender" />
       <Variable x:TypeArguments="x:String" Name="status" />
     </Sequence.Variables>
-    <ui:LogMessage DisplayName="Log Start" Level="Info" Message="[&quot;Looking up cases in Coordination for &quot; &amp; in_Query]" sap2010:WorkflowViewState.IdRef="LogMessage_40" />
-    <Assign x:TypeArguments="sdt:DataTable" DisplayName="Create Cases Table" sap2010:WorkflowViewState.IdRef="Assign_40">
-      <Assign.To>
-        <OutArgument x:TypeArguments="sdt:DataTable">[out_Cases]</OutArgument>
-      </Assign.To>
-      <Assign.Value>
-        <InArgument x:TypeArguments="sdt:DataTable">[New DataTable()]</InArgument>
-      </Assign.Value>
-    </Assign>
-    <ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add case_id" ColumnName="case_id" DataTable="[out_Cases]" sap2010:WorkflowViewState.IdRef="AddDataColumn_40" />
-    <ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add sender" ColumnName="sender" DataTable="[out_Cases]" sap2010:WorkflowViewState.IdRef="AddDataColumn_41" />
-    <ui:AddDataColumn x:TypeArguments="x:String" DisplayName="Add status" ColumnName="status" DataTable="[out_Cases]" sap2010:WorkflowViewState.IdRef="AddDataColumn_42" />
-    <uix:NApplicationCard AttachMode="ByInstance" DisplayName="Coordination" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_40" ScopeGuid="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Version="V2">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:LogMessage DisplayName="Log Start" sap:VirtualizedContainerService.HintSize="734.6666666666666,176.66666666666666" sap2010:WorkflowViewState.IdRef="LogMessage_40" Level="Info" Message="[&quot;Looking up cases in Coordination for &quot; &amp; in_Query]" />
+    <Assign x:TypeArguments="sd:DataTable" DisplayName="Create Cases Table" sap:VirtualizedContainerService.HintSize="734.6666666666666,54" sap2010:WorkflowViewState.IdRef="Assign_40" To="[out_Cases]" Value="[New DataTable()]" />
+    <ui:AddDataColumn x:TypeArguments="x:String" AllowDBNull="{x:Null}" AutoIncrement="{x:Null}" Column="{x:Null}" DefaultValue="{x:Null}" MaxLength="{x:Null}" Unique="{x:Null}" ColumnName="case_id" DataTable="[out_Cases]" DisplayName="Add case_id" sap:VirtualizedContainerService.HintSize="734.6666666666666,223.33333333333334" sap2010:WorkflowViewState.IdRef="AddDataColumn_40" />
+    <ui:AddDataColumn x:TypeArguments="x:String" AllowDBNull="{x:Null}" AutoIncrement="{x:Null}" Column="{x:Null}" DefaultValue="{x:Null}" MaxLength="{x:Null}" Unique="{x:Null}" ColumnName="sender" DataTable="[out_Cases]" DisplayName="Add sender" sap:VirtualizedContainerService.HintSize="734.6666666666666,223.33333333333334" sap2010:WorkflowViewState.IdRef="AddDataColumn_41" />
+    <ui:AddDataColumn x:TypeArguments="x:String" AllowDBNull="{x:Null}" AutoIncrement="{x:Null}" Column="{x:Null}" DefaultValue="{x:Null}" MaxLength="{x:Null}" Unique="{x:Null}" ColumnName="status" DataTable="[out_Cases]" DisplayName="Add status" sap:VirtualizedContainerService.HintSize="734.6666666666666,223.33333333333334" sap2010:WorkflowViewState.IdRef="AddDataColumn_42" />
+    <uix:NApplicationCard AttachMode="ByInstance" DisplayName="Coordination" HealingAgentBehavior="Job" sap:VirtualizedContainerService.HintSize="734.6666666666666,2466.6666666666665" sap2010:WorkflowViewState.IdRef="NApplicationCard_40" ScopeGuid="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Version="V2">
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
-          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_41">
-            <uix:NGoToUrl DisplayName="Go To Cases page" sap2010:WorkflowViewState.IdRef="NGoToUrl_40" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Url="[&quot;http://100.99.72.90:8081/arenden?q=&quot; &amp; in_Query]" Version="V5" />
-            <While DisplayName="While There Are More Rows" Condition="[moreRows And rowIdx &lt;= 11]" sap2010:WorkflowViewState.IdRef="While_40">
-              <uix:NCheckState DisplayName="Is There a Case Row?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_40" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Timeout="3" Version="V5">
+          <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="732.6666666666666,2262.6666666666665" sap2010:WorkflowViewState.IdRef="Sequence_41">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <uix:NGoToUrl DisplayName="Go To Cases page" sap:VirtualizedContainerService.HintSize="698.6666666666666,124" sap2010:WorkflowViewState.IdRef="NGoToUrl_40" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Url="[&quot;http://100.99.72.90:8081/arenden?q=&quot; &amp; in_Query]" Version="V5" />
+            <While DisplayName="While There Are More Rows" sap:VirtualizedContainerService.HintSize="698.6666666666666,1313.3333333333333" sap2010:WorkflowViewState.IdRef="While_40" Condition="[moreRows And rowIdx &lt;= 11]">
+              <uix:NCheckState DisplayName="Is There a Case Row?" HealingAgentBehavior="Disabled" sap:VirtualizedContainerService.HintSize="652,1119.3333333333333" sap2010:WorkflowViewState.IdRef="NCheckState_40" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Timeout="3" Version="V5">
                 <uix:NCheckState.IfExists>
-                  <Sequence DisplayName="Row found" sap2010:WorkflowViewState.IdRef="Sequence_42">
-                    <uix:NGetText DisplayName="Get Case Id" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_40" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" TextString="[caseId]" Version="V5">
+                  <Sequence DisplayName="Row found" sap:VirtualizedContainerService.HintSize="650,758" sap2010:WorkflowViewState.IdRef="Sequence_42">
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                    <uix:NGetText DisplayName="Get Case Id" HealingAgentBehavior="SameAsCard" sap:VirtualizedContainerService.HintSize="616,143.33333333333334" sap2010:WorkflowViewState.IdRef="NGetText_40" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" TextString="[caseId]" Version="V5">
                       <uix:NGetText.Target>
-                        <uix:TargetAnchorable DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Ärende-ID' tableRow='{0}' tag='A' /&gt;&quot;, rowIdx)]" Guid="c5dea878-f0eb-4eb5-a0cc-78e2be60c686" Reference="gXLf1IiL0EC9LGC4vtpo9Q/GoMpWypqyEmGszBarW48Tg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                        <uix:TargetAnchorable ContentHash="lnj4hy4Bh0KpKiawrTPVgw" DesignTimeRectangle="562, 744, 87, 19" DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Ärende-ID' tableRow='{0}' tag='A' /&gt;&quot;, rowIdx)]" Guid="c5dea878-f0eb-4eb5-a0cc-78e2be60c686" InformativeScreenshot="eeed22db84e57fed2ee4b0075e855efa.jpg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/GoMpWypqyEmGszBarW48Tg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                       </uix:NGetText.Target>
                     </uix:NGetText>
-                    <uix:NGetText DisplayName="Get Sender" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_41" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" TextString="[sender]" Version="V5">
+                    <uix:NGetText DisplayName="Get Sender" HealingAgentBehavior="SameAsCard" sap:VirtualizedContainerService.HintSize="616,143.33333333333334" sap2010:WorkflowViewState.IdRef="NGetText_41" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" TextString="[sender]" Version="V5">
                       <uix:NGetText.Target>
-                        <uix:TargetAnchorable DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Avsändare' tableRow='{0}' tag='TD' /&gt;&quot;, rowIdx)]" Guid="1b1f2a3c-4d5e-4f60-8a71-92b3c4d5e6f7" Reference="gXLf1IiL0EC9LGC4vtpo9Q/jU9fuVWJ1UyhBMZn29vVhg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                        <uix:TargetAnchorable ContentHash="ahAyF2ZV7EOHL7XT3PAT6A" DesignTimeRectangle="1034, 733, 157, 57" DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Avsändare' tableRow='{0}' tag='TD' /&gt;&quot;, rowIdx)]" Guid="d8c860d4-f19d-4a21-b7c2-18bd1a7e140a" InformativeScreenshot="8ae6d44991853c4a0dc33da3821ff33d.jpg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/jU9fuVWJ1UyhBMZn29vVhg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                       </uix:NGetText.Target>
                     </uix:NGetText>
-                    <uix:NGetText DisplayName="Get Status" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_42" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" TextString="[status]" Version="V5">
+                    <uix:NGetText DisplayName="Get Status" HealingAgentBehavior="SameAsCard" sap:VirtualizedContainerService.HintSize="616,143.33333333333334" sap2010:WorkflowViewState.IdRef="NGetText_42" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" TextString="[status]" Version="V5">
                       <uix:NGetText.Target>
-                        <uix:TargetAnchorable DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Status' tableRow='{0}' tag='SPAN' /&gt;&quot;, rowIdx)]" Guid="2c2e3b4d-5e6f-4071-9b82-a3c4d5e6f708" Reference="gXLf1IiL0EC9LGC4vtpo9Q/qouAPdKJgkCEb3XXskU0Rw" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                        <uix:TargetAnchorable ContentHash="WfiRYURh4kOIMbpZpfvJzg" DesignTimeRectangle="1474, 744, 82, 23" DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Status' tableRow='{0}' tag='SPAN' /&gt;&quot;, rowIdx)]" Guid="52af8498-157c-46b3-9d3e-b290eb5f1f3d" InformativeScreenshot="13d667290221dfe45f0f2f9f9a8a04bc.jpg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/qouAPdKJgkCEb3XXskU0Rw" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                       </uix:NGetText.Target>
                     </uix:NGetText>
-                    <ui:AddDataRow DisplayName="Add Case to Table" DataTable="[out_Cases]" sap2010:WorkflowViewState.IdRef="AddDataRow_40">
-                      <ui:AddDataRow.ArrayRow>
-                        <InArgument x:TypeArguments="s:Object[]">[New Object() {caseId.Trim(), sender.Trim(), status.Trim()}]</InArgument>
-                      </ui:AddDataRow.ArrayRow>
-                    </ui:AddDataRow>
-                    <Assign x:TypeArguments="x:Int32" DisplayName="Next Row" sap2010:WorkflowViewState.IdRef="Assign_41">
-                      <Assign.To>
-                        <OutArgument x:TypeArguments="x:Int32">[rowIdx]</OutArgument>
-                      </Assign.To>
-                      <Assign.Value>
-                        <InArgument x:TypeArguments="x:Int32">[rowIdx + 1]</InArgument>
-                      </Assign.Value>
-                    </Assign>
+                    <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {caseId.Trim(), sender.Trim(), status.Trim()}]" DataTable="[out_Cases]" DisplayName="Add Case to Table" sap:VirtualizedContainerService.HintSize="616,223.33333333333334" sap2010:WorkflowViewState.IdRef="AddDataRow_40" />
+                    <Assign x:TypeArguments="x:Int32" DisplayName="Next Row" sap:VirtualizedContainerService.HintSize="616,44.666666666666664" sap2010:WorkflowViewState.IdRef="Assign_41" To="[rowIdx]" Value="[rowIdx + 1]" />
                   </Sequence>
                 </uix:NCheckState.IfExists>
                 <uix:NCheckState.IfNotExists>
-                  <Assign x:TypeArguments="x:Boolean" DisplayName="No More Rows" sap2010:WorkflowViewState.IdRef="Assign_42">
-                    <Assign.To>
-                      <OutArgument x:TypeArguments="x:Boolean">[moreRows]</OutArgument>
-                    </Assign.To>
-                    <Assign.Value>
-                      <InArgument x:TypeArguments="x:Boolean">[False]</InArgument>
-                    </Assign.Value>
-                  </Assign>
+                  <Assign x:TypeArguments="x:Boolean" DisplayName="No More Rows" sap:VirtualizedContainerService.HintSize="650,22" sap2010:WorkflowViewState.IdRef="Assign_42" To="[moreRows]" Value="[False]" />
                 </uix:NCheckState.IfNotExists>
                 <uix:NCheckState.Target>
-                  <uix:TargetAnchorable DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Ärende-ID' tableRow='{0}' tag='A' /&gt;&quot;, rowIdx)]" Guid="3d3f4c5e-6f70-4182-8c93-b4d5e6f70819" Reference="gXLf1IiL0EC9LGC4vtpo9Q/GoMpWypqyEmGszBarW48Tg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                  <uix:TargetAnchorable ContentHash="lnj4hy4Bh0KpKiawrTPVgw" DesignTimeRectangle="562, 744, 87, 19" DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Ärende-ID' tableRow='{0}' tag='A' /&gt;&quot;, rowIdx)]" Guid="c5dea878-f0eb-4eb5-a0cc-78e2be60c686" InformativeScreenshot="eeed22db84e57fed2ee4b0075e855efa.jpg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/GoMpWypqyEmGszBarW48Tg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                 </uix:NCheckState.Target>
               </uix:NCheckState>
             </While>
+            <If Condition="[rowIdx = 2]" DisplayName="Was Nothing Found?" sap:VirtualizedContainerService.HintSize="698.6666666666666,765.3333333333334" sap2010:WorkflowViewState.IdRef="If_901">
+              <If.Then>
+                <uix:NCheckState DisplayName="Is the Login Page Shown?" HealingAgentBehavior="Disabled" sap:VirtualizedContainerService.HintSize="652,522" sap2010:WorkflowViewState.IdRef="NCheckState_901" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Timeout="1" Version="V5">
+                  <uix:NCheckState.IfExists>
+                    <Throw DisplayName="Throw Session Expired" Exception="[New Exception(&quot;Session expired: the login page is shown&quot;)]" sap:VirtualizedContainerService.HintSize="650,92" sap2010:WorkflowViewState.IdRef="Throw_901" />
+                  </uix:NCheckState.IfExists>
+                  <uix:NCheckState.IfNotExists>
+                    <Sequence DisplayName="Target does not appear" sap:VirtualizedContainerService.HintSize="650,90.66666666666667" sap2010:WorkflowViewState.IdRef="Sequence_43">
+                      <sap:WorkflowViewStateService.ViewState>
+                        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                        </scg:Dictionary>
+                      </sap:WorkflowViewStateService.ViewState>
+                    </Sequence>
+                  </uix:NCheckState.IfNotExists>
+                  <uix:NCheckState.Target>
+                    <uix:TargetAnchorable DesignTimeRectangle="0, 0, 0, 0" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='login-button' tag='BUTTON' /&gt;" Guid="6fab6272-ea0c-478f-842f-325ffa0fbab6" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                  </uix:NCheckState.Target>
+                </uix:NCheckState>
+              </If.Then>
+            </If>
           </Sequence>
         </ActivityAction>
       </uix:NApplicationCard.Body>
       <uix:NApplicationCard.OCREngine>
-        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
+        <ActivityFunc x:TypeArguments="sd1:Image, scg:IEnumerable(scg:KeyValuePair(sd2:Rectangle, x:String))">
           <ActivityFunc.Argument>
-            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
+            <DelegateInArgument x:TypeArguments="sd1:Image" Name="Image" />
           </ActivityFunc.Argument>
         </ActivityFunc>
       </uix:NApplicationCard.OCREngine>
       <uix:NApplicationCard.TargetApp>
-        <uix:TargetApp Area="-12, -12, 2512, 1464" BrowserType="Chrome" Reference="gXLf1IiL0EC9LGC4vtpo9Q/aupNFLt0HEimm6pFhBIzkg" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3">
+        <uix:TargetApp Area="-12, -12, 2512, 1464" BrowserType="Chrome" ContentHash="fzYQnvg64U2RVZUgiOZ_2w" InformativeScreenshot="1a5dd2122b722358d73ca0be3203b1ed.jpg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/aupNFLt0HEimm6pFhBIzkg" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3">
           <uix:TargetApp.Arguments>
             <InArgument x:TypeArguments="x:String" />
           </uix:TargetApp.Arguments>
@@ -158,6 +174,6 @@
         </uix:TargetApp>
       </uix:NApplicationCard.TargetApp>
     </uix:NApplicationCard>
-    <ui:LogMessage DisplayName="Log Result" Level="Info" Message="[&quot;Cases found: &quot; &amp; out_Cases.Rows.Count.ToString()]" sap2010:WorkflowViewState.IdRef="LogMessage_41" />
+    <ui:LogMessage DisplayName="Log Result" sap:VirtualizedContainerService.HintSize="734.6666666666666,167.33333333333334" sap2010:WorkflowViewState.IdRef="LogMessage_41" Level="Info" Message="[&quot;Cases found: &quot; &amp; out_Cases.Rows.Count.ToString()]" />
   </Sequence>
 </Activity>
