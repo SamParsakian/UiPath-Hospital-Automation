@@ -4,6 +4,10 @@ A UiPath automation that checks referral records in two fictional Swedish hospit
 
 All data in this project is fictional.
 
+[![Overview of the reconciliation process - click to watch the demo video on YouTube](Project%20Record/Screenshots/readme-overview.png)](https://youtu.be/h75j1saIfDk)
+
+**[Watch the demo video on YouTube](https://youtu.be/h75j1saIfDk)** - a full run of the robot, started from UiPath Assistant (about 4 minutes).
+
 ## What It Does
 
 Every morning, a patient administration officer compares the referrals of the day between two web systems: **Personalportalen** (Staff Portal) and **Journalsamordning** (Coordination). The robot does this check:
