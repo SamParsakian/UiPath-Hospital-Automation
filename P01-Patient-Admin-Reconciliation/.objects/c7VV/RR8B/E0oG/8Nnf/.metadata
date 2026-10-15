@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Referral Id Cell",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "8Nnf7F31NUOpAmFkNwtrlA",
+  "Reference": "gXLf1IiL0EC9LGC4vtpo9Q/8Nnf7F31NUOpAmFkNwtrlA",
+  "ParentRef": "gXLf1IiL0EC9LGC4vtpo9Q/E0oGLTrpEEKjguwcXzj6iQ",
+  "Created": "2026-10-13T21:16:22.4920042Z",
+  "Updated": "2026-10-13T21:16:22.4920042Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

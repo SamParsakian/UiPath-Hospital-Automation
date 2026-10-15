@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Patient Name Cell",
+  "Type": "Element",
+  "TaxonomyType": "None",
+  "Id": "uYXH6FOaCU-jot9luUVFvw",
+  "Reference": "gXLf1IiL0EC9LGC4vtpo9Q/uYXH6FOaCU-jot9luUVFvw",
+  "ParentRef": "gXLf1IiL0EC9LGC4vtpo9Q/E0oGLTrpEEKjguwcXzj6iQ",
+  "Created": "2026-10-13T21:16:34.7057924Z",
+  "Updated": "2026-10-13T21:16:34.7057924Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

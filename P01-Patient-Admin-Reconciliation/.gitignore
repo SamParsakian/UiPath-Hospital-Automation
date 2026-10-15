@@ -20,7 +20,6 @@ credentials/
 # UiPath local and generated files
 .local/
 .screenshots/
-.objects/
 .output/
 .settings/
 .project/

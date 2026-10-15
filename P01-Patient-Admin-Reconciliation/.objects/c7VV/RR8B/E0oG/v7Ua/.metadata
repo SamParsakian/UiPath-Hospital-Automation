@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Patient Birth Date Cell",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "v7UapNfqoEa4Jrs6NfUDJQ",
+  "Reference": "gXLf1IiL0EC9LGC4vtpo9Q/v7UapNfqoEa4Jrs6NfUDJQ",
+  "ParentRef": "gXLf1IiL0EC9LGC4vtpo9Q/E0oGLTrpEEKjguwcXzj6iQ",
+  "Created": "2026-10-13T21:16:40.4336572Z",
+  "Updated": "2026-10-13T21:16:40.4336572Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

@@ -1,0 +1,12 @@
+﻿{
+  "Name": "Staff Portal_App",
+  "Type": "App",
+  "Id": "c7VVc2xG_UGeIVZqZPb0JA",
+  "Reference": "gXLf1IiL0EC9LGC4vtpo9Q/c7VVc2xG_UGeIVZqZPb0JA",
+  "Created": "2026-10-13T13:54:59.1863237Z",
+  "Updated": "2026-10-13T13:54:59.1863237Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Case Id Cell",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "GoMpWypqyEmGszBarW48Tg",
+  "Reference": "gXLf1IiL0EC9LGC4vtpo9Q/GoMpWypqyEmGszBarW48Tg",
+  "ParentRef": "gXLf1IiL0EC9LGC4vtpo9Q/aupNFLt0HEimm6pFhBIzkg",
+  "Created": "2026-10-13T21:12:29.8478264Z",
+  "Updated": "2026-10-13T21:12:29.8478264Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
