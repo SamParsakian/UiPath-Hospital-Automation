@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="ahAyF2ZV7EOHL7XT3PAT6A" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" ContentHash="7kaxuaZRiE22EB1McipgvA" DesignTimeRectangle="1034, 733, 157, 57" DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl colName='Avsändare' tableRow='{0}' tag='TD' /&gt;&quot;, rowIdx)]" Guid="d8c860d4-f19d-4a21-b7c2-18bd1a7e140a" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="8ae6d44991853c4a0dc33da3821ff33d.jpg" xmlns="">0ipbY8dF9eUuGb6NMMjgvsw</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

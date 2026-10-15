@@ -1,0 +1,13 @@
+﻿{
+  "Name": "Login Page",
+  "Type": "Screen",
+  "Id": "GbHd2UVDMUmkNRjoGAkJng",
+  "Reference": "gXLf1IiL0EC9LGC4vtpo9Q/GbHd2UVDMUmkNRjoGAkJng",
+  "ParentRef": "gXLf1IiL0EC9LGC4vtpo9Q/RR8B62HwXkSFWjpuq245RQ",
+  "Created": "2026-10-13T21:03:52.9962789Z",
+  "Updated": "2026-10-13T21:03:52.9962789Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

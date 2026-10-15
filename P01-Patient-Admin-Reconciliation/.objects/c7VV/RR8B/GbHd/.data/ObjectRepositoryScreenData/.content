@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryScreenData ContentHash="cZSd05yA10aJ4uS8DPIHRg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/GbHd2UVDMUmkNRjoGAkJng" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:p="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryScreenData.Data>
+    <TargetApp x:Key="TargetApp" Area="-12, -12, 2512, 1464" BrowserType="Chrome" ContentHash="c5dhyLsNX0yRiSzqj-i8pg" Reference="gXLf1IiL0EC9LGC4vtpo9Q/GbHd2UVDMUmkNRjoGAkJng" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" Url="http://100.99.72.90:8080/login" Version="V3">
+      <TargetApp.Arguments>
+        <p:InArgument x:TypeArguments="x:String" />
+      </TargetApp.Arguments>
+      <TargetApp.WorkingDirectory>
+        <p:InArgument x:TypeArguments="x:String" />
+      </TargetApp.WorkingDirectory>
+      <imageRef attrName="InformativeScreenshot" originalValue="2d7d0adea95b5fab05e306ea1481ac07.jpg" xmlns="">0TbLSGcAcZEax39pri02vZQ</imageRef>
+    </TargetApp>
+  </ObjectRepositoryScreenData.Data>
+</ObjectRepositoryScreenData>

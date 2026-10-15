@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="Ag4yws6mGkuYsZ2GY5tdFg" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="0, 0, 0, 0" DesignTimeScaleFactor="1" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='login-button' tag='BUTTON' /&gt;" Guid="def5625f-a83d-408d-b25e-c6442117a7e4" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

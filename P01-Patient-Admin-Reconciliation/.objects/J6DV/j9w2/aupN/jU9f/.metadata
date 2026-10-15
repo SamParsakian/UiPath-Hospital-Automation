@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Sender Cell",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "jU9fuVWJ1UyhBMZn29vVhg",
+  "Reference": "gXLf1IiL0EC9LGC4vtpo9Q/jU9fuVWJ1UyhBMZn29vVhg",
+  "ParentRef": "gXLf1IiL0EC9LGC4vtpo9Q/aupNFLt0HEimm6pFhBIzkg",
+  "Created": "2026-10-13T21:12:31.4637089Z",
+  "Updated": "2026-10-13T21:12:31.4637089Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
