@@ -390,3 +390,54 @@ Looking up patients in the Staff Portal: Hugo Henriksson
 ```
 
 The Staff Portal was still logged in, so only Coordination needed a new login. After this, all seven rows were checked, and the test passed in 2 minutes and 20 seconds. No error was written to the log.
+
+## 9. Testing a System Outage
+
+### 9.1 The Maintenance Test
+
+The lab can put the Staff Portal into maintenance mode. In this mode every page of the Staff Portal is replaced by a maintenance page with the error code 503, while Coordination keeps working. The whole process was started from `Main.xaml` in this mode, to see how the robot reports a system that is not available.
+
+![The Staff Portal in maintenance mode](Screenshots/staff-portal-maintenance-page.png)
+
+*Figure 27. The maintenance page of the Staff Portal. The page says that the system is not available, with the error code 503.*
+
+### 9.2 A Problem Found by the Test
+
+In the first run, the maintenance page was read as a search without results. All seven checked rows were reported as `MISSING_IN_STAFF_PORTAL` or `ORPHAN_CASE`, as if the referrals did not exist. This result was wrong, because the referrals exist and only the system was down.
+
+The cause was found in the three lookup workflows. When no row was found, only the login page was checked, and every other page was taken as an empty search.
+
+### 9.3 The Fix
+
+On a real search without results, the page shows one table row with the text "Inga remisser matchar filtret." (no referrals match the filter). The lookups now accept an empty search only when this row is shown. If the login page is shown, the session has expired, as described in section 8.3. If neither is shown, the page did not load, and the lookup stops with the error "The Staff Portal search page did not load". The row is then tried again and ends as `TECHNICAL_ERROR`.
+
+![The new check in the referral lookup](Screenshots/lookup-empty-result-check.png)
+
+*Figure 28. The checks that run when no referral is found, in `LookupReferral.xaml`.*
+
+### 9.4 Result of the Maintenance Test
+
+The test was run again with the fix. Every row failed two times and was then given up, and the process still finished and wrote the report in 2 minutes and 53 seconds:
+
+```
+Row 1 R-2026-0098 failed (attempt 1): The Staff Portal search page did not load
+Row 1 R-2026-0098 failed (attempt 2): The Staff Portal search page did not load
+Row 1 R-2026-0098: TECHNICAL_ERROR - Technical error: The Staff Portal search page did not load
+...
+Process finished. Processed: 0, needs review: 7, rejected: 3.
+```
+
+![The report of the maintenance test in Excel](Screenshots/maintenance-report-in-excel.png)
+
+*Figure 29. The report of the maintenance test. Rows 1 to 7 are technical errors, and rows 8 to 10 are rejected as in a normal run.*
+
+The technical errors in this report are the expected result of the test. They do not describe the patient records; they only tell the staff that the check must be repeated when the system is available again. The table below compares the two runs.
+
+| Rows | Normal run | Maintenance run |
+|---|---|---|
+| 1 to 7 | Real results, for example `OK`, `MISSING_IN_COORDINATION` and `DUPLICATE_CASE` | `TECHNICAL_ERROR`, needs review |
+| 8 to 10 | Rejected input | Rejected input |
+
+### 9.5 Normal Results After the Fix
+
+After the maintenance mode was switched off, the test `Test_ReconcileRows.xaml` was run again to make sure that the fix did not change the normal results. Real empty searches, such as the missing case of row 2 and the missing referral of row 7, were still recognised. All seven rows had the expected result, no row was tried again, and the test passed in 2 minutes and 19 seconds.
