@@ -1,5 +1,5 @@
 {
-  "name": "Project1-",
+  "name": "P01_PatientAdminReconciliation",
   "projectId": "a347b93c-6275-43aa-90cd-0d0213c90b5e",
   "description": "UiPath automation that compares fictional hospital patient administration records across two web applications, identifies missing, duplicate and conflicting data, and generates a reconciliation report with error handling and logging.",
   "main": "Main.xaml",
