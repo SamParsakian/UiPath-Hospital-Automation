@@ -441,3 +441,51 @@ The technical errors in this report are the expected result of the test. They do
 ### 9.5 Normal Results After the Fix
 
 After the maintenance mode was switched off, the test `Test_ReconcileRows.xaml` was run again to make sure that the fix did not change the normal results. Real empty searches, such as the missing case of row 2 and the missing referral of row 7, were still recognised. All seven rows had the expected result, no row was tried again, and the test passed in 2 minutes and 19 seconds.
+
+## 10. Publishing to Orchestrator and Running as an Attended Job
+
+### 10.1 Why the Process Is Published
+
+A member of the administration staff should be able to start the check without UiPath Studio. For this reason, the project is published to Orchestrator. Orchestrator is the UiPath cloud service that stores the published version of the process and collects the logs of every run.
+
+The first attempt to create the package failed, because the project name `Project1-` ends with a hyphen, and a package name cannot end with a hyphen. The package name in `project.json` was therefore changed to `P01_PatientAdminReconciliation`, while the project folder kept its name. Only the project files were included in the package, so local reports, test output and raw screenshots were left out. Version 1.0.0 was published to the personal workspace in Orchestrator, and the process was created there automatically.
+
+![The process in Orchestrator](Screenshots/orchestrator-process.png)
+
+*Figure 30. The process `P01_PatientAdminReconciliation`, version 1.0.0, in the personal workspace in Orchestrator.*
+
+### 10.2 How the Staff Starts the Check
+
+The process is an attended automation. It runs on the computer of the staff member, in the same Chrome window that the staff member uses, and it is started by the staff member when the check is needed.
+
+UiPath Assistant is installed together with the UiPath Robot. It shows all processes that are published for the user. Before the start, the user only needs to be logged in to the Staff Portal and to Coordination in Chrome. The user then selects the process in UiPath Assistant and clicks Run. While the robot works, the browser should not be used.
+
+![The process in UiPath Assistant](Screenshots/assistant-process.png)
+
+*Figure 31. The process as the user sees it in UiPath Assistant, before the first run.*
+
+UiPath Assistant shows the progress of the job. In the test run, the package was installed, the whole check was done, and the job was completed after 2 minutes and 18 seconds with the status Success.
+
+![The finished job in UiPath Assistant](Screenshots/assistant-job-success.png)
+
+*Figure 32. The finished job in UiPath Assistant. It started at 11:32 and was completed at 11:34.*
+
+### 10.3 What the User and the Administrator Get
+
+The result for the user is the report `reconciliation_report.csv` in the `Output` folder of the installed process. It can be opened in Excel. In the test run, all ten rows had the expected result and outcome, and every row had the time of the run.
+
+![The report of the Orchestrator job in Excel](Screenshots/orchestrator-report-in-excel.png)
+
+*Figure 33. The report of the attended job, opened in Excel. The time 11:34 shows that it comes from this run.*
+
+An administrator can follow every run in Orchestrator without access to the computer of the user, because the robot sends its log messages there. The test run had 64 information messages, 3 warnings and no errors. The warnings are the three input rows that were rejected, and they can be found quickly by sorting the logs by level.
+
+![The job logs in Orchestrator](Screenshots/orchestrator-job-logs.png)
+
+*Figure 34. The logs of the job in Orchestrator, sorted by level. The marked lines are the warnings for the rejected rows 8, 9 and 10.*
+
+Orchestrator showed the times in UTC, so the time zone was changed to Stockholm time in the tenant settings.
+
+![The time zone setting in Orchestrator](Screenshots/orchestrator-time-zone.png)
+
+*Figure 35. The time zone of the tenant in the Orchestrator settings.*
