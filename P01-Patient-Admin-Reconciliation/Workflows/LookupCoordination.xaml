@@ -147,6 +147,7 @@
                           <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                         </scg:Dictionary>
                       </sap:WorkflowViewStateService.ViewState>
+<uix:NCheckState DisplayName="Is the Empty Result Shown?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_911" ScopeIdentifier="9c3e5a10-6d2b-4e0a-b1f7-2a8d4c6e9f31" Timeout="1" Version="V5"><uix:NCheckState.IfNotExists><Throw DisplayName="Page Did Not Load" Exception="[New Exception(&quot;The Coordination search page did not load&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_911" /></uix:NCheckState.IfNotExists><uix:NCheckState.Target><uix:TargetAnchorable ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-table' tag='TABLE' /&gt;&lt;webctrl tag='TD' class='empty' /&gt;" Guid="1e13d680-1089-497f-b51d-e4863e6b641e" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" /></uix:NCheckState.Target></uix:NCheckState>
                     </Sequence>
                   </uix:NCheckState.IfNotExists>
                   <uix:NCheckState.Target>

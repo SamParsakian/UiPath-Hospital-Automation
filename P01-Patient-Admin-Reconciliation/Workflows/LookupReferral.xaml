@@ -135,6 +135,7 @@
                       </Assign.Value>
                     </Assign>
                   </uix:NCheckState.IfExists>
+<uix:NCheckState.IfNotExists><uix:NCheckState DisplayName="Is the Empty Result Shown?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_910" ScopeIdentifier="4e7a9b20-8c3d-4f15-a6e1-0b2c3d4e5f60" Timeout="1" Version="V5"><uix:NCheckState.IfNotExists><Throw DisplayName="Page Did Not Load" Exception="[New Exception(&quot;The Staff Portal search page did not load&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_910" /></uix:NCheckState.IfNotExists><uix:NCheckState.Target><uix:TargetAnchorable ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='referral-table' tag='TABLE' /&gt;&lt;webctrl tag='TD' class='empty' /&gt;" Guid="ba6869f0-0bae-4ae7-8fa8-3045e430befc" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" /></uix:NCheckState.Target></uix:NCheckState></uix:NCheckState.IfNotExists>
                   <uix:NCheckState.Target>
                     <uix:TargetAnchorable ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='login-button' tag='BUTTON' /&gt;" Guid="7fcc7c2f-f061-4800-948f-8d47c1d54851" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                   </uix:NCheckState.Target>
