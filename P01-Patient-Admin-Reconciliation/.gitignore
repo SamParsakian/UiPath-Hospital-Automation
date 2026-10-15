@@ -53,3 +53,6 @@ __pycache__/
 
 # Generated reports
 Output/
+
+# Studio temporary copies of open workflows
+~*.xaml
