@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadInvoice" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:upap="clr-namespace:UiPath.PDF.Activities.PDF;assembly=UiPath.PDF.Activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadInvoice" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:upap="clr-namespace:UiPath.PDF.Activities.PDF;assembly=UiPath.PDF.Activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_FilePath" Type="InArgument(x:String)" />
     <x:Property Name="out_Result" Type="OutArgument(x:String)" />
@@ -16,26 +16,31 @@
     <x:Property Name="out_TotalAmount" Type="OutArgument(x:Decimal)" />
     <x:Property Name="out_Bankgiro" Type="OutArgument(x:String)" />
   </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
-      <x:String>System.Activities</x:String>
-      <x:String>System.Activities.Statements</x:String>
-      <x:String>System.Activities.Expressions</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
       <x:String>Microsoft.VisualBasic</x:String>
       <x:String>Microsoft.VisualBasic.Activities</x:String>
       <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
       <x:String>System.Collections</x:String>
       <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
       <x:String>System.Globalization</x:String>
       <x:String>System.IO</x:String>
       <x:String>System.Linq</x:String>
       <x:String>System.Text</x:String>
       <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>System.Windows.Markup</x:String>
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
-      <x:String>System.Windows.Markup</x:String>
-      <x:String>GlobalVariablesNamespace</x:String>
-      <x:String>GlobalConstantsNamespace</x:String>
     </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -66,7 +71,12 @@
       <Variable x:TypeArguments="x:String" Name="vatText" />
       <Variable x:TypeArguments="x:String" Name="totalText" />
     </Sequence.Variables>
-    <Assign DisplayName="Start As Invoice">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Assign DisplayName="Start As Invoice" sap2010:WorkflowViewState.IdRef="Assign_1">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
       </Assign.To>
@@ -74,7 +84,7 @@
         <InArgument x:TypeArguments="x:String">Invoice</InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Read File Bytes">
+    <Assign DisplayName="Read File Bytes" sap2010:WorkflowViewState.IdRef="Assign_2">
       <Assign.To>
         <OutArgument x:TypeArguments="s:Byte[]">[fileBytes]</OutArgument>
       </Assign.To>
@@ -82,7 +92,7 @@
         <InArgument x:TypeArguments="s:Byte[]">[File.ReadAllBytes(in_FilePath)]</InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Get File Start">
+    <Assign DisplayName="Get File Start" sap2010:WorkflowViewState.IdRef="Assign_3">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[fileStart]</OutArgument>
       </Assign.To>
@@ -90,7 +100,7 @@
         <InArgument x:TypeArguments="x:String">[Encoding.ASCII.GetString(fileBytes.Take(5).ToArray())]</InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Get File End">
+    <Assign DisplayName="Get File End" sap2010:WorkflowViewState.IdRef="Assign_4">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[fileEnd]</OutArgument>
       </Assign.To>
@@ -98,10 +108,10 @@
         <InArgument x:TypeArguments="x:String">[Encoding.ASCII.GetString(fileBytes.Skip(Math.Max(0, fileBytes.Length - 1024)).ToArray())]</InArgument>
       </Assign.Value>
     </Assign>
-    <If DisplayName="Check 1 - Real PDF?" Condition="[fileStart &lt;&gt; &quot;%PDF-&quot;]">
+    <If Condition="[fileStart &lt;&gt; &quot;%PDF-&quot;]" DisplayName="Check 1 - Real PDF?" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
-        <Sequence DisplayName="Not A PDF">
-          <Assign DisplayName="Set Error">
+        <Sequence DisplayName="Not A PDF" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <Assign DisplayName="Set Error" sap2010:WorkflowViewState.IdRef="Assign_5">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
             </Assign.To>
@@ -109,7 +119,7 @@
               <InArgument x:TypeArguments="x:String">Error</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Set Reason">
+          <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_6">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
             </Assign.To>
@@ -120,10 +130,10 @@
         </Sequence>
       </If.Then>
     </If>
-    <If DisplayName="Check 2 - Complete PDF?" Condition="[out_Result = &quot;Invoice&quot; AndAlso Not fileEnd.Contains(&quot;%%EOF&quot;)]">
+    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso Not fileEnd.Contains(&quot;%%EOF&quot;)]" DisplayName="Check 2 - Complete PDF?" sap2010:WorkflowViewState.IdRef="If_2">
       <If.Then>
-        <Sequence DisplayName="Damaged PDF">
-          <Assign DisplayName="Set Error">
+        <Sequence DisplayName="Damaged PDF" sap2010:WorkflowViewState.IdRef="Sequence_3">
+          <Assign DisplayName="Set Error" sap2010:WorkflowViewState.IdRef="Assign_7">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
             </Assign.To>
@@ -131,7 +141,7 @@
               <InArgument x:TypeArguments="x:String">Error</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Set Reason">
+          <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_8">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
             </Assign.To>
@@ -142,24 +152,24 @@
         </Sequence>
       </If.Then>
     </If>
-    <If DisplayName="Check 3 - Read The Text" Condition="[out_Result = &quot;Invoice&quot;]">
+    <If Condition="[out_Result = &quot;Invoice&quot;]" DisplayName="Check 3 - Read The Text" sap2010:WorkflowViewState.IdRef="If_3">
       <If.Then>
-        <TryCatch DisplayName="Try Read PDF">
+        <TryCatch DisplayName="Try Read PDF" sap2010:WorkflowViewState.IdRef="TryCatch_1">
           <TryCatch.Try>
-            <ui:ReadPDFText DisplayName="Read PDF Text" FileName="{x:Null}" PreserveFormatting="{x:Null}" ResourceFile="{x:Null}" Range="All" Text="[pdfText]">
+            <ui:ReadPDFText PreserveFormatting="{x:Null}" ResourceFile="{x:Null}" DisplayName="Read PDF Text" FileName="[in_FilePath]" sap2010:WorkflowViewState.IdRef="ReadPDFText_1" Range="All" Text="[pdfText]">
               <ui:ReadPDFText.Item>
-                <upap:ItemArgument x:TypeArguments="upr:IResource" FileName="[in_FilePath]" ResourceFile="{x:Null}" />
+                <upap:ItemArgument x:TypeArguments="upr:IResource" ResourceFile="{x:Null}" FileName="[in_FilePath]" />
               </ui:ReadPDFText.Item>
             </ui:ReadPDFText>
           </TryCatch.Try>
           <TryCatch.Catches>
-            <Catch x:TypeArguments="s:Exception">
+            <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_1">
               <ActivityAction x:TypeArguments="s:Exception">
                 <ActivityAction.Argument>
                   <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
                 </ActivityAction.Argument>
-                <Sequence DisplayName="PDF Cannot Be Read">
-                  <Assign DisplayName="Set Error">
+                <Sequence DisplayName="PDF Cannot Be Read" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                  <Assign DisplayName="Set Error" sap2010:WorkflowViewState.IdRef="Assign_9">
                     <Assign.To>
                       <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
                     </Assign.To>
@@ -167,7 +177,7 @@
                       <InArgument x:TypeArguments="x:String">Error</InArgument>
                     </Assign.Value>
                   </Assign>
-                  <Assign DisplayName="Set Reason">
+                  <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_10">
                     <Assign.To>
                       <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
                     </Assign.To>
@@ -182,10 +192,10 @@
         </TryCatch>
       </If.Then>
     </If>
-    <If DisplayName="Check 4 - Text Found?" Condition="[out_Result = &quot;Invoice&quot; AndAlso String.IsNullOrWhiteSpace(pdfText)]">
+    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso String.IsNullOrWhiteSpace(pdfText)]" DisplayName="Check 4 - Text Found?" sap2010:WorkflowViewState.IdRef="If_4">
       <If.Then>
-        <Sequence DisplayName="Scanned PDF">
-          <Assign DisplayName="Set Scanned">
+        <Sequence DisplayName="Scanned PDF" sap2010:WorkflowViewState.IdRef="Sequence_5">
+          <Assign DisplayName="Set Scanned" sap2010:WorkflowViewState.IdRef="Assign_11">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
             </Assign.To>
@@ -193,7 +203,7 @@
               <InArgument x:TypeArguments="x:String">Scanned</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Set Reason">
+          <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_12">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
             </Assign.To>
@@ -204,10 +214,10 @@
         </Sequence>
       </If.Then>
     </If>
-    <If DisplayName="Find The Fields" Condition="[out_Result = &quot;Invoice&quot;]">
+    <If Condition="[out_Result = &quot;Invoice&quot;]" DisplayName="Find The Fields" sap2010:WorkflowViewState.IdRef="If_5">
       <If.Then>
-        <Sequence DisplayName="Read Fields With Regex">
-          <Assign DisplayName="Document Type">
+        <Sequence DisplayName="Read Fields With Regex" sap2010:WorkflowViewState.IdRef="Sequence_6">
+          <Assign DisplayName="Document Type" sap2010:WorkflowViewState.IdRef="Assign_13">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_DocumentType]</OutArgument>
             </Assign.To>
@@ -215,7 +225,7 @@
               <InArgument x:TypeArguments="x:String">[pdfText.Trim().Split({vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)(0).Trim().ToUpper()]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Supplier Name">
+          <Assign DisplayName="Supplier Name" sap2010:WorkflowViewState.IdRef="Assign_14">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_SupplierName]</OutArgument>
             </Assign.To>
@@ -223,7 +233,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Från[ \t]+([^\r\n]+)").Groups(1).Value.Trim()]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Organisation Number">
+          <Assign DisplayName="Organisation Number" sap2010:WorkflowViewState.IdRef="Assign_15">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_OrgNumber]</OutArgument>
             </Assign.To>
@@ -231,7 +241,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Organisationsnummer[ \t]+(\d{6}-\d{4})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Invoice Number">
+          <Assign DisplayName="Invoice Number" sap2010:WorkflowViewState.IdRef="Assign_16">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_InvoiceNumber]</OutArgument>
             </Assign.To>
@@ -239,7 +249,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Fakturanummer|Kreditfakturanummer)[ \t]+(\S+)").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Invoice Date">
+          <Assign DisplayName="Invoice Date" sap2010:WorkflowViewState.IdRef="Assign_17">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_InvoiceDate]</OutArgument>
             </Assign.To>
@@ -247,7 +257,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Fakturadatum|Datum)[ \t]+(\d{4}-\d{2}-\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Due Date">
+          <Assign DisplayName="Due Date" sap2010:WorkflowViewState.IdRef="Assign_18">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_DueDate]</OutArgument>
             </Assign.To>
@@ -255,7 +265,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Förfallodatum[ \t]+(\d{4}-\d{2}-\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Purchase Order">
+          <Assign DisplayName="Purchase Order" sap2010:WorkflowViewState.IdRef="Assign_19">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_PurchaseOrder]</OutArgument>
             </Assign.To>
@@ -263,7 +273,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Er referens[ \t]+(\S+)").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Cost Centre">
+          <Assign DisplayName="Cost Centre" sap2010:WorkflowViewState.IdRef="Assign_20">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_CostCentre]</OutArgument>
             </Assign.To>
@@ -271,7 +281,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Kostnadsställe[ \t]+(\S+)").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Bankgiro">
+          <Assign DisplayName="Bankgiro" sap2010:WorkflowViewState.IdRef="Assign_21">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Bankgiro]</OutArgument>
             </Assign.To>
@@ -279,7 +289,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Bankgiro[ \t]+(\d{3,4}-\d{4})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Net Amount Text">
+          <Assign DisplayName="Net Amount Text" sap2010:WorkflowViewState.IdRef="Assign_22">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[netText]</OutArgument>
             </Assign.To>
@@ -287,7 +297,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Belopp exkl\. moms[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="VAT Amount Text">
+          <Assign DisplayName="VAT Amount Text" sap2010:WorkflowViewState.IdRef="Assign_23">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[vatText]</OutArgument>
             </Assign.To>
@@ -295,7 +305,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Moms[^\r\n%]*%[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Total Amount Text">
+          <Assign DisplayName="Total Amount Text" sap2010:WorkflowViewState.IdRef="Assign_24">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[totalText]</OutArgument>
             </Assign.To>
@@ -303,7 +313,7 @@
               <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Att betala|Att erhålla)[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Net Amount">
+          <Assign DisplayName="Net Amount" sap2010:WorkflowViewState.IdRef="Assign_25">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Decimal">[out_NetAmount]</OutArgument>
             </Assign.To>
@@ -311,7 +321,7 @@
               <InArgument x:TypeArguments="x:Decimal">[If(netText = "", 0D, Decimal.Parse(netText.Replace(" ", "").Replace(ChrW(160).ToString(), "").Replace(",", "."), CultureInfo.InvariantCulture))]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="VAT Amount">
+          <Assign DisplayName="VAT Amount" sap2010:WorkflowViewState.IdRef="Assign_26">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Decimal">[out_VatAmount]</OutArgument>
             </Assign.To>
@@ -319,7 +329,7 @@
               <InArgument x:TypeArguments="x:Decimal">[If(vatText = "", 0D, Decimal.Parse(vatText.Replace(" ", "").Replace(ChrW(160).ToString(), "").Replace(",", "."), CultureInfo.InvariantCulture))]</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Total Amount">
+          <Assign DisplayName="Total Amount" sap2010:WorkflowViewState.IdRef="Assign_27">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Decimal">[out_TotalAmount]</OutArgument>
             </Assign.To>
@@ -330,10 +340,10 @@
         </Sequence>
       </If.Then>
     </If>
-    <If DisplayName="Check 5 - Invoice Or Credit Note?" Condition="[out_Result = &quot;Invoice&quot; AndAlso out_DocumentType &lt;&gt; &quot;FAKTURA&quot; AndAlso out_DocumentType &lt;&gt; &quot;KREDITFAKTURA&quot;]">
+    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso out_DocumentType &lt;&gt; &quot;FAKTURA&quot; AndAlso out_DocumentType &lt;&gt; &quot;KREDITFAKTURA&quot;]" DisplayName="Check 5 - Invoice Or Credit Note?" sap2010:WorkflowViewState.IdRef="If_6">
       <If.Then>
-        <Sequence DisplayName="Not An Invoice">
-          <Assign DisplayName="Set Not Invoice">
+        <Sequence DisplayName="Not An Invoice" sap2010:WorkflowViewState.IdRef="Sequence_7">
+          <Assign DisplayName="Set Not Invoice" sap2010:WorkflowViewState.IdRef="Assign_28">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
             </Assign.To>
@@ -341,7 +351,7 @@
               <InArgument x:TypeArguments="x:String">NotInvoice</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Set Reason">
+          <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_29">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
             </Assign.To>
@@ -352,10 +362,10 @@
         </Sequence>
       </If.Then>
     </If>
-    <If DisplayName="Check 6 - Credit Note?" Condition="[out_Result = &quot;Invoice&quot; AndAlso out_DocumentType = &quot;KREDITFAKTURA&quot;]">
+    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso out_DocumentType = &quot;KREDITFAKTURA&quot;]" DisplayName="Check 6 - Credit Note?" sap2010:WorkflowViewState.IdRef="If_7">
       <If.Then>
-        <Sequence DisplayName="Credit Note">
-          <Assign DisplayName="Set Credit Note">
+        <Sequence DisplayName="Credit Note" sap2010:WorkflowViewState.IdRef="Sequence_8">
+          <Assign DisplayName="Set Credit Note" sap2010:WorkflowViewState.IdRef="Assign_30">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
             </Assign.To>
@@ -363,7 +373,7 @@
               <InArgument x:TypeArguments="x:String">CreditNote</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Set Reason">
+          <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_31">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
             </Assign.To>
@@ -374,10 +384,10 @@
         </Sequence>
       </If.Then>
     </If>
-    <If DisplayName="Check 7 - Invoice Number Found?" Condition="[out_Result = &quot;Invoice&quot; AndAlso out_InvoiceNumber = &quot;&quot;]">
+    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso out_InvoiceNumber = &quot;&quot;]" DisplayName="Check 7 - Invoice Number Found?" sap2010:WorkflowViewState.IdRef="If_8">
       <If.Then>
-        <Sequence DisplayName="Invoice Number Missing">
-          <Assign DisplayName="Set Error">
+        <Sequence DisplayName="Invoice Number Missing" sap2010:WorkflowViewState.IdRef="Sequence_9">
+          <Assign DisplayName="Set Error" sap2010:WorkflowViewState.IdRef="Assign_32">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
             </Assign.To>
@@ -385,7 +395,7 @@
               <InArgument x:TypeArguments="x:String">Error</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Set Reason">
+          <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_33">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
             </Assign.To>
@@ -396,10 +406,10 @@
         </Sequence>
       </If.Then>
     </If>
-    <If DisplayName="Check 8 - Amounts Found?" Condition="[out_Result = &quot;Invoice&quot; AndAlso (netText = &quot;&quot; OrElse vatText = &quot;&quot; OrElse totalText = &quot;&quot;)]">
+    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso (netText = &quot;&quot; OrElse vatText = &quot;&quot; OrElse totalText = &quot;&quot;)]" DisplayName="Check 8 - Amounts Found?" sap2010:WorkflowViewState.IdRef="If_9">
       <If.Then>
-        <Sequence DisplayName="Amounts Missing">
-          <Assign DisplayName="Set Error">
+        <Sequence DisplayName="Amounts Missing" sap2010:WorkflowViewState.IdRef="Sequence_10">
+          <Assign DisplayName="Set Error" sap2010:WorkflowViewState.IdRef="Assign_34">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
             </Assign.To>
@@ -407,7 +417,7 @@
               <InArgument x:TypeArguments="x:String">Error</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Set Reason">
+          <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_35">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
             </Assign.To>
@@ -418,10 +428,10 @@
         </Sequence>
       </If.Then>
     </If>
-    <If DisplayName="Check 9 - Total = Net + VAT?" Condition="[out_Result = &quot;Invoice&quot; AndAlso out_NetAmount + out_VatAmount &lt;&gt; out_TotalAmount]">
+    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso out_NetAmount + out_VatAmount &lt;&gt; out_TotalAmount]" DisplayName="Check 9 - Total = Net + VAT?" sap2010:WorkflowViewState.IdRef="If_10">
       <If.Then>
-        <Sequence DisplayName="Wrong Total">
-          <Assign DisplayName="Set Error">
+        <Sequence DisplayName="Wrong Total" sap2010:WorkflowViewState.IdRef="Sequence_11">
+          <Assign DisplayName="Set Error" sap2010:WorkflowViewState.IdRef="Assign_36">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Result]</OutArgument>
             </Assign.To>
@@ -429,7 +439,7 @@
               <InArgument x:TypeArguments="x:String">Error</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Set Reason">
+          <Assign DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign_37">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Reason]</OutArgument>
             </Assign.To>
