@@ -136,3 +136,78 @@ The invoice file `norrlands-livsmedelsgrossist-ab_49838.pdf` was saved, and it o
 *Figure 6. The invoice that was saved by the test workflow.*
 
 After the test, the Inbox still had 33 unread emails, and no email was moved. This shows that UiPath can read the shared mailbox and its attachments without changing it.
+
+## 4. Test Data and Expected Results
+
+Before building the process, the test data was prepared. In this way, it is clear what the automation must do with every email, and the result can be checked afterwards.
+
+### 4.1 Why the Expected Results Are Written First
+
+The test mailbox contains 40 emails in the Inbox. Some are normal invoices, but many have a problem on purpose, for example a wrong amount, a broken file or a fake bank detail change. If the expected result of each email is known before the robot is built, it is easy to see later if the robot made the right decision.
+
+The expected result of every email was written down in `TestData/expected_results.csv`. Each row has the scenario ID, the subject, the sender, the attachments, the supplier, the invoice number, the purchase order, and the folder where the email must end. The file also contains the message ID of each email, which never changes, so the robot can match an email with its row in the file.
+
+The 40 emails are expected to end like this:
+
+| Expected result | Emails | Examples |
+|---|---|---|
+| Processed | 9 | normal invoices, one email with two invoices, an invoice with an extra CSV file |
+| Review, with a notification to the controller | 21 | wrong amount, wrong VAT, unknown supplier, duplicate, reminder, scanned invoice, suspicious email |
+| Error, with a reply asking for a new invoice | 4 | not a real PDF, damaged PDF, missing invoice number, wrong total |
+| Stay in the Inbox with the label "Robot: Ignored" | 6 | order confirmation, delivery note, newsletter, out-of-office reply |
+
+### 4.2 Saving the Attachments with UiPath
+
+To test the reading of the invoices without touching the mailbox every time, a copy of all attachments was saved in the project. This was done with a small helper workflow, `Tools/DownloadTestAttachments.xaml`:
+
+1. **Read CSV** reads the file with the expected results.
+2. **Get Email List** reads all emails in the Inbox of the shared mailbox.
+3. **For Each** goes through the emails one by one.
+4. **Assign** finds the scenario ID of the email by its message ID.
+5. **Create Folder** makes a folder with the scenario ID, for example `TestData/Attachments/P02-E09`.
+6. **Download Email Attachments** saves the attachments of the email in that folder. Images inside the email text, such as a company logo, are skipped.
+
+The workflow found all 40 emails in the file, and saved the attachments of the 32 emails that have attachments. Like the first test, it does not mark, move or send any email.
+
+![The saved test attachments](Screenshots/test-attachments-folders.png)
+
+*Figure 7. The folder `TestData/Attachments` with one folder for each email that has attachments.*
+
+### 4.3 Checking Samples in Personalportalen
+
+Two emails were checked manually in Personalportalen, to make sure that the expected results match the hospital data.
+
+The normal invoice 49838 from Norrlands Livsmedelsgrossist AB is found under Ekonomi > Fakturor. The invoice number, the purchase order PO-2026-0001 and the total 17 851,68 kr are the same as in the PDF. The amount of the purchase order without VAT (14 281,34 kr) is also the same as on the invoice, so this invoice is expected to be processed.
+
+![Invoice 49838 in Personalportalen](Screenshots/staff-portal-invoice-49838.png)
+
+*Figure 8. Invoice 49838 in Personalportalen. The supplier, the purchase order and the total match the PDF.*
+
+Invoice 70870 from Nordisk Sjukvårdsmaterial AB has 58 061,41 kr without VAT, but its purchase order PO-2026-0024 has 64 512,68 kr. The amounts are different, so this invoice is expected to go to Review.
+
+![Purchase order PO-2026-0024 in Personalportalen](Screenshots/staff-portal-po-2026-0024.png)
+
+*Figure 9. Purchase order PO-2026-0024 in Personalportalen. The order amount is 64 512,68 kr, but the invoice has 58 061,41 kr.*
+
+### 4.4 The Order of the Checks
+
+Some emails have more than one problem, so the checks are always done in the same order, and the first problem that is found decides the result:
+
+1. **Already handled:** an email that already has the label "Robot: Processed" is only moved to Processed.
+2. **Not an invoice:** order confirmations, delivery notes, newsletters, automatic replies and internal messages stay in the Inbox.
+3. **Suspicious:** a look-alike sender address, a bank detail change or an HTML attachment with a payment link goes to Review.
+4. **No readable invoice:** a photo, a ZIP file or an email without an attachment goes to Review. These files are never opened.
+5. **Broken file or data:** a file that is not a real PDF, a damaged PDF, a missing invoice number or a wrong total goes to Error.
+6. **Scanned invoice:** a PDF without text goes to Review.
+7. **Business check:** an unknown or inactive supplier, a wrong sender, a missing purchase order, a wrong amount, a wrong VAT, a duplicate, a reminder or a credit note goes to Review.
+8. **Everything correct:** the email goes to Processed.
+
+### 4.5 The Config File
+
+The settings of the process are kept in `Data/Config.xlsx`, so they can be changed without changing the workflows. It contains the shared mailbox, the names of the folders and labels, the controller who gets the notifications, the addresses of the hospital systems, and the folders for the report. The lab login is only named there. The password itself is kept in the Windows Credential Manager.
+
+The file was created with a second helper workflow, `Tools/CreateConfig.xaml`. **Build Data Table** holds the settings, **Create Folder** makes the folder `Data`, and **Write Range Workbook** writes the table to the sheet Settings. This activity writes the Excel file directly, so Excel does not need to be open.
+
+![The config file in Excel](Screenshots/config-file.png)
+
+*Figure 10. The sheet Settings in `Data/Config.xlsx`. Each setting has a name, a value and a short description.*
