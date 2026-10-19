@@ -4,7 +4,8 @@
   "description": "Blank Process",
   "main": "Main.xaml",
   "dependencies": {
-    "UiPath.System.Activities": "[26.8.2]"
+    "UiPath.System.Activities": "[26.8.2]",
+    "UiPath.MicrosoftOffice365.Activities": "3.12.10"
   },
   "webServices": [],
   "entitiesStores": [],
