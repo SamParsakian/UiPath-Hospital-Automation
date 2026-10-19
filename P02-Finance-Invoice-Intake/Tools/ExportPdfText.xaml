@@ -1,0 +1,143 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Tools_ExportPdfText" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sc="clr-namespace:System.Collections;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:upap="clr-namespace:UiPath.PDF.Activities.PDF;assembly=UiPath.PDF.Activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.PDF.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Platform</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Export PDF Text" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="s:String[]" Name="pdfFiles" />
+      <Variable x:TypeArguments="x:String" Name="textFolder" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="s:String[]" DisplayName="Find Test PDFs">
+      <Assign.To>
+        <OutArgument x:TypeArguments="s:String[]">
+          <VisualBasicReference x:TypeArguments="s:String[]" ExpressionText="pdfFiles" />
+        </OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="s:String[]">
+          <VisualBasicValue x:TypeArguments="s:String[]" ExpressionText="Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, &quot;TestData&quot;, &quot;Attachments&quot;), &quot;*.*&quot;, SearchOption.AllDirectories).Where(Function(f) Path.GetExtension(f).ToLower() = &quot;.pdf&quot;).ToArray()" />
+        </InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign x:TypeArguments="x:String" DisplayName="Set Text Folder">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">
+          <VisualBasicReference x:TypeArguments="x:String" ExpressionText="textFolder" />
+        </OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">
+          <VisualBasicValue x:TypeArguments="x:String" ExpressionText="Path.Combine(Environment.CurrentDirectory, &quot;Output&quot;, &quot;PdfText&quot;)" />
+        </InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:CreateDirectory DisplayName="Create Text Folder" Path="[textFolder]" />
+    <ui:ForEach x:TypeArguments="x:String" DisplayName="For Each PDF">
+      <ui:ForEach.Values>
+        <InArgument x:TypeArguments="sc:IEnumerable">
+          <VisualBasicValue x:TypeArguments="sc:IEnumerable" ExpressionText="pdfFiles" />
+        </InArgument>
+      </ui:ForEach.Values>
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:String">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:String" Name="pdfFile" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:String" Name="pdfText" />
+              <Variable x:TypeArguments="x:String" Name="textFile" />
+            </Sequence.Variables>
+            <Assign x:TypeArguments="x:String" DisplayName="Set Text File Name">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:String">
+                  <VisualBasicReference x:TypeArguments="x:String" ExpressionText="textFile" />
+                </OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:String">
+                  <VisualBasicValue x:TypeArguments="x:String" ExpressionText="Path.Combine(textFolder, Path.GetFileName(Path.GetDirectoryName(pdfFile)) &amp; &quot;_&quot; &amp; Path.GetFileNameWithoutExtension(pdfFile) &amp; &quot;.txt&quot;)" />
+                </InArgument>
+              </Assign.Value>
+            </Assign>
+            <TryCatch DisplayName="Try Read PDF">
+              <TryCatch.Try>
+                <Sequence DisplayName="Read And Save">
+                  <ui:ReadPDFText DisplayName="Read PDF Text" FileName="{x:Null}" PreserveFormatting="{x:Null}" ResourceFile="{x:Null}" Range="All" Text="[pdfText]">
+                    <ui:ReadPDFText.Item>
+                      <upap:ItemArgument x:TypeArguments="upr:IResource" FileName="[pdfFile]" ResourceFile="{x:Null}" />
+                    </ui:ReadPDFText.Item>
+                  </ui:ReadPDFText>
+                  <ui:WriteTextFile DisplayName="Save Text" FileName="[textFile]" Text="[pdfText]" />
+                  <ui:LogMessage Level="Info" DisplayName="Log Saved Text">
+                    <ui:LogMessage.Message>
+                      <InArgument x:TypeArguments="x:Object">
+                        <VisualBasicValue x:TypeArguments="x:Object" ExpressionText="$&quot;{Path.GetFileName(textFile)}: {pdfText.Length} characters&quot;" />
+                      </InArgument>
+                    </ui:LogMessage.Message>
+                  </ui:LogMessage>
+                </Sequence>
+              </TryCatch.Try>
+              <TryCatch.Catches>
+                <Catch x:TypeArguments="s:Exception">
+                  <ActivityAction x:TypeArguments="s:Exception">
+                    <ActivityAction.Argument>
+                      <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                    </ActivityAction.Argument>
+                    <ui:LogMessage Level="Warn" DisplayName="Log Read Error">
+                      <ui:LogMessage.Message>
+                        <InArgument x:TypeArguments="x:Object">
+                          <VisualBasicValue x:TypeArguments="x:Object" ExpressionText="$&quot;{Path.GetFileName(textFile)}: {exception.GetType().Name}: {exception.Message}&quot;" />
+                        </InArgument>
+                      </ui:LogMessage.Message>
+                    </ui:LogMessage>
+                  </ActivityAction>
+                </Catch>
+              </TryCatch.Catches>
+            </TryCatch>
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <ui:LogMessage Level="Info" DisplayName="Log Summary">
+      <ui:LogMessage.Message>
+        <InArgument x:TypeArguments="x:Object">
+          <VisualBasicValue x:TypeArguments="x:Object" ExpressionText="$&quot;PDF files found: {pdfFiles.Length}&quot;" />
+        </InArgument>
+      </ui:LogMessage.Message>
+    </ui:LogMessage>
+  </Sequence>
+</Activity>
