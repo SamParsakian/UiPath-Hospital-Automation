@@ -88,3 +88,51 @@ The finance pages of Personalportalen (invoices, suppliers, purchase orders) nee
 ### 2.4 Safe Approach
 
 Invoices and payments are sensitive, so the automation only reads the finance data. Emails are only moved inside the shared mailbox, and notifications go only to test accounts.
+
+## 3. First Outlook Test with UiPath
+
+Before building the real process, a very small workflow was created to prove that UiPath can read the shared mailbox and save an invoice. If this works, the same connection can be used later for the whole process.
+
+### 3.1 Outlook Package
+
+To work with Outlook, the Microsoft Office 365 package (`UiPath.MicrosoftOffice365.Activities`) is needed, so it was installed in the project. Its Outlook activities read, move and send emails through the mailbox service of Microsoft 365, so the Outlook program does not need to be open on the computer.
+
+### 3.2 Connecting UiPath to the Mailbox
+
+UiPath signs in to Microsoft 365 with a connection in Integration Service. The connection is created once, with the account of the finance assistant Andreas Henriksson, who has access to the shared mailbox. The password is entered only in the Microsoft sign-in window and is never stored in the workflow.
+
+When the connection is created, the needed permissions are selected. The robot needs to read and change emails and to send emails, also in a shared mailbox. Calendar permissions are not needed, so they were removed. The shared mailbox field is left empty, because the shared mailbox is chosen in each Outlook activity instead.
+
+![Permissions of the Outlook connection](Screenshots/outlook-connection-scopes.png)
+
+*Figure 4. The new Outlook connection. The red rectangle shows the mail permissions, including the two permissions for the shared mailbox.*
+
+The first sign-in showed the message "Need admin approval", because the organisation must allow the UiPath app once. The approval was given with the administrator account. During this step, a second connection with the administrator account was also created. It was removed, because the robot must only work with the account of the finance assistant.
+
+![The Outlook connection in Orchestrator](Screenshots/outlook-connection-connected.png)
+
+*Figure 5. The Connections page in Orchestrator. Only the connection of the finance assistant is left, and its status is Connected.*
+
+### 3.3 The Test Workflow
+
+The workflow `Main.xaml` has five steps:
+
+1. **Get Email List** reads all emails in the Inbox of the shared mailbox `fakturor@stockholmdemohospital.onmicrosoft.com`.
+2. **Log Message** writes the number of emails and unread emails to the output log.
+3. **For Each** writes the date, the sender, the subject and the number of attachments of every email to the log.
+4. **Assign** finds the email with the subject `Faktura 49838 från Norrlands Livsmedelsgrossist AB`.
+5. **Download Email Attachments** saves the PDF of that email in the folder `Output\Attachments`.
+
+The option "Mark As Read" is switched off, so the emails stay unread. The test does not move, label or send any email.
+
+### 3.4 Result
+
+The log shows 40 emails in the Inbox, and 33 of them are unread. This is the same as in Outlook on the web. The newest email in the list is `Order PO-2026-0011 - faktura 55655 betald?`.
+
+The invoice file `norrlands-livsmedelsgrossist-ab_49838.pdf` was saved, and it opens as a normal invoice. The red rectangle shows the fields that the robot must read from each invoice later: supplier, organisation number, invoice number, dates, purchase order, cost centre, amounts and bankgiro.
+
+![The downloaded invoice](Screenshots/downloaded-invoice-49838.png)
+
+*Figure 6. The invoice that was saved by the test workflow.*
+
+After the test, the Inbox still had 33 unread emails, and no email was moved. This shows that UiPath can read the shared mailbox and its attachments without changing it.
