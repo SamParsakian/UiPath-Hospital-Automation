@@ -1,0 +1,33 @@
+﻿ScenarioId;FileName;ExpectedResult;InvoiceNumber;PurchaseOrder;Note
+P02-E07;Faktura_55655.pdf;Invoice;55655;PO-2026-0011;Resent invoice without password
+P02-E09;norrlands-livsmedelsgrossist-ab_49838.pdf;Invoice;49838;PO-2026-0001;Normal invoice
+P02-E10;norrlands-livsmedelsgrossist-ab_49838.pdf;Invoice;49838;PO-2026-0001;Same invoice sent twice
+P02-E11;saltsjon-lakemedelslogistik-ab_67201.pdf;Invoice;67201;PO-2026-0019;Forwarded invoice
+P02-E12;bromma-sterilteknik-ab_20977.pdf;Invoice;20977;PO-2026-0021;First of two invoices
+P02-E12;bromma-sterilteknik-ab_64460.pdf;Invoice;64460;PO-2026-0010;Second of two invoices
+P02-E13;bromma-sterilteknik-ab_94583.pdf;Invoice;94583;PO-2026-0027;Shared mailbox on CC
+P02-E14;nacka-medicinsk-gas-ab_43421.pdf;Invoice;43421;PO-2026-0029;Extra CSV file in the email
+P02-E15;nordisk-sjukvardsmaterial-ab_49743.pdf;Invoice;49743;PO-2026-0002;Logo in the signature
+P02-E16;Dokument1.PDF;Invoice;60327;PO-2026-0004;Bad file name, upper case extension
+P02-E17;svea-medicinteknik-ab_48990.pdf;Invoice;48990;PO-2026-0016;Already has a category
+P02-E18;malardalens-laboratorieprodukter-ab_27634.pdf;Invoice;27634;PO-2026-0004;Reminder with the original invoice
+P02-E19;saltsjon-lakemedelslogistik-ab_93107.pdf;Invoice;93107;;Reminder, no purchase order
+P02-E20;nordisk-sjukvardsmaterial-ab_70870.pdf;Invoice;70870;PO-2026-0024;Amount differs from the order
+P02-E21;Faktura_48317.pdf;Invoice;48317;PO-2026-0025;Wrong VAT, but the total is correct
+P02-E22;solna-forbrukningsmaterial-ab_65975.pdf;Invoice;65975;PO-2026-0014;Already paid
+P02-E23;Faktura 10547 Stockholms Städservice.pdf;Invoice;10547;PO-2026-0005;Copy of an approved invoice
+P02-E24;norrlands-livsmedelsgrossist-ab_66671_kopia.pdf;Invoice;66671;PO-2026-0001;Duplicate of an earlier invoice
+P02-E25;Faktura_september.pdf;Error;;PO-2026-0006;Invoice number missing
+P02-E26;SCAN_20261009_0001.pdf;Scanned;;;Scanned paper invoice
+P02-E26;SCAN_20261009_0002.pdf;Scanned;;;Scanned paper invoice
+P02-E27;Faktura_26191.pdf;Error;26191;PO-2026-0026;Total is not net plus VAT
+P02-E28;Faktura_26191_korrigerad.pdf;Invoice;26191;PO-2026-0026;Corrected invoice
+P02-E28;Kreditfaktura_26191-K1.pdf;CreditNote;26191-K1;PO-2026-0026;Credit note
+P02-E29;Faktura_77123.pdf;Invoice;77123;;Purchase order missing
+P02-E30;Faktura_99001.pdf;Invoice;99001;PO-2026-0027;Unknown supplier
+P02-E31;faktura_felaktigt_format.pdf;Error;;;Not a real PDF
+P02-E32;faktura-22127.pdf;Error;;;Damaged PDF
+P02-E36;sundbyberg-mobelinredning-ab_61204.pdf;Invoice;61204;;Inactive supplier
+P02-E37;solna-forbrukningsmaterial-ab_50318.pdf;Invoice;50318;PO-2026-0017;Sender does not match
+P02-E39;Meddelande_nytt_bankgiro.pdf;NotInvoice;;;Bank detail change letter
+P02-E41;Foljesedel_FS-77310.pdf;NotInvoice;;;Delivery note
