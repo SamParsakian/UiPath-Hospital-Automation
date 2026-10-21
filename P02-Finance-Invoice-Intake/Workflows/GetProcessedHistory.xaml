@@ -1,0 +1,175 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_GetProcessedHistory" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sc="clr-namespace:System.Collections;assembly=System.Private.CoreLib" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="out_History" Type="OutArgument(sd:DataTable)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Activities.Mail</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>UiPath.PDF.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Get Processed History" sap2010:WorkflowViewState.IdRef="Sequence_3">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:List(umm:Office365Message)" Name="processedEmails" />
+      <Variable x:TypeArguments="x:String" Name="historyFolder" />
+      <Variable x:TypeArguments="x:Int32" Default="1" Name="emailNumber" />
+    </Sequence.Variables>
+    <ui:BuildDataTable DataTable="[out_History]" DisplayName="Build History Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;History&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;History&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;OrgNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;InvoiceNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Source&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <Assign x:TypeArguments="x:String" DisplayName="Set History Folder" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[historyFolder]" Value="[Path.Combine(Environment.CurrentDirectory, &quot;Output&quot;, &quot;History&quot;)]" />
+    <umam:GetEmailListConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Get Processed Emails" EmailList="[processedEmails]" IncludeAttachments="None" IncludeSubfolders="False" MarkAsRead="False" MaxResults="0" UnreadOnly="False" UseConnectionService="True" WithAttachmentsOnly="False" sap2010:WorkflowViewState.IdRef="GetEmailListConnections_1">
+      <umam:GetEmailListConnections.FilterSelectionBackup>
+        <usau:BackupSlot x:TypeArguments="umame:FilterMode" StoredValue="ConditionBuilder">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umame:FilterMode, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umam:GetEmailListConnections.FilterSelectionBackup>
+      <umam:GetEmailListConnections.MailFolderArgument>
+        <umamm:MailFolderArgument SelectionMode="EnterPath">
+          <umamm:MailFolderArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:ItemSelectionMode" StoredValue="EnterPath">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailFolderArgument.Backup>
+          <umamm:MailFolderArgument.ManualEntryFolder>
+            <InArgument x:TypeArguments="x:String">[in_Config(&quot;Folder_Processed&quot;)]</InArgument>
+          </umamm:MailFolderArgument.ManualEntryFolder>
+        </umamm:MailFolderArgument>
+      </umam:GetEmailListConnections.MailFolderArgument>
+      <umam:GetEmailListConnections.MailboxArg>
+        <umamm:MailboxArgument UseSharedMailbox="True">
+          <umamm:MailboxArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailboxArgument.Backup>
+          <umamm:MailboxArgument.SharedMailbox>
+            <InArgument x:TypeArguments="x:String">[in_Config(&quot;InvoiceMailbox&quot;)]</InArgument>
+          </umamm:MailboxArgument.SharedMailbox>
+        </umamm:MailboxArgument>
+      </umam:GetEmailListConnections.MailboxArg>
+    </umam:GetEmailListConnections>
+    <ui:ForEach x:TypeArguments="umm:Office365Message" CurrentIndex="{x:Null}" DisplayName="For Each Processed Email" sap2010:WorkflowViewState.IdRef="ForEach`1_2" Values="[processedEmails]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="umm:Office365Message">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="umm:Office365Message" Name="email" />
+          </ActivityAction.Argument>
+          <If Condition="[email.StandardAttachmentCount &gt; 0]" DisplayName="Has Attachments?" sap2010:WorkflowViewState.IdRef="If_3">
+            <If.Then>
+              <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                <Sequence.Variables>
+                  <Variable x:TypeArguments="x:String" Name="emailFolder" />
+                </Sequence.Variables>
+                <Assign x:TypeArguments="x:String" DisplayName="Set Email Folder" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[emailFolder]" Value="[Path.Combine(historyFolder, emailNumber.ToString())]" />
+                <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Email Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[emailFolder]" />
+                <umam:DownloadEmailAttachments ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" ConflictResolution="Replace" DestinationPath="[emailFolder]" DisplayName="Download Attachments" Email="[email]" ExcludeInlineAttachments="True" SearchMode="UseSimple" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="DownloadEmailAttachments_1" />
+                <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each File" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[Directory.GetFiles(emailFolder, &quot;*.*&quot;)]">
+                  <ui:ForEach.Body>
+                    <ActivityAction x:TypeArguments="x:String">
+                      <ActivityAction.Argument>
+                        <DelegateInArgument x:TypeArguments="x:String" Name="pdfFile" />
+                      </ActivityAction.Argument>
+                      <If Condition="[Path.GetExtension(pdfFile).ToLower() = &quot;.pdf&quot;]" DisplayName="Is It a PDF?" sap2010:WorkflowViewState.IdRef="If_2">
+                        <If.Then>
+                          <Sequence DisplayName="Read One PDF" sap2010:WorkflowViewState.IdRef="Sequence_1">
+                            <Sequence.Variables>
+                              <Variable x:TypeArguments="x:String" Name="readResult" />
+                              <Variable x:TypeArguments="x:String" Name="readReason" />
+                              <Variable x:TypeArguments="x:String" Name="documentType" />
+                              <Variable x:TypeArguments="x:String" Name="pdfSupplierName" />
+                              <Variable x:TypeArguments="x:String" Name="orgNumber" />
+                              <Variable x:TypeArguments="x:String" Name="invoiceNumber" />
+                              <Variable x:TypeArguments="x:String" Name="invoiceDate" />
+                              <Variable x:TypeArguments="x:String" Name="dueDate" />
+                              <Variable x:TypeArguments="x:String" Name="purchaseOrder" />
+                              <Variable x:TypeArguments="x:String" Name="costCentre" />
+                              <Variable x:TypeArguments="x:Decimal" Name="netAmount" />
+                              <Variable x:TypeArguments="x:Decimal" Name="vatAmount" />
+                              <Variable x:TypeArguments="x:Decimal" Name="totalAmount" />
+                              <Variable x:TypeArguments="x:String" Name="bankgiro" />
+                            </Sequence.Variables>
+                            <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Read Invoice" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\ReadInvoice.xaml">
+                              <ui:InvokeWorkflowFile.Arguments>
+                                <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[pdfFile]</InArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_Result">[readResult]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[readReason]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_DocumentType">[documentType]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_SupplierName">[pdfSupplierName]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_OrgNumber">[orgNumber]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceNumber">[invoiceNumber]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceDate">[invoiceDate]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_DueDate">[dueDate]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_PurchaseOrder">[purchaseOrder]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_CostCentre">[costCentre]</OutArgument>
+                                <OutArgument x:TypeArguments="x:Decimal" x:Key="out_NetAmount">[netAmount]</OutArgument>
+                                <OutArgument x:TypeArguments="x:Decimal" x:Key="out_VatAmount">[vatAmount]</OutArgument>
+                                <OutArgument x:TypeArguments="x:Decimal" x:Key="out_TotalAmount">[totalAmount]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_Bankgiro">[bankgiro]</OutArgument>
+                              </ui:InvokeWorkflowFile.Arguments>
+                            </ui:InvokeWorkflowFile>
+                            <If Condition="[readResult = &quot;Invoice&quot; OrElse readResult = &quot;CreditNote&quot;]" DisplayName="Is It an Invoice?" sap2010:WorkflowViewState.IdRef="If_1">
+                              <If.Then>
+                                <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{orgNumber, invoiceNumber, &quot;Processed folder: &quot; &amp; email.Subject}]" DataTable="[out_History]" DisplayName="Add History Row" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
+                              </If.Then>
+                            </If>
+                          </Sequence>
+                        </If.Then>
+                      </If>
+                    </ActivityAction>
+                  </ui:ForEach.Body>
+                </ui:ForEach>
+                <Assign x:TypeArguments="x:Int32" DisplayName="Next Email Number" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[emailNumber]" Value="[emailNumber + 1]" />
+              </Sequence>
+            </If.Then>
+          </If>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <ui:LogMessage DisplayName="Log History" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;History read: {processedEmails.Count} emails in Processed, {out_History.Rows.Count} invoices&quot;]" />
+  </Sequence>
+</Activity>
