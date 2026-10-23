@@ -78,7 +78,8 @@
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_2">
-            <uix:NCheckState DisplayName="Is the Login Form Shown?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Timeout="3" Version="V5">
+            <uix:NGoToUrl DisplayName="Open Purchase Orders Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_2" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Url="[in_Config(&quot;LabPortalUrl&quot;) &amp; &quot;/ekonomi/inkop&quot;]" Version="V5" />
+            <uix:NCheckState DisplayName="Is the Login Form Shown?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Timeout="5" Version="V5">
               <uix:NCheckState.IfExists>
                 <Sequence DisplayName="Log In" sap2010:WorkflowViewState.IdRef="Sequence_3">
                   <Sequence.Variables>
@@ -182,6 +183,11 @@
         </uix:TargetApp>
       </uix:NApplicationCard.TargetApp>
     </uix:NApplicationCard>
+    <If Condition="[out_PurchaseOrders.Rows.Count = 0]" DisplayName="Were Any Orders Read?" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <Throw DisplayName="Throw No Orders" Exception="[New Exception(&quot;No purchase orders were read. The Inköp page did not load or the login failed.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+      </If.Then>
+    </If>
     <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[$&quot;Purchase orders read: {out_PurchaseOrders.Rows.Count} from {page} pages&quot;]" />
   </Sequence>
 </Activity>
