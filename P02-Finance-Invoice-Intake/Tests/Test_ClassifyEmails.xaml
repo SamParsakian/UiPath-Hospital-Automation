@@ -81,7 +81,8 @@
       </ui:InvokeWorkflowFile.Arguments>
     </ui:InvokeWorkflowFile>
     <ui:ReadCsvFile PathResource="{x:Null}" DataTable="[expected]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" DisplayName="Read Expected Results" FilePath="[Path.Combine(Environment.CurrentDirectory, &quot;TestData&quot;, &quot;expected_results.csv&quot;)]" sap2010:WorkflowViewState.IdRef="ReadCsvFile_1" />
-    <Assign x:TypeArguments="x:String" DisplayName="Set Attachment Folder" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[attachmentFolder]" Value="[Path.Combine(Environment.CurrentDirectory, config(&quot;AttachmentFolder&quot;))]" />
+    <ui:AddDataColumn x:TypeArguments="x:String" Column="{x:Null}" ColumnName="Used" DataTable="[expected]" DefaultValue="[&quot;No&quot;]" DisplayName="Add Used Column" sap2010:WorkflowViewState.IdRef="AddDataColumn`1_1" />
+    <Assign x:TypeArguments="x:String" DisplayName="Set Attachment Folder" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[attachmentFolder]" Value="[Path.Combine(Environment.CurrentDirectory, config(&quot;AttachmentFolder&quot;))]" />
     <umam:GetEmailListConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Get Inbox Emails" EmailList="[inboxEmails]" IncludeAttachments="None" IncludeSubfolders="False" MarkAsRead="False" MaxResults="0" UnreadOnly="False" UseConnectionService="True" WithAttachmentsOnly="False" sap2010:WorkflowViewState.IdRef="GetEmailListConnections_1">
       <umam:GetEmailListConnections.FilterSelectionBackup>
         <usau:BackupSlot x:TypeArguments="umame:FilterMode" StoredValue="ConditionBuilder">
@@ -119,7 +120,7 @@
         </umamm:MailboxArgument>
       </umam:GetEmailListConnections.MailboxArg>
     </umam:GetEmailListConnections>
-    <Assign x:TypeArguments="scg:List(umm:Office365Message)" DisplayName="Sort Oldest First" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[inboxEmails]" Value="[inboxEmails.OrderBy(Function(m) m.ReceivedDateTime).ToList()]" />
+    <Assign x:TypeArguments="scg:List(umm:Office365Message)" DisplayName="Sort Oldest First" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[inboxEmails]" Value="[inboxEmails.OrderBy(Function(m) m.ReceivedDateTime).ToList()]" />
     <ui:BuildDataTable DataTable="[results]" DisplayName="Build Results Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;Results&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;Results&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;ScenarioId&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Subject&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ExpectedClass&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ActualClass&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ExpectedFolder&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ActualFolder&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Supplier&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;InvoiceNumbers&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Reason&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Passed&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
     <ui:ForEach x:TypeArguments="umm:Office365Message" CurrentIndex="{x:Null}" DisplayName="For Each Inbox Email" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[inboxEmails]">
       <ui:ForEach.Body>
@@ -156,16 +157,21 @@
                 <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceNumbers">[invoiceNumbers]</OutArgument>
               </ui:InvokeWorkflowFile.Arguments>
             </ui:InvokeWorkflowFile>
-            <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Expected Result" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[expectedRows]" Value="[expected.Select(&quot;InternetMessageId = '&quot; &amp; email.InternetMessageId.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;'&quot;)]" />
-            <Assign x:TypeArguments="x:String" DisplayName="Get Scenario ID" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[scenarioId]" Value="[If(expectedRows.Length = 0, &quot;unknown&quot;, expectedRows(0)(&quot;ScenarioId&quot;).ToString())]" />
-            <Assign x:TypeArguments="x:String" DisplayName="Get Expected Class" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[expectedClass]" Value="[If(expectedRows.Length = 0, &quot;&quot;, expectedRows(0)(&quot;ExpectedClass&quot;).ToString())]" />
-            <Assign x:TypeArguments="x:String" DisplayName="Get Expected Folder" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[expectedFolder]" Value="[If(expectedRows.Length = 0, &quot;&quot;, expectedRows(0)(&quot;ExpectedFolder&quot;).ToString())]" />
-            <Assign x:TypeArguments="x:Boolean" DisplayName="Compare With Expected" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[passed]" Value="[emailClass = expectedClass AndAlso folder = expectedFolder]" />
+            <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Expected Result" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[expectedRows]" Value="[expected.Select(&quot;Subject = '&quot; &amp; email.Subject.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;' AND Sender LIKE '%&lt;&quot; &amp; email.FromAddress &amp; &quot;&gt;' AND Used = 'No'&quot;)]" />
+            <If Condition="[expectedRows.Length &gt; 0]" DisplayName="Expected Row Found?" sap2010:WorkflowViewState.IdRef="If_1">
+              <If.Then>
+                <Assign x:TypeArguments="x:Object" DisplayName="Mark Expected Row As Used" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[expectedRows(0)(&quot;Used&quot;)]" Value="[&quot;Yes&quot;]" />
+              </If.Then>
+            </If>
+            <Assign x:TypeArguments="x:String" DisplayName="Get Scenario ID" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[scenarioId]" Value="[If(expectedRows.Length = 0, &quot;unknown&quot;, expectedRows(0)(&quot;ScenarioId&quot;).ToString())]" />
+            <Assign x:TypeArguments="x:String" DisplayName="Get Expected Class" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[expectedClass]" Value="[If(expectedRows.Length = 0, &quot;&quot;, expectedRows(0)(&quot;ExpectedClass&quot;).ToString())]" />
+            <Assign x:TypeArguments="x:String" DisplayName="Get Expected Folder" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[expectedFolder]" Value="[If(expectedRows.Length = 0, &quot;&quot;, expectedRows(0)(&quot;ExpectedFolder&quot;).ToString())]" />
+            <Assign x:TypeArguments="x:Boolean" DisplayName="Compare With Expected" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[passed]" Value="[emailClass = expectedClass AndAlso folder = expectedFolder]" />
             <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{scenarioId, email.Subject, expectedClass, emailClass, expectedFolder, folder, supplierName, invoiceNumbers, reason, If(passed, &quot;Yes&quot;, &quot;No&quot;)}]" DataTable="[results]" DisplayName="Add Result Row" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
-            <If Condition="[passed]" DisplayName="Passed?" sap2010:WorkflowViewState.IdRef="If_1">
+            <If Condition="[passed]" DisplayName="Passed?" sap2010:WorkflowViewState.IdRef="If_2">
               <If.Then>
                 <Sequence DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Sequence_1">
-                  <Assign x:TypeArguments="x:Int32" DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[passedCount]" Value="[passedCount + 1]" />
+                  <Assign x:TypeArguments="x:Int32" DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[passedCount]" Value="[passedCount + 1]" />
                   <ui:LogMessage DisplayName="Log Passed" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;OK   {scenarioId}: {emailClass} -&gt; {folder}&quot;]" />
                 </Sequence>
               </If.Then>
