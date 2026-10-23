@@ -1,0 +1,210 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_RouteEmail" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sc="clr-namespace:System.Collections;assembly=System.Private.CoreLib" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Email" Type="InArgument(umm:Office365Message)" />
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_Class" Type="InArgument(x:String)" />
+    <x:Property Name="in_Reason" Type="InArgument(x:String)" />
+    <x:Property Name="in_Folder" Type="InArgument(x:String)" />
+    <x:Property Name="in_SupplierName" Type="InArgument(x:String)" />
+    <x:Property Name="in_InvoiceNumbers" Type="InArgument(x:String)" />
+    <x:Property Name="out_MailSent" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Activities.Mail</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Route Email" sap2010:WorkflowViewState.IdRef="Sequence_3">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="category" />
+      <Variable x:TypeArguments="x:String" Name="supplier" />
+      <Variable x:TypeArguments="x:String" Name="subject" />
+      <Variable x:TypeArguments="x:String" Name="body" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:String" DisplayName="Set No Mail Sent" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[out_MailSent]" Value="[&quot;None&quot;]" />
+    <If Condition="[in_Folder = in_Config(&quot;Folder_Inbox&quot;)]" DisplayName="Is the Email Ignored?" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Use Ignored Category" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[category]" Value="[in_Config(&quot;Category_Ignored&quot;)]" />
+      </If.Then>
+      <If.Else>
+        <Assign x:TypeArguments="x:String" DisplayName="Use Folder Category" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[category]" Value="[in_Config(&quot;Category_&quot; &amp; in_Folder)]" />
+      </If.Else>
+    </If>
+    <umam:SetEmailCategoriesConnections CategoriesToAssign="[New String() {category}]" CategoriesToRemove="None" ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Set Robot Category" Email="[in_Email]" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="SetEmailCategoriesConnections_1">
+      <umam:SetEmailCategoriesConnections.MailboxArg>
+        <umamm:MailboxArgument UseSharedMailbox="True">
+          <umamm:MailboxArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailboxArgument.Backup>
+          <umamm:MailboxArgument.SharedMailbox>
+            <InArgument x:TypeArguments="x:String">[in_Config(&quot;InvoiceMailbox&quot;)]</InArgument>
+          </umamm:MailboxArgument.SharedMailbox>
+        </umamm:MailboxArgument>
+      </umam:SetEmailCategoriesConnections.MailboxArg>
+    </umam:SetEmailCategoriesConnections>
+    <If Condition="[in_Folder &lt;&gt; in_Config(&quot;Folder_Inbox&quot;)]" DisplayName="Move the Email?" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <umam:MoveEmailConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" CreateFolderIfMissing="False" DisplayName="Move Email To Folder" Email="[in_Email]" IncludeAttachments="None" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="MoveEmailConnections_1">
+          <umam:MoveEmailConnections.MailFolderArgument>
+            <umamm:MailFolderArgument SelectionMode="EnterPath">
+              <umamm:MailFolderArgument.Backup>
+                <usau:BackupSlot x:TypeArguments="umame:ItemSelectionMode" StoredValue="EnterPath">
+                  <usau:BackupSlot.BackupValues>
+                    <scg:Dictionary x:TypeArguments="umame:ItemSelectionMode, scg:List(x:Object)" />
+                  </usau:BackupSlot.BackupValues>
+                </usau:BackupSlot>
+              </umamm:MailFolderArgument.Backup>
+              <umamm:MailFolderArgument.ManualEntryFolder>
+                <InArgument x:TypeArguments="x:String">[in_Folder]</InArgument>
+              </umamm:MailFolderArgument.ManualEntryFolder>
+            </umamm:MailFolderArgument>
+          </umam:MoveEmailConnections.MailFolderArgument>
+          <umam:MoveEmailConnections.MailboxArg>
+            <umamm:MailboxArgument UseSharedMailbox="True">
+              <umamm:MailboxArgument.Backup>
+                <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+                  <usau:BackupSlot.BackupValues>
+                    <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+                  </usau:BackupSlot.BackupValues>
+                </usau:BackupSlot>
+              </umamm:MailboxArgument.Backup>
+              <umamm:MailboxArgument.SharedMailbox>
+                <InArgument x:TypeArguments="x:String">[in_Config(&quot;InvoiceMailbox&quot;)]</InArgument>
+              </umamm:MailboxArgument.SharedMailbox>
+            </umamm:MailboxArgument>
+          </umam:MoveEmailConnections.MailboxArg>
+        </umam:MoveEmailConnections>
+      </If.Then>
+    </If>
+    <Assign x:TypeArguments="x:String" DisplayName="Get Supplier Name" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[supplier]" Value="[If(in_SupplierName = &quot;&quot;, in_Email.FromDisplayName, in_SupplierName)]" />
+    <If Condition="[in_Folder = in_Config(&quot;Folder_Review&quot;)]" DisplayName="Is It a Review?" sap2010:WorkflowViewState.IdRef="If_3">
+      <If.Then>
+        <Sequence DisplayName="Send Review Notification" sap2010:WorkflowViewState.IdRef="Sequence_1">
+          <Assign x:TypeArguments="x:String" DisplayName="Build Notification Subject" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[subject]" Value="[If(in_InvoiceNumbers = &quot;&quot;, &quot;Granskning krävs: &quot; &amp; in_Email.Subject, &quot;Granskning krävs: faktura &quot; &amp; in_InvoiceNumbers &amp; &quot; från &quot; &amp; supplier)]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Build Notification Text" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[body]" Value="[String.Join(vbCrLf, {&quot;Hej,&quot;, &quot;&quot;, &quot;Ett mejl i fakturor@ behöver granskas av en person.&quot;, &quot;&quot;, &quot;Ämne: &quot; &amp; in_Email.Subject, &quot;Från: &quot; &amp; in_Email.FromDisplayName &amp; &quot; &lt;&quot; &amp; in_Email.FromAddress &amp; &quot;&gt;&quot;, &quot;Leverantör: &quot; &amp; supplier, &quot;Fakturanummer: &quot; &amp; If(in_InvoiceNumbers = &quot;&quot;, &quot;-&quot;, in_InvoiceNumbers), &quot;Orsak: &quot; &amp; in_Reason, &quot;&quot;, &quot;Mejlet ligger nu i mappen &quot; &amp; in_Folder &amp; &quot;.&quot;, &quot;&quot;, &quot;Detta mejl skickades av roboten.&quot;})]" />
+          <umam:SendMailConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Send Review Notification" Importance="Normal" InputType="TEXT" IsDeliveryReceiptRequested="False" IsReadReceiptRequested="False" SaveAsDraft="False" Subject="[subject]" TextBody="[body]" To="[New String() {in_Config(&quot;ReviewRecipient&quot;)}]" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="SendMailConnections_1">
+            <umam:SendMailConnections.InputTypeBackup>
+              <usau:BackupSlot x:TypeArguments="umame:BodyInputType" StoredValue="TEXT">
+                <usau:BackupSlot.BackupValues>
+                  <scg:Dictionary x:TypeArguments="umame:BodyInputType, scg:List(x:Object)" />
+                </usau:BackupSlot.BackupValues>
+              </usau:BackupSlot>
+            </umam:SendMailConnections.InputTypeBackup>
+            <umam:SendMailConnections.AttachmentsBackup>
+              <usau:BackupSlot x:TypeArguments="umame:AttachmentInputMode" StoredValue="Existing">
+                <usau:BackupSlot.BackupValues>
+                  <scg:Dictionary x:TypeArguments="umame:AttachmentInputMode, scg:List(x:Object)" />
+                </usau:BackupSlot.BackupValues>
+              </usau:BackupSlot>
+            </umam:SendMailConnections.AttachmentsBackup>
+            <umam:SendMailConnections.MailboxArg>
+              <umamm:MailboxArgument UseSharedMailbox="True">
+                <umamm:MailboxArgument.Backup>
+                  <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+                    <usau:BackupSlot.BackupValues>
+                      <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+                    </usau:BackupSlot.BackupValues>
+                  </usau:BackupSlot>
+                </umamm:MailboxArgument.Backup>
+                <umamm:MailboxArgument.SharedMailbox>
+                  <InArgument x:TypeArguments="x:String">[in_Config(&quot;InvoiceMailbox&quot;)]</InArgument>
+                </umamm:MailboxArgument.SharedMailbox>
+              </umamm:MailboxArgument>
+            </umam:SendMailConnections.MailboxArg>
+          </umam:SendMailConnections>
+          <Assign x:TypeArguments="x:String" DisplayName="Set Mail Sent" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[out_MailSent]" Value="[&quot;Review notification&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[in_Folder = in_Config(&quot;Folder_Error&quot;)]" DisplayName="Is It an Error?" sap2010:WorkflowViewState.IdRef="If_5">
+      <If.Then>
+        <If Condition="[in_Config(&quot;TestMode&quot;).ToLower() = &quot;true&quot;]" DisplayName="Test Mode?" sap2010:WorkflowViewState.IdRef="If_4">
+          <If.Then>
+            <Sequence DisplayName="Send Error Reply" sap2010:WorkflowViewState.IdRef="Sequence_2">
+              <Assign x:TypeArguments="x:String" DisplayName="Build Reply Subject" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[subject]" Value="[&quot;SV: &quot; &amp; in_Email.Subject]" />
+              <Assign x:TypeArguments="x:String" DisplayName="Build Reply Text" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[body]" Value="[String.Join(vbCrLf, {&quot;TESTLÄGE: Detta svar skulle ha skickats till &quot; &amp; in_Email.FromAddress &amp; &quot;.&quot;, &quot;&quot;, &quot;Hej,&quot;, &quot;&quot;, &quot;Tack för ert mejl. Fakturan kunde inte behandlas.&quot;, &quot;Orsak: &quot; &amp; in_Reason, &quot;&quot;, &quot;Skicka fakturan igen som en läsbar PDF-fil.&quot;, &quot;&quot;, &quot;Med vänlig hälsning&quot;, &quot;Ekonomiavdelningen, Stockholm Demo Hospital&quot;})]" />
+              <umam:SendMailConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Send Reply To Test Recipient" Importance="Normal" InputType="TEXT" IsDeliveryReceiptRequested="False" IsReadReceiptRequested="False" SaveAsDraft="False" Subject="[subject]" TextBody="[body]" To="[New String() {in_Config(&quot;TestReplyRecipient&quot;)}]" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="SendMailConnections_2">
+                <umam:SendMailConnections.InputTypeBackup>
+                  <usau:BackupSlot x:TypeArguments="umame:BodyInputType" StoredValue="TEXT">
+                    <usau:BackupSlot.BackupValues>
+                      <scg:Dictionary x:TypeArguments="umame:BodyInputType, scg:List(x:Object)" />
+                    </usau:BackupSlot.BackupValues>
+                  </usau:BackupSlot>
+                </umam:SendMailConnections.InputTypeBackup>
+                <umam:SendMailConnections.AttachmentsBackup>
+                  <usau:BackupSlot x:TypeArguments="umame:AttachmentInputMode" StoredValue="Existing">
+                    <usau:BackupSlot.BackupValues>
+                      <scg:Dictionary x:TypeArguments="umame:AttachmentInputMode, scg:List(x:Object)" />
+                    </usau:BackupSlot.BackupValues>
+                  </usau:BackupSlot>
+                </umam:SendMailConnections.AttachmentsBackup>
+                <umam:SendMailConnections.MailboxArg>
+                  <umamm:MailboxArgument UseSharedMailbox="True">
+                    <umamm:MailboxArgument.Backup>
+                      <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+                        <usau:BackupSlot.BackupValues>
+                          <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+                        </usau:BackupSlot.BackupValues>
+                      </usau:BackupSlot>
+                    </umamm:MailboxArgument.Backup>
+                    <umamm:MailboxArgument.SharedMailbox>
+                      <InArgument x:TypeArguments="x:String">[in_Config(&quot;InvoiceMailbox&quot;)]</InArgument>
+                    </umamm:MailboxArgument.SharedMailbox>
+                  </umamm:MailboxArgument>
+                </umam:SendMailConnections.MailboxArg>
+              </umam:SendMailConnections>
+              <Assign x:TypeArguments="x:String" DisplayName="Set Mail Sent" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[out_MailSent]" Value="[&quot;Error reply (test mode)&quot;]" />
+            </Sequence>
+          </If.Then>
+          <If.Else>
+            <ui:LogMessage DisplayName="Log Reply Not Sent" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Warn" Message="[&quot;Test mode is off. Replies to suppliers are not sent in this lab.&quot;]" />
+          </If.Else>
+        </If>
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Routing" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[$&quot;Routed: {in_Class} -&gt; {in_Folder}, category {category}, mail: {out_MailSent}&quot;]" />
+  </Sequence>
+</Activity>

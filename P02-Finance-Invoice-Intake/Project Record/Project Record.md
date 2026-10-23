@@ -758,7 +758,7 @@ At the end, the result of the email is decided (Figure 59):
 8. **Build Data Table** makes the results table.
 9. **For Each** goes through the emails.
 10. **Invoke Workflow File** runs ClassifyEmail.
-11. **Assign** activities find the expected class and folder by the InternetMessageId and compare them with the result.
+11. **Assign** activities find the expected class and folder of the email and compare them with the result (see section 7.4).
 12. **Add Data Row** saves the result.
 13. **If** counts the passed emails and writes OK or FAIL to the log.
 14. **Write CSV** saves the table as `Output/classify_results.csv`.
@@ -787,3 +787,201 @@ After the login fix, the test was run from Studio again, and all 40 emails got t
 | Inbox | 6 | Not an invoice |
 
 These are the same numbers as the expected result of the test mailbox: 9 emails with 10 invoices to Processed, 21 to Review, 4 to Error and 6 that stay in the Inbox. The file `Output/classify_results.csv` also has the reason for every email, for example "Net amount 58 061,41 kr is not the amount of PO-2026-0024 (64 512,68 kr)" for P02-E20, or "Invoice 65975 is already in the portal as INV-00011 with status Betald" for P02-E22.
+
+## 7. Routing the Emails and Writing the Report
+
+When the class and the folder of an email are known, the email is marked and moved in the shared mailbox. A person is told about the emails that need a review, and the sender of a broken invoice gets an answer. Every handled email is written to a processed log and to an Excel report. No new packages were needed, because the Outlook and Excel packages were already installed.
+
+### 7.1 Moving and Marking One Email
+
+`Workflows/RouteEmail.xaml` handles one email. It gets the email, the config and the result of ClassifyEmail as arguments, and it gives back which message was sent. The numbers in Figures 63 to 65 match the steps:
+
+1. **Assign** starts with "None", because most emails do not need a message.
+2. **If** chooses the category. An email that stays in the Inbox gets `Robot: Ignored`. The other emails get the category of their folder, for example `Robot: Review`.
+3. **Set Email Categories** sets the category in the shared mailbox. The category is set first, so the email is already marked even if the next step fails.
+4. **If** checks that the folder is not the Inbox, and **Move Email** moves the email to Processed, Review or Error.
+5. **Assign** gets the supplier name for the message. When no supplier was found, the display name of the sender is used.
+6. **If** checks if the email is in Review.
+7. Two **Assign** activities build the subject and the text of the review notification.
+8. **Send Email** sends the notification from the shared mailbox to the review person in the config. *Save as draft* is set to No, so the email is really sent.
+9. **Assign** saves "Review notification" as the sent message.
+10. **If** checks if the email is in Error.
+11. **If** checks the setting `TestMode` in the config.
+12. In test mode, **Send Email** sends the reply to the test person in the config, not to the supplier. The real address of the supplier is written in the first line of the text.
+13. When the test mode is off, **Log Message** only writes a warning. In this lab, a supplier never gets an email from the robot.
+14. **Log Message** writes the class, the folder, the category and the sent message.
+
+![RouteEmail, part 1](Screenshots/studio-route-email-1.png)
+
+*Figure 63. The first part of `Workflows/RouteEmail.xaml`: the category and the move to the folder.*
+
+![RouteEmail, part 2](Screenshots/studio-route-email-2.png)
+
+*Figure 64. The review notification. The email is sent as the shared mailbox (Send as) and not saved as a draft.*
+
+![RouteEmail, part 3](Screenshots/studio-route-email-3.png)
+
+*Figure 65. The reply for a technical error, which is only sent in test mode, and the log line.*
+
+The folder names, the categories and the receivers of the messages come from `Data/Config.xlsx`, so the workflow has no mailbox names in the code (Figure 66). The same Integration Service connection as before is used in all three Outlook activities.
+
+![The message settings in the config file](Screenshots/excel-config-test-mode.png)
+
+*Figure 66. The settings in `Data/Config.xlsx` for the messages: the review person (1), the test mode (2) and the test person for the replies (3).*
+
+### 7.2 The Messages From the Robot
+
+The messages are written in Swedish, like the other emails in the mailbox. The review notification has the subject "Granskning krävs: faktura (number) från (supplier)", or "Granskning krävs: (subject)" when the email has no invoice number. The text has the subject, the sender, the supplier, the invoice number, the reason and the folder of the email (Figure 67).
+
+![The review notifications in Sent Items](Screenshots/outlook-sent-items-notifications.png)
+
+*Figure 67. Sent Items of the shared mailbox (1) after the run. The notifications (2) were sent from "Ekonomi - Leverantörsfakturor" to Frida Sjöberg (3). The text (4) shows the reason from the checks.*
+
+The reply for a technical error has the subject "SV: (original subject)". The first line says that it is a test and which supplier address would get the reply. Then the reason is written, and the supplier is asked to send the invoice again as a readable PDF file (Figure 68).
+
+![The test mode replies in Sent Items](Screenshots/outlook-sent-items-reply.png)
+
+*Figure 68. The 4 replies in Sent Items (1). They were sent from the shared mailbox to Frida Sjöberg (2). The first line names the supplier address that would get the reply (3), and the reason comes from ReadInvoice (4).*
+
+### 7.3 Handling the Whole Inbox
+
+`Workflows/ProcessInbox.xaml` goes through the Inbox and calls ClassifyEmail and RouteEmail for each email. The numbers in Figures 69 to 71 match the steps:
+
+1. **Invoke Workflow File** runs ReadConfig.
+2. GetFinanceData, GetPurchaseOrders and GetProcessedHistory read the suppliers, the invoices, the purchase orders and the history.
+3. Two **Assign** activities set the attachment folder and the report folder.
+4. **Create Folder** makes sure that the report folder `Output` exists.
+5. Two **Assign** activities set the path of the processed log and of the report. The report name has the date and time, for example `Report_2026-10-23_142707.xlsx`.
+6. **Path Exists** checks if the processed log `Output/processed_log.csv` exists.
+7. **If** reads the log with **Read CSV**. On the first run there is no log, so **Build Data Table** makes an empty one.
+8. **Build Data Table** makes the report table.
+9. **Get Email List** reads all emails in the Inbox of the shared mailbox.
+10. **Assign** sorts the emails with the oldest first.
+11. **For Each** goes through the emails.
+12. **Assign** looks for the InternetMessageId of the email in the processed log.
+13. **If** the email is already in the log, **Log Message** writes "Skipped" and the email is counted as skipped.
+14. Otherwise the email is handled:
+15. **Invoke Workflow File** runs ClassifyEmail.
+16. **Invoke Workflow File** runs RouteEmail.
+17. **Assign** gets the time.
+18. Two **Add Data Row** activities add a row to the report and a row to the processed log.
+19. **Write CSV** saves the processed log at once, after every email.
+20. **Assign** counts the handled email.
+21. **If** there were new emails, **Write Range** writes the report to the sheet Report. Otherwise only a log line is written.
+22. **Log Message** writes how many emails were handled and skipped.
+
+![ProcessInbox, part 1](Screenshots/studio-process-inbox-1.png)
+
+*Figure 69. The first part of `Workflows/ProcessInbox.xaml`: reading the data and the processed log.*
+
+![ProcessInbox, part 2](Screenshots/studio-process-inbox-2.png)
+
+*Figure 70. Reading the Inbox and the check against the processed log.*
+
+![ProcessInbox, part 3](Screenshots/studio-process-inbox-3.png)
+
+*Figure 71. Handling a new email, saving the log and writing the report.*
+
+The processed log uses the InternetMessageId of the email as the key. This ID is a header of the email itself, so it stays the same when the email is moved to another folder. The Graph ID that Outlook uses changes when an email is moved, so it cannot be used as the key.
+
+The log is saved after every email. If a run stops in the middle, the emails that were already handled are in the log. Emails that were moved are not in the Inbox any more, and the emails in the Inbox that were already handled are skipped, so no email is handled twice and no message is sent twice.
+
+The report has one row per handled email with these columns: ProcessedAt, Sender, Subject, Supplier, InvoiceNumbers, Class, Reason, Folder, MailSent and InternetMessageId.
+
+### 7.4 Matching the Test Emails After a Mailbox Reset
+
+Before the live run, the test mailbox was reset to its start state. After the reset, the dry run from section 6.8 still gave the right folders (9, 21, 4 and 6), but every email was "unknown" and the test said "0 of 40". The reset creates the test emails again, and new emails get a new InternetMessageId. The IDs in `TestData/expected_results.csv` were from the first setup of the mailbox, so no email was found in the file.
+
+The InternetMessageId is still the right key inside one mailbox state, so the processed log was not changed. Only the tests were changed: they now find the expected row by the subject and the sender address of the email. Two emails in the test data have the same subject and sender, because the same invoice 49838 was sent twice. To handle this, **Add Data Column** adds a column Used (Figure 72) to the expected results, and a row that was found is marked as used. The next email with the same subject gets the next row. The emails are handled oldest first, so the first copy gets the first row (P02-E09) and the copy gets the second row (P02-E10).
+
+![The new Used column in the dry run test](Screenshots/studio-test-classify-used-column.png)
+
+*Figure 72. In `Tests/Test_ClassifyEmails.xaml`, Read CSV reads the expected results (1), and Add Data Column adds the column Used (2).*
+
+After this change, the dry run gave 40 of 40 again (Figure 73).
+
+![The dry run after the reset](Screenshots/studio-dry-run-after-reset.png)
+
+*Figure 73. The dry run after the mailbox reset: every email is found in the expected results, and the test gives 40 of 40.*
+
+### 7.5 The Live Run
+
+After the reset, `Workflows/ProcessInbox.xaml` was run from Studio. The run took 2 minutes and 11 seconds (Figure 74).
+
+![The Output panel of the live run](Screenshots/studio-process-inbox-output.png)
+
+*Figure 74. The live run: a "Routed" line for each email with the class, the folder, the category and the sent message (1), and the summary "40 emails, 40 handled" (2).*
+
+The result in the mailbox:
+
+| Folder | Emails | Category | Message sent |
+|---|---|---|---|
+| Processed | 9 | Robot: Processed | None |
+| Review | 21 | Robot: Review | 21 review notifications to Frida Sjöberg |
+| Error | 4 | Robot: Error | 4 replies in test mode to Frida Sjöberg |
+| Inbox | 6 | Robot: Ignored | None |
+
+![The Review folder after the run](Screenshots/outlook-review-folder.png)
+
+*Figure 75. The folder Review has 21 emails (1), and each email has the category Robot: Review (2).*
+
+The 6 emails that are not invoices stay in the Inbox with the category Robot: Ignored (Figure 76). In the folder Error, the 4 emails of this run have the category Robot: Error (Figure 77). The fifth email in Error is the first attempt of invoice 55655 (P02-E05), which was already there before the run. The numbers next to the folder names count the unread emails, not all emails.
+
+![The Inbox after the run](Screenshots/outlook-inbox-ignored.png)
+
+*Figure 76. The Inbox of the shared mailbox (1) after the run. The 6 emails that stay there have the category Robot: Ignored (2).*
+
+![The Error folder after the run](Screenshots/outlook-error-folder.png)
+
+*Figure 77. The folder Error (1). The 4 emails of this run have the category Robot: Error (2). The email from Hammarby Vårdtextil (3) was in the folder before the run.*
+
+The report `Output/Report_2026-10-23_142707.xlsx` has 40 rows, one for each email (Figure 78).
+
+![The Excel report](Screenshots/excel-report.png)
+
+*Figure 78. The report of the live run. Row 1 has the column names (1). The columns Folder and MailSent (2) show where each email went and which message was sent.*
+
+`Tests/Test_CheckReport.xaml` checks the report against the expected results. It sends and moves nothing. The numbers in Figures 79 to 81 match the steps:
+
+1. **Invoke Workflow File** runs ReadConfig.
+2. Two **Assign** activities set the report folder and an empty report path.
+3. **For Each** goes through the report files in the folder.
+4. **If** keeps the newest file.
+5. **If** stops the test with an error when no report was found.
+6. **Log Message** writes the name of the report.
+7. **Read Range** reads the sheet Report.
+8. **Read CSV** reads the expected results.
+9. **Add Data Column** adds the column Used.
+10. **For Each Row** goes through the report rows.
+11. **Assign** finds the expected row by the subject and the sender.
+12. **If** no row was found, the email is "unknown". Otherwise the row is marked as used, and the expected class, folder and message are read. The expected message is "Review notification" when a notification is expected, "Error reply (test mode)" when a reply is expected, and "None" otherwise.
+13. **Assign** compares the class, the folder and the sent message.
+14. **If** counts the passed emails and writes OK or FAIL to the log.
+15. **Log Message** writes the summary.
+16. **If** stops the test with an error when an email did not pass.
+
+![Test_CheckReport, part 1](Screenshots/studio-test-check-report-1.png)
+
+*Figure 79. The first part of `Tests/Test_CheckReport.xaml`: finding the newest report.*
+
+![Test_CheckReport, part 2](Screenshots/studio-test-check-report-2.png)
+
+*Figure 80. Reading the report and the expected results, and finding the expected row.*
+
+![Test_CheckReport, part 3](Screenshots/studio-test-check-report-3.png)
+
+*Figure 81. The comparison and the end of the test.*
+
+The test found the report of the live run, and all 40 emails had the expected class, folder and message (Figure 82).
+
+![The Output panel of the report check](Screenshots/studio-test-check-report-output.png)
+
+*Figure 82. Test_CheckReport checks the report of the live run (1) and gives 40 of 40 (2).*
+
+### 7.6 Running the Process a Second Time
+
+To check that nothing is done twice, ProcessInbox was run again without a reset. The 6 emails that stay in the Inbox were found in the processed log and skipped. No email was moved, no message was sent and no new report was written (Figure 83).
+
+![The Output panel of the second run](Screenshots/studio-second-run-output.png)
+
+*Figure 83. The second run: the 6 emails in the Inbox are skipped (1), and no email is handled and no report is written (2).*
