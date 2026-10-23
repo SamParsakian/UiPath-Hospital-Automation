@@ -66,7 +66,7 @@
         <Assign x:TypeArguments="x:String" DisplayName="Use Ignored Category" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[category]" Value="[in_Config(&quot;Category_Ignored&quot;)]" />
       </If.Then>
       <If.Else>
-        <Assign x:TypeArguments="x:String" DisplayName="Use Folder Category" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[category]" Value="[in_Config(&quot;Category_&quot; &amp; in_Folder)]" />
+        <Assign x:TypeArguments="x:String" DisplayName="Use Folder Category" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[category]" Value="[If(in_Folder = in_Config(&quot;Folder_Review&quot;), in_Config(&quot;Category_Review&quot;), If(in_Folder = in_Config(&quot;Folder_Error&quot;), in_Config(&quot;Category_Error&quot;), in_Config(&quot;Category_Processed&quot;)))]" />
       </If.Else>
     </If>
     <umam:SetEmailCategoriesConnections CategoriesToAssign="[New String() {category}]" CategoriesToRemove="None" ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Set Robot Category" Email="[in_Email]" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="SetEmailCategoriesConnections_1">
@@ -119,7 +119,7 @@
         </umam:MoveEmailConnections>
       </If.Then>
     </If>
-    <Assign x:TypeArguments="x:String" DisplayName="Get Supplier Name" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[supplier]" Value="[If(in_SupplierName = &quot;&quot;, in_Email.FromDisplayName, in_SupplierName)]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Supplier Name" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[supplier]" Value="[If(in_SupplierName = &quot;&quot;, &quot;-&quot;, in_SupplierName)]" />
     <If Condition="[in_Folder = in_Config(&quot;Folder_Review&quot;)]" DisplayName="Is It a Review?" sap2010:WorkflowViewState.IdRef="If_3">
       <If.Then>
         <Sequence DisplayName="Send Review Notification" sap2010:WorkflowViewState.IdRef="Sequence_1">

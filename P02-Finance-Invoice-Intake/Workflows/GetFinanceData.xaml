@@ -54,9 +54,6 @@
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="Get Finance Data" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="username" />
-      <Variable x:TypeArguments="ss:SecureString" Name="password" />
-      <Variable x:TypeArguments="x:String" Name="loginBody" />
       <Variable x:TypeArguments="uwahm:HttpResponseSummary" Name="tokenResponse" />
       <Variable x:TypeArguments="njl:JObject" Name="tokenJson" />
       <Variable x:TypeArguments="x:String" Name="token" />
@@ -71,6 +68,15 @@
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
+    <ui:RetryScope DisplayName="Retry Lab API" LogRetriedExceptions="True" NumberOfRetries="3" RetriedExceptionsLogLevel="Warn" RetryInterval="00:00:05" sap2010:WorkflowViewState.IdRef="RetryScope_1">
+      <ui:RetryScope.ActivityBody>
+        <ActivityAction>
+          <Sequence DisplayName="Read From Lab API" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:String" Name="username" />
+              <Variable x:TypeArguments="ss:SecureString" Name="password" />
+              <Variable x:TypeArguments="x:String" Name="loginBody" />
+            </Sequence.Variables>
     <p:GetSecureCredential DisplayName="Get Lab API Login" CredentialType="Generic" PersistanceType="Enterprise" Target="[in_Config(&quot;LabApiCredential&quot;)]" Username="[username]" Password="[password]" sap2010:WorkflowViewState.IdRef="GetSecureCredential_1" />
     <Assign x:TypeArguments="x:String" DisplayName="Build Login Body" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[loginBody]" Value="[New JObject(New JProperty(&quot;username&quot;, username), New JProperty(&quot;password&quot;, New NetworkCredential(&quot;&quot;, password).Password)).ToString()]" />
     <uwah:NetHttpRequest BasicAuthPassword="{x:Null}" BasicAuthSecurePassword="{x:Null}" BasicAuthUsername="{x:Null}" BinaryPayload="{x:Null}" ClientCertPassword="{x:Null}" ClientCertPath="{x:Null}" ClientCertSecurePassword="{x:Null}" Cookies="{x:Null}" CustomNegotiatedAuthCredentials="{x:Null}" FilePath="{x:Null}" FormData="{x:Null}" FormDataParts="{x:Null}" Headers="{x:Null}" LocalFiles="{x:Null}" OutputFileName="{x:Null}" OutputFileTargetFolder="{x:Null}" PathResource="{x:Null}" ProxyConfiguration="{x:Null}" ResourceFiles="{x:Null}" RetryStatusCodes="{x:Null}" AuthenticationType="None" OAuthToken="{x:Null}" RequestBodyType="Text" TextPayload="[loginBody]" Parameters="{x:Null}" ContinueOnError="False" DisableSslVerification="False" DisplayName="Get API Token" EnableCookies="True" FileOverwrite="AutoRename" FollowRedirects="True" sap2010:WorkflowViewState.IdRef="NetHttpRequest_1" InitialDelay="500" MaxRedirects="3" MaxRetryAfterDelay="30000" Method="POST" Multiplier="2" PreferRetryAfterValue="True" RequestUrl="[in_Config(&quot;LabApiUrl&quot;) &amp; &quot;/v1/token&quot;]" Result="[tokenResponse]" RetryCount="3" SaveRawRequestResponse="False" SaveResponseAsFile="False" TextPayloadContentType="application/json" TextPayloadEncoding="UTF-8" TlsProtocol="Automatic" UseJitter="True" UseOsNegotiatedAuthCredentials="True">
@@ -156,6 +162,13 @@
         <Assign x:TypeArguments="x:Int32" DisplayName="Next Page" sap2010:WorkflowViewState.IdRef="Assign`1_32" To="[page]" Value="[page + 1]" />
       </Sequence>
     </DoWhile>
+          </Sequence>
+        </ActivityAction>
+      </ui:RetryScope.ActivityBody>
+      <ui:RetryScope.Condition>
+        <ActivityFunc x:TypeArguments="x:Boolean" />
+      </ui:RetryScope.Condition>
+    </ui:RetryScope>
     <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[$&quot;Finance data read: {out_Suppliers.Rows.Count} suppliers, {out_Invoices.Rows.Count} invoices&quot;]" />
   </Sequence>
 </Activity>
