@@ -1,0 +1,161 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_GetFinanceData" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:njl="clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json" xmlns:p="http://schemas.uipath.com/workflow/activities/credentials" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uwah="clr-namespace:UiPath.Web.Activities.Http;assembly=UiPath.Web.Activities" xmlns:uwahm="clr-namespace:UiPath.Web.Activities.Http.Models;assembly=UiPath.Web.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="out_Suppliers" Type="OutArgument(sd:DataTable)" />
+    <x:Property Name="out_Invoices" Type="OutArgument(sd:DataTable)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net</x:String>
+      <x:String>System.Security</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>Newtonsoft.Json.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.Web.Activities.Http</x:String>
+      <x:String>UiPath.Web.Activities.Http.Models</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Net.Primitives</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>Newtonsoft.Json</AssemblyReference>
+      <AssemblyReference>UiPath.Web.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Credentials.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Get Finance Data" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="username" />
+      <Variable x:TypeArguments="ss:SecureString" Name="password" />
+      <Variable x:TypeArguments="x:String" Name="loginBody" />
+      <Variable x:TypeArguments="uwahm:HttpResponseSummary" Name="tokenResponse" />
+      <Variable x:TypeArguments="njl:JObject" Name="tokenJson" />
+      <Variable x:TypeArguments="x:String" Name="token" />
+      <Variable x:TypeArguments="x:String" Name="role" />
+      <Variable x:TypeArguments="uwahm:HttpResponseSummary" Name="pageResponse" />
+      <Variable x:TypeArguments="njl:JObject" Name="pageJson" />
+      <Variable x:TypeArguments="x:Int32" Default="1" Name="page" />
+      <Variable x:TypeArguments="x:Int32" Default="1" Name="pageCount" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <p:GetSecureCredential DisplayName="Get Lab API Login" CredentialType="Generic" PersistanceType="Enterprise" Target="[in_Config(&quot;LabApiCredential&quot;)]" Username="[username]" Password="[password]" sap2010:WorkflowViewState.IdRef="GetSecureCredential_1" />
+    <Assign x:TypeArguments="x:String" DisplayName="Build Login Body" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[loginBody]" Value="[New JObject(New JProperty(&quot;username&quot;, username), New JProperty(&quot;password&quot;, New NetworkCredential(&quot;&quot;, password).Password)).ToString()]" />
+    <uwah:NetHttpRequest BasicAuthPassword="{x:Null}" BasicAuthSecurePassword="{x:Null}" BasicAuthUsername="{x:Null}" BinaryPayload="{x:Null}" ClientCertPassword="{x:Null}" ClientCertPath="{x:Null}" ClientCertSecurePassword="{x:Null}" Cookies="{x:Null}" CustomNegotiatedAuthCredentials="{x:Null}" FilePath="{x:Null}" FormData="{x:Null}" FormDataParts="{x:Null}" Headers="{x:Null}" LocalFiles="{x:Null}" OutputFileName="{x:Null}" OutputFileTargetFolder="{x:Null}" PathResource="{x:Null}" ProxyConfiguration="{x:Null}" ResourceFiles="{x:Null}" RetryStatusCodes="{x:Null}" AuthenticationType="None" OAuthToken="{x:Null}" RequestBodyType="Text" TextPayload="[loginBody]" Parameters="{x:Null}" ContinueOnError="False" DisableSslVerification="False" DisplayName="Get API Token" EnableCookies="True" FileOverwrite="AutoRename" FollowRedirects="True" sap2010:WorkflowViewState.IdRef="NetHttpRequest_1" InitialDelay="500" MaxRedirects="3" MaxRetryAfterDelay="30000" Method="POST" Multiplier="2" PreferRetryAfterValue="True" RequestUrl="[in_Config(&quot;LabApiUrl&quot;) &amp; &quot;/v1/token&quot;]" Result="[tokenResponse]" RetryCount="3" SaveRawRequestResponse="False" SaveResponseAsFile="False" TextPayloadContentType="application/json" TextPayloadEncoding="UTF-8" TlsProtocol="Automatic" UseJitter="True" UseOsNegotiatedAuthCredentials="True">
+      <uwah:NetHttpRequest.TimeoutInMiliseconds>
+        <InArgument x:TypeArguments="s:Nullable(x:Int32)">
+          <Literal x:TypeArguments="s:Nullable(x:Int32)" Value="10000" />
+        </InArgument>
+      </uwah:NetHttpRequest.TimeoutInMiliseconds>
+    </uwah:NetHttpRequest>
+    <If Condition="[CInt(tokenResponse.StatusCode) &lt;&gt; 200]" DisplayName="Check Login Status" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <Throw DisplayName="Throw Login Error" Exception="[New Exception($&quot;API login failed with status {CInt(tokenResponse.StatusCode)} for user {username}&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+      </If.Then>
+    </If>
+    <ui:DeserializeJson x:TypeArguments="njl:JObject" JsonSample="{x:Null}" Settings="{x:Null}" DisplayName="Deserialize Token Response" JsonObject="[tokenJson]" JsonString="[tokenResponse.TextContent]" sap2010:WorkflowViewState.IdRef="DeserializeJson`1_1" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Token" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[token]" Value="[tokenJson(&quot;access_token&quot;).ToString()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Role" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[role]" Value="[tokenJson(&quot;role&quot;).ToString()]" />
+    <If Condition="[role &lt;&gt; &quot;finance&quot;]" DisplayName="Check Role" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <Throw DisplayName="Throw Role Error" Exception="[New Exception($&quot;The API user {username} has the role {role}, not finance&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_2" />
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Login" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;API login OK: user {username}, role {role}&quot;]" />
+    <ui:BuildDataTable DataTable="[out_Suppliers]" DisplayName="Build Suppliers Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;Suppliers&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;Suppliers&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;SupplierRef&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Name&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;OrgNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Email&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Status&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <ui:BuildDataTable DataTable="[out_Invoices]" DisplayName="Build Invoices Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_2" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;Invoices&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;Invoices&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;InvoiceRef&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;SupplierRef&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;PoRef&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;InvoiceNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Total&quot; type=&quot;xs:decimal&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Status&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <Assign x:TypeArguments="x:Int32" DisplayName="Start At Page 1" sap2010:WorkflowViewState.IdRef="Assign`1_20" To="[page]" Value="1" />
+    <DoWhile Condition="[page &lt;= pageCount]" DisplayName="Read All Suppliers Pages" sap2010:WorkflowViewState.IdRef="DoWhile_2">
+      <Sequence DisplayName="Read One Page" sap2010:WorkflowViewState.IdRef="Sequence_20">
+        <uwah:NetHttpRequest BasicAuthPassword="{x:Null}" BasicAuthSecurePassword="{x:Null}" BasicAuthUsername="{x:Null}" BinaryPayload="{x:Null}" ClientCertPassword="{x:Null}" ClientCertPath="{x:Null}" ClientCertSecurePassword="{x:Null}" Cookies="{x:Null}" CustomNegotiatedAuthCredentials="{x:Null}" FilePath="{x:Null}" FormData="{x:Null}" FormDataParts="{x:Null}" Headers="{x:Null}" LocalFiles="{x:Null}" OutputFileName="{x:Null}" OutputFileTargetFolder="{x:Null}" PathResource="{x:Null}" ProxyConfiguration="{x:Null}" ResourceFiles="{x:Null}" RetryStatusCodes="{x:Null}" AuthenticationType="OAuthToken" OAuthToken="[token]" RequestBodyType="None" TextPayload="{x:Null}" Parameters="[New Dictionary(Of String, String) From {{&quot;page&quot;, page.ToString()}, {&quot;per_page&quot;, &quot;100&quot;}}]" ContinueOnError="False" DisableSslVerification="False" DisplayName="Get Suppliers Page" EnableCookies="True" FileOverwrite="AutoRename" FollowRedirects="True" sap2010:WorkflowViewState.IdRef="NetHttpRequest_2" InitialDelay="500" MaxRedirects="3" MaxRetryAfterDelay="30000" Method="GET" Multiplier="2" PreferRetryAfterValue="True" RequestUrl="[in_Config(&quot;LabApiUrl&quot;) &amp; &quot;/v1/suppliers&quot;]" Result="[pageResponse]" RetryCount="3" SaveRawRequestResponse="False" SaveResponseAsFile="False" TextPayloadContentType="application/json" TextPayloadEncoding="UTF-8" TlsProtocol="Automatic" UseJitter="True" UseOsNegotiatedAuthCredentials="True">
+          <uwah:NetHttpRequest.TimeoutInMiliseconds>
+            <InArgument x:TypeArguments="s:Nullable(x:Int32)">
+              <Literal x:TypeArguments="s:Nullable(x:Int32)" Value="10000" />
+            </InArgument>
+          </uwah:NetHttpRequest.TimeoutInMiliseconds>
+        </uwah:NetHttpRequest>
+        <If Condition="[CInt(pageResponse.StatusCode) &lt;&gt; 200]" DisplayName="Check Page Status" sap2010:WorkflowViewState.IdRef="If_20">
+          <If.Then>
+            <Throw DisplayName="Throw Page Error" Exception="[New Exception($&quot;Reading suppliers page {page} failed with status {CInt(pageResponse.StatusCode)}&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_20" />
+          </If.Then>
+        </If>
+        <ui:DeserializeJson x:TypeArguments="njl:JObject" JsonSample="{x:Null}" Settings="{x:Null}" DisplayName="Deserialize Page" JsonObject="[pageJson]" JsonString="[pageResponse.TextContent]" sap2010:WorkflowViewState.IdRef="DeserializeJson`1_2" />
+        <Assign x:TypeArguments="x:Int32" DisplayName="Read Page Count" sap2010:WorkflowViewState.IdRef="Assign`1_21" To="[pageCount]" Value="[CInt(pageJson(&quot;pages&quot;))]" />
+        <ui:ForEach x:TypeArguments="njl:JToken" CurrentIndex="{x:Null}" DisplayName="For Each Supplier" sap2010:WorkflowViewState.IdRef="ForEach`1_2" Values="[pageJson(&quot;items&quot;)]">
+          <ui:ForEach.Body>
+            <ActivityAction x:TypeArguments="njl:JToken">
+              <ActivityAction.Argument>
+                <DelegateInArgument x:TypeArguments="njl:JToken" Name="item" />
+              </ActivityAction.Argument>
+              <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{item(&quot;supplier_ref&quot;).ToString(), item(&quot;name&quot;).ToString(), item(&quot;org_number&quot;).ToString(), item(&quot;email&quot;).ToString(), item(&quot;status&quot;).ToString()}]" DataTable="[out_Suppliers]" DisplayName="Add Supplier Row" sap2010:WorkflowViewState.IdRef="AddDataRow_2" />
+            </ActivityAction>
+          </ui:ForEach.Body>
+        </ui:ForEach>
+        <Assign x:TypeArguments="x:Int32" DisplayName="Next Page" sap2010:WorkflowViewState.IdRef="Assign`1_22" To="[page]" Value="[page + 1]" />
+      </Sequence>
+    </DoWhile>
+    <Assign x:TypeArguments="x:Int32" DisplayName="Start At Page 1" sap2010:WorkflowViewState.IdRef="Assign`1_30" To="[page]" Value="1" />
+    <DoWhile Condition="[page &lt;= pageCount]" DisplayName="Read All Invoices Pages" sap2010:WorkflowViewState.IdRef="DoWhile_3">
+      <Sequence DisplayName="Read One Page" sap2010:WorkflowViewState.IdRef="Sequence_30">
+        <uwah:NetHttpRequest BasicAuthPassword="{x:Null}" BasicAuthSecurePassword="{x:Null}" BasicAuthUsername="{x:Null}" BinaryPayload="{x:Null}" ClientCertPassword="{x:Null}" ClientCertPath="{x:Null}" ClientCertSecurePassword="{x:Null}" Cookies="{x:Null}" CustomNegotiatedAuthCredentials="{x:Null}" FilePath="{x:Null}" FormData="{x:Null}" FormDataParts="{x:Null}" Headers="{x:Null}" LocalFiles="{x:Null}" OutputFileName="{x:Null}" OutputFileTargetFolder="{x:Null}" PathResource="{x:Null}" ProxyConfiguration="{x:Null}" ResourceFiles="{x:Null}" RetryStatusCodes="{x:Null}" AuthenticationType="OAuthToken" OAuthToken="[token]" RequestBodyType="None" TextPayload="{x:Null}" Parameters="[New Dictionary(Of String, String) From {{&quot;page&quot;, page.ToString()}, {&quot;per_page&quot;, &quot;100&quot;}}]" ContinueOnError="False" DisableSslVerification="False" DisplayName="Get Invoices Page" EnableCookies="True" FileOverwrite="AutoRename" FollowRedirects="True" sap2010:WorkflowViewState.IdRef="NetHttpRequest_3" InitialDelay="500" MaxRedirects="3" MaxRetryAfterDelay="30000" Method="GET" Multiplier="2" PreferRetryAfterValue="True" RequestUrl="[in_Config(&quot;LabApiUrl&quot;) &amp; &quot;/v1/invoices&quot;]" Result="[pageResponse]" RetryCount="3" SaveRawRequestResponse="False" SaveResponseAsFile="False" TextPayloadContentType="application/json" TextPayloadEncoding="UTF-8" TlsProtocol="Automatic" UseJitter="True" UseOsNegotiatedAuthCredentials="True">
+          <uwah:NetHttpRequest.TimeoutInMiliseconds>
+            <InArgument x:TypeArguments="s:Nullable(x:Int32)">
+              <Literal x:TypeArguments="s:Nullable(x:Int32)" Value="10000" />
+            </InArgument>
+          </uwah:NetHttpRequest.TimeoutInMiliseconds>
+        </uwah:NetHttpRequest>
+        <If Condition="[CInt(pageResponse.StatusCode) &lt;&gt; 200]" DisplayName="Check Page Status" sap2010:WorkflowViewState.IdRef="If_30">
+          <If.Then>
+            <Throw DisplayName="Throw Page Error" Exception="[New Exception($&quot;Reading invoices page {page} failed with status {CInt(pageResponse.StatusCode)}&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_30" />
+          </If.Then>
+        </If>
+        <ui:DeserializeJson x:TypeArguments="njl:JObject" JsonSample="{x:Null}" Settings="{x:Null}" DisplayName="Deserialize Page" JsonObject="[pageJson]" JsonString="[pageResponse.TextContent]" sap2010:WorkflowViewState.IdRef="DeserializeJson`1_3" />
+        <Assign x:TypeArguments="x:Int32" DisplayName="Read Page Count" sap2010:WorkflowViewState.IdRef="Assign`1_31" To="[pageCount]" Value="[CInt(pageJson(&quot;pages&quot;))]" />
+        <ui:ForEach x:TypeArguments="njl:JToken" CurrentIndex="{x:Null}" DisplayName="For Each Invoice" sap2010:WorkflowViewState.IdRef="ForEach`1_3" Values="[pageJson(&quot;items&quot;)]">
+          <ui:ForEach.Body>
+            <ActivityAction x:TypeArguments="njl:JToken">
+              <ActivityAction.Argument>
+                <DelegateInArgument x:TypeArguments="njl:JToken" Name="item" />
+              </ActivityAction.Argument>
+              <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {item(&quot;invoice_ref&quot;).ToString(), item(&quot;supplier_ref&quot;).ToString(), item(&quot;po_ref&quot;).ToString(), item(&quot;invoice_number&quot;).ToString(), CDec(item(&quot;total&quot;)), item(&quot;status&quot;).ToString()}]" DataTable="[out_Invoices]" DisplayName="Add Invoice Row" sap2010:WorkflowViewState.IdRef="AddDataRow_3" />
+            </ActivityAction>
+          </ui:ForEach.Body>
+        </ui:ForEach>
+        <Assign x:TypeArguments="x:Int32" DisplayName="Next Page" sap2010:WorkflowViewState.IdRef="Assign`1_32" To="[page]" Value="[page + 1]" />
+      </Sequence>
+    </DoWhile>
+    <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[$&quot;Finance data read: {out_Suppliers.Rows.Count} suppliers, {out_Invoices.Rows.Count} invoices&quot;]" />
+  </Sequence>
+</Activity>

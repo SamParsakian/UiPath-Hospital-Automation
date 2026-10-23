@@ -442,3 +442,348 @@ After this change, the test was run with Debug File, and all 33 test files passe
 | Error | 5 | not a real PDF, damaged PDF, no invoice number, wrong total, locked PDF |
 
 Many files with the result Invoice still have a business problem, for example an amount that differs from the purchase order (P02-E20) or a wrong VAT (P02-E21). ReadInvoice only checks that the PDF can be read and that its own numbers add up. The VAT of P02-E21 is 12 % instead of 25 %, but net plus VAT is still the total, so only a VAT check against the purchase order and the VAT rate can find it.
+
+## 6. Checking the Invoices Against the Finance Data
+
+After the PDF is read, the invoice is compared with the finance data of the hospital. The suppliers and the registered invoices are read from the lab API, and the purchase orders are read from Personalportalen with the browser, because the API has no purchase orders. Then every email gets a class and a target folder. In this part, nothing in the mailbox is changed: the result is tested in a dry run.
+
+### 6.1 New Packages
+
+Three packages were added in Manage Packages (Figure 33):
+
+1. **UiPath.Credentials.Activities** for the activity Get Credential, which reads a login from the Windows Credential Manager.
+2. **UiPath.UIAutomation.Activities** for the browser automation in Personalportalen.
+3. **UiPath.WebAPI.Activities** for the activities HTTP Request and Deserialize JSON.
+
+![The new packages in Manage Packages](Screenshots/studio-packages-finance.png)
+
+*Figure 33. Manage Packages with the Credentials, UI Automation and Web API packages.*
+
+### 6.2 Reading the Config Once
+
+Several workflows need the settings, so `Workflows/ReadConfig.xaml` reads `Data/Config.xlsx` once and gives back a dictionary. **Read Range Workbook** reads the sheet Settings, and **For Each Row** adds each name and value to the dictionary. The other workflows get this dictionary as the argument `in_Config` and read a setting with, for example, `in_Config("LabApiUrl")`.
+
+The numbers in Figure 34 match the steps:
+
+1. **Read Range Workbook** reads the sheet Settings of `Data/Config.xlsx` into a data table.
+2. **Assign** makes an empty dictionary.
+3. **For Each Row** goes through the settings.
+4. **If** skips empty rows, and **Assign** adds the name and the value to the dictionary.
+5. **Log Message** writes how many settings were read.
+
+![The ReadConfig workflow](Screenshots/studio-read-config.png)
+
+*Figure 34. The workflow `Workflows/ReadConfig.xaml`.*
+
+One new setting was added in `Tools/CreateConfig.xaml`: `LabApiCredential = P02_LabApi`. After the workflow was run again, the config file had 18 settings.
+
+### 6.3 Logging In to the Lab API
+
+The API needs a token. The token is received from `POST /v1/token` with a user name and a password, and then it is sent with every other call.
+
+The first try used the same Windows credential as the portal login, and the API answered **401 Wrong username or password**. The API uses the same accounts as Personalportalen, but it needs the exact values of the finance account. So a separate generic credential, `P02_LabApi`, was created in the Windows Credential Manager with the user name `finance` (Figure 35). The password is only stored there.
+
+![The credential P02_LabApi in Credential Manager](Screenshots/credential-manager-labapi.png)
+
+*Figure 35. The generic credential `P02_LabApi` in the Windows Credential Manager.*
+
+The login is the first part of `Workflows/GetFinanceData.xaml`. The numbers in Figure 36 match the steps:
+
+1. **Get Credential** reads the user name and the password of `P02_LabApi`. The password is a SecureString.
+2. **Assign** "Build Login Body" makes the JSON text `{"username": ..., "password": ...}` with Newtonsoft `JObject`. This is the only place where the password is turned into normal text, with `New NetworkCredential("", password).Password`.
+3. **HTTP Request** sends the body with POST to `/v1/token`, with the content type `application/json`.
+4. **If** stops the workflow with an error if the status is not 200.
+5. **Deserialize JSON** turns the answer into a JSON object.
+6. **Assign** takes the token and the role from the answer.
+7. **If** stops the workflow if the role is not `finance`.
+8. **Log Message** writes the user name and the role. The password and the token are never written to the log.
+
+![GetFinanceData, the login part](Screenshots/studio-get-finance-data-1.png)
+
+*Figure 36. The login part of `Workflows/GetFinanceData.xaml`.*
+
+Figure 37 shows the properties of the login call. The URL comes from the config (2), the body is the variable `loginBody` (3), and the call itself has no authentication (4), because the token does not exist yet. Continue on error is No (5), so a failed call stops the workflow.
+
+![The properties of Get API Token](Screenshots/studio-get-api-token.png)
+
+*Figure 37. The HTTP Request "Get API Token" and its Properties panel.*
+
+Studio has a Workflow Analyzer rule, **ST-SEC-009 SecureString Misusage**, that treats every change from SecureString to normal text as an error. The API needs the password as normal text in the JSON body, so this change cannot be avoided. The rule was set to **Warning** for this project in Project Settings > Workflow Analyzer (Figure 38). The rule is still on, so Studio still shows the warning.
+
+![ST-SEC-009 set to Warning](Screenshots/studio-analyzer-sec009.png)
+
+*Figure 38. The rule ST-SEC-009 with the level Warning.*
+
+The second part reads all suppliers and all invoices (Figure 39):
+
+1. **Build Data Table** makes the two empty tables.
+2. **Assign** starts at page 1.
+3. **Do While** repeats the reading while there are more pages.
+4. **HTTP Request** sends GET to `/v1/suppliers` with the parameters `page` and `per_page` (100). Here the authentication is the bearer token.
+5. **If** stops the workflow if the status is not 200.
+6. **Deserialize JSON** reads the page, and **Assign** reads the number of pages.
+7. **For Each** goes through the items of the page, and **Add Data Row** adds each supplier to the table.
+8. **Assign** goes to the next page.
+9. The loop ends when the last page has been read.
+10. The invoices are read in the same way from `/v1/invoices`.
+
+![GetFinanceData, reading the pages](Screenshots/studio-get-finance-data-2.png)
+
+*Figure 39. The second part of `Workflows/GetFinanceData.xaml`: reading all pages of the suppliers.*
+
+The test workflow `Tests/Test_GetFinanceData.xaml` calls ReadConfig and GetFinanceData and checks some known values: 15 suppliers, 73 invoices, SUP-015 has the status Inaktiv and INV-00011 has the status Betald (Figure 40).
+
+![The test of GetFinanceData](Screenshots/studio-test-get-finance-data.png)
+
+*Figure 40. `Tests/Test_GetFinanceData.xaml` and its Output panel with the login line and the PASSED line.*
+
+**What should be done from the start in a new project:**
+
+- Use a separate Windows credential for the API, with the exact user name and password of a finance account, and put only its name in the config.
+- Turn the SecureString into text in only one Assign, and build the JSON with Newtonsoft, not by joining strings.
+- Check both the status code and the role after the login, and never log the password or the token.
+- Set ST-SEC-009 to Warning for the project before the first build, and explain why.
+
+### 6.4 Reading the Purchase Orders in Personalportalen
+
+The purchase orders are shown in a table on the page Ekonomi > Inköpsordrar, 10 orders on each page. `Workflows/GetPurchaseOrders.xaml` reads the order number, the supplier and the amount without VAT from every row, in the same way as the patient tables in project 1.
+
+The numbers in Figures 41 to 43 match the steps:
+
+1. **Build Data Table** makes the table for the purchase orders.
+2. **Use Application/Browser** opens Personalportalen in Chrome, or uses the tab that is already open.
+3. **Go To URL** opens the purchase orders page and waits until it has loaded.
+4. **Check App State** looks for the login form for up to 5 seconds.
+5. If the form is shown, **Get Credential** reads the portal login, and **Type Into** and **Click** log in.
+6. If the form is not shown, the robot is already logged in.
+7. **Assign** starts at page 1.
+8. **While** repeats the reading for each page.
+9. **Go To URL** opens the page with the number `page`.
+10. **Assign** starts at the first row of the table.
+11. **While** repeats the reading for each row, at most 10 rows.
+12. **Check App State** checks that the row exists. If it does not exist, the page has no more rows.
+13. **Get Text** reads the order number, the supplier and the amount without VAT of the row.
+14. **Assign** turns the amount text, for example `73 900,95 kr`, into a number, and **Add Data Row** adds the row to the table.
+15. **Check App State** looks for the "Nästa sida" (next page) link. If it exists, the next page is read, otherwise the loop ends.
+16. **If** stops the workflow with an error when no purchase order was read.
+17. **Log Message** writes the number of purchase orders and pages.
+
+![GetPurchaseOrders, part 1](Screenshots/studio-get-purchase-orders-1.png)
+
+*Figure 41. The first part of `Workflows/GetPurchaseOrders.xaml`: opening the page and the login.*
+
+![GetPurchaseOrders, part 2](Screenshots/studio-get-purchase-orders-2.png)
+
+*Figure 42. The loop over the pages and the rows, with the three Get Text activities.*
+
+![GetPurchaseOrders, part 3](Screenshots/studio-get-purchase-orders-3.png)
+
+*Figure 43. The end of the row loop, the check for the next page and the check that orders were read.*
+
+The four targets were added to the Object Repository: one screen with the order cell, the supplier cell, the amount cell and the "Nästa sida" (next page) link (Figure 44).
+
+![The Object Repository](Screenshots/studio-object-repository-po.png)
+
+*Figure 44. The Object Repository with the screen "Purchase Orders Page" and its four elements.*
+
+The same Get Text activity must read row 1, row 2, row 3 and so on. So the row number in the selector is a variable (Figures 45 and 46). The selector is made with `string.Format`, and `tableRow='{0}'` is filled with the variable `rowIndex`. The first data row is row 2, because row 1 is the header.
+
+![Get Order Number and its selector](Screenshots/studio-get-order-number.png)
+
+*Figure 45. Get Order Number (1) is linked to the Object Repository. Its strict selector (2) contains the row number.*
+
+![The selector with the row number](Screenshots/studio-selector-row-index.png)
+
+*Figure 46. The strict selector in the Expression Editor. `tableRow='{0}'` is replaced by `rowIndex`.*
+
+The first run from Studio gave a wrong result. Most invoices got the class "Wrong PO", and only 26 of 40 emails were correct (Figure 47). The log showed "Already logged in to Personalportalen", but the browser showed the login page, and 0 purchase orders were read. The check for the login form had run while the new browser tab was still loading. It did not find the form within 3 seconds, so the robot thought it was already logged in.
+
+![The first dry run with the login problem](Screenshots/studio-first-dry-run-failed.png)
+
+*Figure 47. The first run from Studio. The FAIL lines say "got Wrong PO", and only 26 of 40 emails got the expected result.*
+
+Two changes fixed it. First, **Go To URL** opens the purchase orders page before the login check, and this activity waits until the page has loaded. If the session has ended, the portal shows the login page, and the check now finds the form, with a timeout of 5 seconds. Second, if no purchase order is read, the workflow now stops with the error "No purchase orders were read". A missing login or an empty page can no longer give a silent wrong result. After the fix, the robot logged in by itself when the portal session had ended, and all 30 purchase orders were read.
+
+### 6.5 The History of Processed Invoices
+
+An invoice is a duplicate if the same supplier and invoice number was handled before. One email in the test data (P02-E24) is a copy of an invoice that is already in the folder Processed from an earlier run. In the portal, this invoice only has the status Inkommen, so the portal alone does not show the problem.
+
+`Workflows/GetProcessedHistory.xaml` reads the emails in the folder Processed, downloads their PDF attachments to `Output/History`, and reads each PDF with ReadInvoice. The organisation number and the invoice number of every invoice are saved in a history table. During the run, every correct invoice is also added to this table, so the second email with invoice 49838 (P02-E10) is found as a duplicate of P02-E09.
+
+The numbers in Figures 48 and 49 match the steps:
+
+1. **Build Data Table** makes the history table with the columns OrgNumber, InvoiceNumber and Source.
+2. **Assign** sets the folder `Output/History`.
+3. **Get Email List** reads the emails in the folder Processed of the shared mailbox.
+4. **For Each** goes through the emails. Only emails with attachments are used.
+5. **Create Folder** and **Download Email Attachments** save the attachments of the email in its own folder.
+6. **For Each** goes through the saved files.
+7. **If** keeps only the PDF files.
+8. **Invoke Workflow File** reads the PDF with ReadInvoice.
+9. **If** adds an invoice or a credit note to the history table.
+10. **Assign** counts the emails, so the next email gets the next folder.
+11. **Log Message** writes the number of emails and invoices.
+
+![GetProcessedHistory, part 1](Screenshots/studio-processed-history-1.png)
+
+*Figure 48. The first part of `Workflows/GetProcessedHistory.xaml`: reading the emails in Processed and saving their attachments.*
+
+![GetProcessedHistory, part 2](Screenshots/studio-processed-history-2.png)
+
+*Figure 49. The second part: reading each PDF and adding it to the history table.*
+
+In the test mailbox, the folder Processed has 2 emails with 2 invoices, 66671 and 74456.
+
+### 6.6 The Business Checks
+
+`Workflows/CheckInvoice.xaml` checks one invoice. It works like ReadInvoice: each check is an **If** that only runs if no earlier check has found a problem (`out_Class = ""`), so the first problem decides the result. The labels in Figures 50 to 52 match the list:
+
+- **A** starts with no result and finds the supplier by the organisation number from the PDF.
+- **Check 1:** the supplier must be in the supplier register (Unknown supplier).
+- **B** reads the name, email address and status of the supplier.
+- **Check 2:** the supplier must have the status Aktiv (Inactive supplier).
+- **C** checks if the sender is an internal hospital address. Internal senders may forward invoices.
+- **Check 3:** an external sender must be the registered email address of the supplier (Sender mismatch).
+- **Check 4:** a subject with "påminnelse" is a reminder (Reminder).
+- **Check 5:** a credit note is handled by a person (Correction).
+- **Check 6:** the invoice must have a purchase order (Missing PO).
+- **D** finds the purchase order in the table from Personalportalen.
+- **Check 7:** the purchase order must exist (Wrong PO).
+- **E** reads the supplier and the amount of the purchase order.
+- **Check 8:** the purchase order must belong to the same supplier (Wrong PO).
+- **Check 9:** the amount without VAT must be the amount of the purchase order (Amount mismatch).
+- **F** calculates 25 % of the amount without VAT.
+- **Check 10:** the VAT must be 25 %, with a difference of at most 0,01 kr (VAT error).
+- **Check 11:** the invoice must not be in the history table (Duplicate).
+- **Check 12:** the invoice must not be in the portal with the status Betald or Godkänd (Duplicate).
+- **13:** if no check found a problem, the result is Invoice.
+
+![CheckInvoice, part 1](Screenshots/studio-check-invoice-1.png)
+
+*Figure 50. The first part of `Workflows/CheckInvoice.xaml`: checks 1 to 3.*
+
+![CheckInvoice, part 2](Screenshots/studio-check-invoice-2.png)
+
+*Figure 51. The second part: checks 4 to 7.*
+
+![CheckInvoice, part 3](Screenshots/studio-check-invoice-3.png)
+
+*Figure 52. The third part: checks 8 to 12 and the result Invoice.*
+
+The order of the checks comes from the expected results. For example, P02-E20 and P02-E21 are approved in the portal, but the expected class is the amount problem and the VAT problem. So the duplicate checks come last. P02-E19 is a reminder without a purchase order, and the expected class is Reminder, so the reminder check comes before the purchase order check. Invoices with the portal status Inkommen are not duplicates: P02-E13 has an extra Inkommen record in the portal, and it is still a correct invoice.
+
+### 6.7 Classifying One Email
+
+`Workflows/ClassifyEmail.xaml` decides the class and the target folder of one email. It follows the rule order from section 4.4, and it uses the same pattern with `out_Class = ""`.
+
+The first rules only need the email itself (Figures 53 to 55):
+
+- **A** reads the subject, the sender address and domain, the hospital domain and the names of the attachments.
+- **Rule 1:** an email with the category "Robot: Processed" was already handled in an earlier run.
+- **Rules 2 to 5:** automatic replies, newsletters, order confirmations and internal messages without an attachment are not invoices. They stay in the Inbox.
+- **B** looks through the attachment names for HTML files.
+- **Rule 6a:** an HTML attachment is suspicious. It is never opened.
+- **Rule 6b:** a subject about new payment details is suspicious.
+- **C** looks for a supplier with the same name as the sender.
+- **Rule 6c:** a sender who uses the name of a supplier, but a different domain, is suspicious. This finds the look-alike domain of P02-E39.
+- **Rules 7a and 7b:** an email without an attachment is a question or a missing attachment.
+
+![ClassifyEmail, part 1](Screenshots/studio-classify-email-1.png)
+
+*Figure 53. The first part of `Workflows/ClassifyEmail.xaml`: the email data and rules 1 to 3.*
+
+![ClassifyEmail, part 2](Screenshots/studio-classify-email-2.png)
+
+*Figure 54. Rules 4 and 5, the search for HTML files and rule 6a.*
+
+![ClassifyEmail, part 3](Screenshots/studio-classify-email-3.png)
+
+*Figure 55. Rules 6b, 6c, 7a and 7b.*
+
+Only if no rule has found a class yet are the attachments downloaded (D in Figure 56):
+
+1. **Create Folder** makes a folder for the email in `Output/Attachments`.
+2. **Download Email Attachments** saves the attachments. Inline images such as logos are not saved.
+3. **For Each** goes through the attachment names in the order of the email and keeps the PDF files. The file content is checked later by ReadInvoice, so a file name like `Dokument1.PDF` also works.
+4. **Rule 8:** if there is no PDF, for example only a photo or a ZIP file, the email goes to Review. These files are never opened.
+
+![ClassifyEmail, part 4](Screenshots/studio-classify-email-4.png)
+
+*Figure 56. Downloading the attachments and rule 8.*
+
+Then every PDF is read (Figures 57 and 58):
+
+1. **Assign** starts the lists of correct invoices and invoice numbers, and starts with no error and no problem.
+2. **For Each** goes through the PDF files.
+3. **Invoke Workflow File** runs ReadInvoice.
+4. The invoice number is saved for the report.
+5. The supplier name from the PDF is saved, in case the supplier is not in the register.
+6. **Switch** looks at the result of ReadInvoice. **Error** saves the first technical error, **Scanned** saves the problem "Scanned invoice", and **NotInvoice** counts other documents, such as a delivery note. The **Default** case is used for invoices and credit notes:
+   1. **Invoke Workflow File** runs CheckInvoice.
+   2. The supplier name from the register is used for the report.
+   3. **If** saves a correct invoice in the list. Otherwise, the first problem is saved.
+
+![ClassifyEmail, part 5](Screenshots/studio-classify-email-5.png)
+
+*Figure 57. The loop over the PDF files: ReadInvoice and the Switch with the cases Error and Scanned.*
+
+![ClassifyEmail, part 6](Screenshots/studio-classify-email-6.png)
+
+*Figure 58. The cases NotInvoice and Default with CheckInvoice.*
+
+At the end, the result of the email is decided (Figure 59):
+
+1. **Assign** joins the invoice numbers.
+2. **Rule 9:** a technical error in any PDF gives Technical error. The supplier is asked for a new invoice.
+3. **Rule 10:** otherwise, the first business problem decides the class.
+4. **Rule 11:** otherwise, all invoices are correct. The class is "Invoice", or "Invoice (2)" for an email with two invoices, and the invoices are added to the history table.
+5. **Rule 12:** if the PDFs were only other documents, the email is not an invoice.
+6. **If** chooses the folder: Inbox for "Not an invoice", Error for "Technical error", Processed for "Invoice" and "Already handled", and Review for everything else.
+
+![ClassifyEmail, part 7](Screenshots/studio-classify-email-7.png)
+
+*Figure 59. Rules 9 to 12 and the choice of the folder.*
+
+### 6.8 Dry Run Over the Inbox
+
+`Tests/Test_ClassifyEmails.xaml` runs the whole classification over the real Inbox, but it does not move, mark or send anything. The numbers in Figures 60 and 61 match the steps:
+
+1. **Invoke Workflow File** runs ReadConfig.
+2. GetFinanceData reads the suppliers and invoices from the API.
+3. GetPurchaseOrders reads the purchase orders from Personalportalen.
+4. GetProcessedHistory reads the history from the folder Processed.
+5. **Read CSV** reads `TestData/expected_results.csv`.
+6. **Get Email List** reads all emails in the Inbox of the shared mailbox. The emails are not marked as read.
+7. **Assign** sorts the emails with the oldest first, so the first copy of an invoice is handled first.
+8. **Build Data Table** makes the results table.
+9. **For Each** goes through the emails.
+10. **Invoke Workflow File** runs ClassifyEmail.
+11. **Assign** activities find the expected class and folder by the InternetMessageId and compare them with the result.
+12. **Add Data Row** saves the result.
+13. **If** counts the passed emails and writes OK or FAIL to the log.
+14. **Write CSV** saves the table as `Output/classify_results.csv`.
+15. **Log Message** writes the number of emails for each folder.
+16. **Log Message** writes the summary.
+
+![The dry run test, part 1](Screenshots/studio-test-classify-emails-1.png)
+
+*Figure 60. The first part of `Tests/Test_ClassifyEmails.xaml`: reading the data and the emails.*
+
+![The dry run test, part 2](Screenshots/studio-test-classify-emails-2.png)
+
+*Figure 61. The second part: the loop over the emails and the end of the test.*
+
+After the login fix, the test was run from Studio again, and all 40 emails got the expected class and folder (Figure 62).
+
+![The Output panel of the dry run](Screenshots/studio-test-classify-emails-output.png)
+
+*Figure 62. The end of the dry run: an OK line for each email, the number of emails for each folder and "40 of 40".*
+
+| Folder | Emails | Classes |
+|---|---|---|
+| Processed | 9 | Invoice (8 emails, one of them with two invoices), Already handled |
+| Review | 21 | Duplicate, Reminder, Amount mismatch, VAT error, Missing PO, Unknown supplier, Inactive supplier, Sender mismatch, Correction, Scanned invoice, Unsupported attachment, No attachment, Question, Suspicious |
+| Error | 4 | Technical error |
+| Inbox | 6 | Not an invoice |
+
+These are the same numbers as the expected result of the test mailbox: 9 emails with 10 invoices to Processed, 21 to Review, 4 to Error and 6 that stay in the Inbox. The file `Output/classify_results.csv` also has the reason for every email, for example "Net amount 58 061,41 kr is not the amount of PO-2026-0024 (64 512,68 kr)" for P02-E20, or "Invoice 65975 is already in the portal as INV-00011 with status Betald" for P02-E22.

@@ -1,0 +1,18 @@
+{
+  "Version": 2,
+  "Rules": [
+    {
+      "RuleId": "ST-SEC-009",
+      "IsEnabled": true,
+      "DefaultIsEnabled": true,
+      "DefaultErrorLevel": "Error",
+      "Parameters": [
+        {
+          "Name": "Excluded",
+          "Value": null
+        }
+      ],
+      "ErrorLevel": "Warning"
+    }
+  ]
+}
