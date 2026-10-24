@@ -985,3 +985,166 @@ To check that nothing is done twice, ProcessInbox was run again without a reset.
 ![The Output panel of the second run](Screenshots/studio-second-run-output.png)
 
 *Figure 83. The second run: the 6 emails in the Inbox are skipped (1), and no email is handled and no report is written (2).*
+
+## 8. Running the Whole Process and Handling Errors
+
+In the last part, the whole process got one start point, `Main.xaml`. Errors were also handled, so one broken email does not stop the run, and a short problem with the lab API is tried again. Two failure tests were run to see what really happens when something goes wrong.
+
+### 8.1 The Main Workflow
+
+Until now, `Main.xaml` was the Outlook test from section 3. That test was moved to `Tests/Test_OutlookConnection.xaml`, and `Main.xaml` now starts the whole process. The numbers in Figure 84 match the steps:
+
+1. **Log Message** writes that the run has started.
+2. **Try Catch** runs ProcessInbox with **Invoke Workflow File**.
+3. If an error stops the run, **Log Message** writes the activity and the error text.
+4. **Log Message** explains that the emails that were already handled are in the processed log, so the next run continues with the rest.
+5. **Rethrow** throws the error again, so the run ends as failed and the error is not hidden.
+6. **Log Message** writes that the run has finished.
+
+![The Main workflow](Screenshots/studio-main.png)
+
+*Figure 84. `Main.xaml` with the Try Catch around ProcessInbox.*
+
+### 8.2 An Error in One Email
+
+In `Workflows/ProcessInbox.xaml`, the handling of each new email is now inside a **Try Catch**. The numbers in Figures 85 and 86 match the steps:
+
+1. **Try Catch** "Try Handle Email" holds all steps for one email.
+2. **Invoke Workflow File** runs ClassifyEmail.
+3. **Invoke Workflow File** runs RouteEmail.
+4. **Add Data Row** adds the row to the report and to the processed log.
+5. **Write CSV** saves the processed log.
+6. The **Catch** for `System.Exception` runs when any of these steps fails.
+7. **Assign** builds the error text from the name of the activity that failed and the error message.
+8. **Log Message** writes "Failed:", the subject and the error text with the level Error.
+9. **Add Data Row** adds a row with the class "Robot error" to the report.
+10. **Assign** counts the failed email. The loop then goes on with the next email.
+
+![ProcessInbox, the Try part](Screenshots/studio-process-inbox-try-1.png)
+
+*Figure 85. The Try part of the Try Catch for one email.*
+
+![ProcessInbox, the Catch part](Screenshots/studio-process-inbox-try-2.png)
+
+*Figure 86. The end of the Try part and the Catch part.*
+
+A failed email is not written to the processed log, so the next run tries it again. The steps in RouteEmail are in the order category, move and message. If the move fails, no message is sent, and if the run is started again, the email is handled once more from the start. RouteEmail was also changed in one small way: the category is now chosen by comparing the folder with the folder names in the config. In this way a wrong folder name stops the email at the move, where the error is clear.
+
+### 8.3 Trying the Lab API Again
+
+The lab API can be slow or down for a short time. In `Workflows/GetFinanceData.xaml`, the login and the reading of the suppliers and invoices were put inside a **Retry Scope** (Figure 87). The numbers match these parts:
+
+1. **Retry Scope** "Retry Lab API" runs its steps again when one of them fails.
+2. **Get Credential** reads the API login.
+3. **HTTP Request** gets the token.
+
+![GetFinanceData with the Retry Scope](Screenshots/studio-get-finance-data-retry.png)
+
+*Figure 87. The Retry Scope (1) around the login (2) and the token request (3).*
+
+The properties of the Retry Scope are set in the Properties panel (Figure 88). The numbers match these settings:
+
+1. **Number of attempts** is 3.
+2. **Retry interval** is 5 seconds, the wait between two tries.
+3. **Log exceptions** is Yes with the level Warn, so every failed try is written to the log.
+
+![The properties of the Retry Scope](Screenshots/studio-retry-scope-properties.png)
+
+*Figure 88. The selected Retry Scope "Retry Lab API" and its properties: the number of attempts (1), the retry interval (2) and the logging of the failed tries (3).*
+
+The condition part is empty, so any error starts a new try. The tables are built inside the Retry Scope, so a new try does not add the same rows twice.
+
+The Workflow Analyzer showed the error ST-SEC-008 at the first build: the password variable must be used in the same scope where it is made. The variables for the user name, the password and the login body were moved into the sequence inside the Retry Scope, and the error was gone.
+
+### 8.4 Test A: The Lab API Is Not Available
+
+For the first test, the setting `LabApiUrl` in `Data/Config.xlsx` was changed to the port 8099, where nothing answers (Figure 89). Then `Main.xaml` was run.
+
+![The wrong API address in the config](Screenshots/excel-config-wrong-api-url.png)
+
+*Figure 89. The lab API address with the wrong port 8099.*
+
+The robot tried three times. Every try waited for an answer and then stopped with "A task was canceled". After the third try, the Retry Scope gave the error to Main (Figure 90).
+
+![The Output panel of test A](Screenshots/studio-test-a-output.png)
+
+*Figure 90. Test A: three warnings for the failed tries (1) and the error from the Retry Scope (2).*
+
+Main wrote "The run stopped: Invoke Get Finance Data: Retry Lab API: A task was canceled." to the log, and Studio showed the error in a window (Figure 91). The API is read before the Inbox, so no email was read, moved or marked. After the test, the port was changed back to 8082.
+
+![The error window in Studio](Screenshots/studio-test-a-error-dialog.png)
+
+*Figure 91. The error window after test A. The source is the Retry Scope "Retry Lab API".*
+
+### 8.5 Test B: A Wrong Folder Name
+
+For the second test, the mailbox was reset, and the setting `Folder_Error` was changed from `Error` to `Errors`, a folder that does not exist (Figure 92).
+
+![The wrong folder name in the config](Screenshots/excel-config-wrong-folder.png)
+
+*Figure 92. The folder for broken invoices with the wrong name Errors.*
+
+In the first run, the 4 emails with a technical error could not be moved, and each of them got a "Failed" line in the log. The other 36 emails were handled as normal (Figure 93):
+
+```
+Failed: Faktura 26191: Move Email To Folder: Value cannot be null. (Parameter 'Folder named 'Errors' could not be found on this account.')
+Inbox: 40 emails, 36 handled, 4 failed, 0 skipped (already processed).
+```
+
+![The Output panel of the first run of test B](Screenshots/studio-test-b-run-1.png)
+
+*Figure 93. Test B, first run: a "Failed" line for an email that could not be moved (1), and the summary with 36 handled and 4 failed emails (2).*
+
+The 4 emails stayed in the Inbox, and no reply was sent for them. Then the folder name was changed back to `Error`, and `Main.xaml` was run again. The 6 emails that are not invoices were skipped, because they were in the processed log, and the 4 failed emails were handled again. They were moved to Error, and the 4 replies in test mode were sent (Figure 94).
+
+![The Output panel of the second run of test B](Screenshots/studio-test-b-run-2.png)
+
+*Figure 94. Test B, second run: the history line (1), the 4 emails with a technical error, now moved to Error with a reply (2), and the summary with 4 handled and 6 skipped emails (3).*
+
+### 8.6 Checking Both Reports and an Error in the History
+
+Test B wrote two reports. `Tests/Test_CheckReport.xaml` was changed so it reads all reports in the folder `Output`, the oldest first. A row with the class "Robot error" is skipped, because that email is checked in a later report. Before the test, the reports and the processed log of section 7 were moved to a folder `Output/Archive_step6`, so only the reports of this test were checked.
+
+The check found 39 of 40 emails with the expected result (Figure 95). P02-E13 (invoice 94583 from Bromma Sterilteknik AB) was expected as Invoice in Processed, but it was found as Duplicate, so it went to Review and a review notification was sent.
+
+![Test_CheckReport with 39 of 40 emails](Screenshots/studio-check-report-39-of-40.png)
+
+*Figure 95. The failed check for P02-E13 (1), and the summary with 39 of 40 emails and the error that stops the test (2).*
+
+The reason was in GetProcessedHistory. The workflow saves the attachments of the emails in Processed in the folders `Output/History/1`, `Output/History/2` and so on, and then reads every PDF in these folders. The folders were never emptied. One extra run before the reset had saved the invoice 94583 in `Output/History/1`. In the next run, this old file was still in the folder and was read as if it was in Processed, so invoice 94583 was a duplicate. The second run of test B shows the problem in the history line: 10 emails in Processed, but 24 invoices (Figure 94, number 1).
+
+To fix it, two activities were added at the start of `Workflows/GetProcessedHistory.xaml` (Figure 96):
+
+1. **Path Exists** checks if the folder `Output/History` exists.
+2. **If** it exists, **Delete Folder** deletes it with all old files, before the attachments are saved again.
+
+![The cleanup at the start of GetProcessedHistory](Screenshots/studio-get-processed-history-cleanup.png)
+
+*Figure 96. Path Exists (1) and the If with Delete Folder (2) at the start of GetProcessedHistory.*
+
+After the fix, the dry run read the history again without moving or sending anything. The log showed one invoice for each PDF in Processed, and no old file was left:
+
+```
+History read: 10 emails in Processed, 11 invoices
+```
+
+### 8.7 A Clean Run After the Fix
+
+To check the fix with the whole process, the mailbox was reset again, and the reports of test B were moved to the folder `Output/Archive_testB`. Then `Main.xaml` was run once. The history line showed only the 2 emails that are in Processed after a reset, with one invoice each:
+
+```
+History read: 2 emails in Processed, 2 invoices
+```
+
+All 40 emails in the Inbox were handled, and no email failed (Figure 97). P02-E13 was now found as Invoice and moved to Processed.
+
+![The Output panel of the clean run](Screenshots/studio-clean-run-output.png)
+
+*Figure 97. The summary of the clean run: 40 emails, 40 handled, 0 failed.*
+
+`Tests/Test_CheckReport.xaml` was then run on the new report. All emails had the expected class, folder and mail:
+
+```
+OK   P02-E13: Invoice -> Processed, mail: None
+Report check: 40 of 40 emails have the expected class, folder and mail (1 reports).
+```

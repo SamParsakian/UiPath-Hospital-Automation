@@ -52,10 +52,17 @@
     <Sequence.Variables>
       <Variable x:TypeArguments="scg:List(umm:Office365Message)" Name="processedEmails" />
       <Variable x:TypeArguments="x:String" Name="historyFolder" />
+      <Variable x:TypeArguments="x:Boolean" Name="folderExists" />
       <Variable x:TypeArguments="x:Int32" Default="1" Name="emailNumber" />
     </Sequence.Variables>
     <ui:BuildDataTable DataTable="[out_History]" DisplayName="Build History Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;History&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;History&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;OrgNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;InvoiceNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Source&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
     <Assign x:TypeArguments="x:String" DisplayName="Set History Folder" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[historyFolder]" Value="[Path.Combine(Environment.CurrentDirectory, &quot;Output&quot;, &quot;History&quot;)]" />
+    <ui:PathExists DisplayName="Does the History Folder Exist?" Exists="[folderExists]" Path="[historyFolder]" PathType="Folder" sap2010:WorkflowViewState.IdRef="PathExists_1" />
+    <If Condition="[folderExists]" DisplayName="Old History Files?" sap2010:WorkflowViewState.IdRef="If_3">
+      <If.Then>
+        <ui:DeleteFolderX DisplayName="Delete Old History Files" Path="[historyFolder]" Recursive="True" sap2010:WorkflowViewState.IdRef="DeleteFolderX_1" />
+      </If.Then>
+    </If>
     <umam:GetEmailListConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Get Processed Emails" EmailList="[processedEmails]" IncludeAttachments="None" IncludeSubfolders="False" MarkAsRead="False" MaxResults="0" UnreadOnly="False" UseConnectionService="True" WithAttachmentsOnly="False" sap2010:WorkflowViewState.IdRef="GetEmailListConnections_1">
       <umam:GetEmailListConnections.FilterSelectionBackup>
         <usau:BackupSlot x:TypeArguments="umame:FilterMode" StoredValue="ConditionBuilder">
@@ -99,7 +106,7 @@
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="umm:Office365Message" Name="email" />
           </ActivityAction.Argument>
-          <If Condition="[email.StandardAttachmentCount &gt; 0]" DisplayName="Has Attachments?" sap2010:WorkflowViewState.IdRef="If_3">
+          <If Condition="[email.StandardAttachmentCount &gt; 0]" DisplayName="Has Attachments?" sap2010:WorkflowViewState.IdRef="If_4">
             <If.Then>
               <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
                 <Sequence.Variables>
