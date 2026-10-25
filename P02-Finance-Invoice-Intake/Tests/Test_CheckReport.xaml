@@ -1,0 +1,147 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Tests_Test_CheckReport" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Test Check Report" sap2010:WorkflowViewState.IdRef="Sequence_6">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:Dictionary(x:String, x:String)" Name="config" />
+      <Variable x:TypeArguments="x:String" Name="reportFolder" />
+      <Variable x:TypeArguments="s:String[]" Name="reportFiles" />
+      <Variable x:TypeArguments="sd:DataTable" Name="report" />
+      <Variable x:TypeArguments="sd:DataTable" Name="expected" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="passedCount" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="reportCount" />
+    </Sequence.Variables>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Read Config" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\ReadConfig.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="out_Config">[config]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <Assign x:TypeArguments="x:String" DisplayName="Set Report Folder" sap2010:WorkflowViewState.IdRef="Assign`1_14" To="[reportFolder]" Value="[Path.Combine(Environment.CurrentDirectory, config(&quot;ReportFolder&quot;))]" />
+    <ui:ReadCsvFile PathResource="{x:Null}" DataTable="[expected]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" DisplayName="Read Expected Results" FilePath="[Path.Combine(Environment.CurrentDirectory, &quot;TestData&quot;, &quot;expected_results.csv&quot;)]" sap2010:WorkflowViewState.IdRef="ReadCsvFile_1" />
+    <ui:AddDataColumn x:TypeArguments="x:String" Column="{x:Null}" ColumnName="Used" DataTable="[expected]" DefaultValue="[&quot;No&quot;]" DisplayName="Add Used Column" sap2010:WorkflowViewState.IdRef="AddDataColumn`1_1" />
+    <Assign x:TypeArguments="s:String[]" DisplayName="Find Report Files" sap2010:WorkflowViewState.IdRef="Assign`1_15" To="[reportFiles]" Value="[Directory.GetFiles(reportFolder, &quot;Report_*.xlsx&quot;)]" />
+    <Assign x:TypeArguments="s:String[]" DisplayName="Sort Oldest Report First" sap2010:WorkflowViewState.IdRef="Assign`1_16" To="[reportFiles]" Value="[reportFiles.OrderBy(Function(f) f).ToArray()]" />
+    <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Report File" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[reportFiles]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:String">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:String" Name="reportFile" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Check One Report" sap2010:WorkflowViewState.IdRef="Sequence_5">
+            <ui:LogMessage DisplayName="Log Report Name" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[$&quot;Checking {Path.GetFileName(reportFile)}&quot;]" />
+            <ui:ReadRange AddHeaders="True" DataTable="[report]" DisplayName="Read Report" Range="" SheetName="Report" WorkbookPath="[reportFile]" sap2010:WorkflowViewState.IdRef="ReadRange_1" />
+            <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[report]" DisplayName="For Each Report Row" sap2010:WorkflowViewState.IdRef="ForEachRow_1">
+              <ui:ForEachRow.Body>
+                <ActivityAction x:TypeArguments="sd:DataRow">
+                  <ActivityAction.Argument>
+                    <DelegateInArgument x:TypeArguments="sd:DataRow" Name="CurrentRow" />
+                  </ActivityAction.Argument>
+                  <If Condition="[CurrentRow(&quot;Class&quot;).ToString() = &quot;Robot error&quot;]" DisplayName="Was the Email Not Finished?" sap2010:WorkflowViewState.IdRef="If_3">
+                    <If.Then>
+                      <ui:LogMessage DisplayName="Log Not Finished" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[$&quot;Not finished in this report, checked again in a later report: {CurrentRow(&quot;Subject&quot;)}&quot;]" />
+                    </If.Then>
+                    <If.Else>
+                      <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                        <Sequence.Variables>
+                          <Variable x:TypeArguments="sd:DataRow[]" Name="expectedRows" />
+                          <Variable x:TypeArguments="x:String" Name="scenarioId" />
+                          <Variable x:TypeArguments="x:String" Name="expectedClass" />
+                          <Variable x:TypeArguments="x:String" Name="expectedFolder" />
+                          <Variable x:TypeArguments="x:String" Name="expectedMail" />
+                          <Variable x:TypeArguments="x:Boolean" Name="passed" />
+                        </Sequence.Variables>
+                        <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Expected Row" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[expectedRows]" Value="[expected.Select(&quot;Subject = '&quot; &amp; CurrentRow(&quot;Subject&quot;).ToString().Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;' AND Sender LIKE '%&lt;&quot; &amp; CurrentRow(&quot;Sender&quot;).ToString() &amp; &quot;&gt;' AND Used = 'No'&quot;)]" />
+                        <If Condition="[expectedRows.Length = 0]" DisplayName="Is the Email Unknown?" sap2010:WorkflowViewState.IdRef="If_1">
+                          <If.Then>
+                            <Sequence DisplayName="Email Unknown" sap2010:WorkflowViewState.IdRef="Sequence_1">
+                              <Assign x:TypeArguments="x:String" DisplayName="Set Unknown Scenario" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[scenarioId]" Value="[&quot;unknown&quot;]" />
+                              <Assign x:TypeArguments="x:String" DisplayName="Set No Expected Class" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[expectedClass]" Value="[&quot;&quot;]" />
+                              <Assign x:TypeArguments="x:String" DisplayName="Set No Expected Folder" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[expectedFolder]" Value="[&quot;&quot;]" />
+                              <Assign x:TypeArguments="x:String" DisplayName="Set No Expected Mail" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[expectedMail]" Value="[&quot;&quot;]" />
+                            </Sequence>
+                          </If.Then>
+                          <If.Else>
+                            <Sequence DisplayName="Email Found" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                              <Assign x:TypeArguments="x:Object" DisplayName="Mark Expected Row As Used" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[expectedRows(0)(&quot;Used&quot;)]" Value="[&quot;Yes&quot;]" />
+                              <Assign x:TypeArguments="x:String" DisplayName="Get Scenario ID" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[scenarioId]" Value="[expectedRows(0)(&quot;ScenarioId&quot;).ToString()]" />
+                              <Assign x:TypeArguments="x:String" DisplayName="Get Expected Class" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[expectedClass]" Value="[expectedRows(0)(&quot;ExpectedClass&quot;).ToString()]" />
+                              <Assign x:TypeArguments="x:String" DisplayName="Get Expected Folder" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[expectedFolder]" Value="[expectedRows(0)(&quot;ExpectedFolder&quot;).ToString()]" />
+                              <Assign x:TypeArguments="x:String" DisplayName="Get Expected Mail" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[expectedMail]" Value="[If(expectedRows(0)(&quot;NotificationExpected&quot;).ToString() = &quot;Yes&quot;, &quot;Review notification&quot;, If(expectedRows(0)(&quot;ReplyExpected&quot;).ToString() = &quot;Yes&quot;, &quot;Error reply (test mode)&quot;, &quot;None&quot;))]" />
+                            </Sequence>
+                          </If.Else>
+                        </If>
+                        <Assign x:TypeArguments="x:Boolean" DisplayName="Compare With Expected" sap2010:WorkflowViewState.IdRef="Assign`1_11" To="[passed]" Value="[CurrentRow(&quot;Class&quot;).ToString() = expectedClass AndAlso CurrentRow(&quot;Folder&quot;).ToString() = expectedFolder AndAlso CurrentRow(&quot;MailSent&quot;).ToString() = expectedMail]" />
+                        <If Condition="[passed]" DisplayName="Passed?" sap2010:WorkflowViewState.IdRef="If_2">
+                          <If.Then>
+                            <Sequence DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                              <Assign x:TypeArguments="x:Int32" DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Assign`1_12" To="[passedCount]" Value="[passedCount + 1]" />
+                              <ui:LogMessage DisplayName="Log Passed" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;OK   {scenarioId}: {CurrentRow(&quot;Class&quot;)} -&gt; {CurrentRow(&quot;Folder&quot;)}, mail: {CurrentRow(&quot;MailSent&quot;)}&quot;]" />
+                            </Sequence>
+                          </If.Then>
+                          <If.Else>
+                            <ui:LogMessage DisplayName="Log Failed" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Warn" Message="[$&quot;FAIL {scenarioId}: expected {expectedClass} -&gt; {expectedFolder}, mail: {expectedMail}; got {CurrentRow(&quot;Class&quot;)} -&gt; {CurrentRow(&quot;Folder&quot;)}, mail: {CurrentRow(&quot;MailSent&quot;)}&quot;]" />
+                          </If.Else>
+                        </If>
+                      </Sequence>
+                    </If.Else>
+                  </If>
+                </ActivityAction>
+              </ui:ForEachRow.Body>
+            </ui:ForEachRow>
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Report" sap2010:WorkflowViewState.IdRef="Assign`1_13" To="[reportCount]" Value="[reportCount + 1]" />
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <If Condition="[reportCount = 0]" DisplayName="No Report Found?" sap2010:WorkflowViewState.IdRef="If_4">
+      <If.Then>
+        <Throw DisplayName="Throw No Report" Exception="[New Exception(&quot;No report was found in the Output folder.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Summary" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[$&quot;Report check: {passedCount} of {expected.Rows.Count} emails have the expected class, folder and mail ({reportCount} reports).&quot;]" />
+    <If Condition="[passedCount &lt;&gt; expected.Rows.Count]" DisplayName="Any Failed?" sap2010:WorkflowViewState.IdRef="If_5">
+      <If.Then>
+        <Throw DisplayName="Throw Test Failed" Exception="[New Exception($&quot;FAILED: {expected.Rows.Count - passedCount} emails do not match the expected results.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_2" />
+      </If.Then>
+    </If>
+  </Sequence>
+</Activity>

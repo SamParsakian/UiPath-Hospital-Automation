@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Supplier Cell",
+  "Description": "Cell in the Leverantor column of a row in the purchase orders table",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "Uo8wrUAdi0iQ5_T1jhgFLg",
+  "Reference": "OEmMk564hEmw20ClD15V9g/Uo8wrUAdi0iQ5_T1jhgFLg",
+  "ParentRef": "OEmMk564hEmw20ClD15V9g/pcu961cVPUqH9eqsRZavWA",
+  "Created": "2026-10-21T11:46:55.6615571Z",
+  "Updated": "2026-10-21T11:46:55.6615571Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
