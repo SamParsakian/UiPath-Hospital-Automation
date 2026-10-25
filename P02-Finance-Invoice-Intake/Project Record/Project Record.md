@@ -23,23 +23,36 @@ The finance office (Ekonomienheten) receives supplier invoices in a shared mailb
    - **Error:** the file or the data is broken, for example a damaged PDF or a wrong total. The supplier is asked to send a new invoice.
    - **Inbox:** emails that are not invoices, for example newsletters or delivery notes, stay in the Inbox.
 
-The shared mailbox is shown under the assistant's own mailbox in Outlook. The red rectangles show the incoming invoice emails and the three folders Error, Processed and Review, where the emails are moved after the check.
+The shared mailbox is shown under the assistant's own mailbox in Outlook. The numbers in Figure 1 match these parts:
+
+1. The shared mailbox **Ekonomi - Leverantörsfakturor**.
+2. Its **Inbox**. The number 33 shows the unread emails.
+3. The incoming emails, most of them with an invoice attached.
+4. The three folders **Error**, **Processed** and **Review**, where the emails are moved after the check.
 
 ![Shared mailbox in Outlook on the web](Screenshots/shared-mailbox-inbox.png)
 
-*Figure 1. The shared mailbox Ekonomi - Leverantörsfakturor in Outlook on the web. The number next to Inbox shows the unread emails.*
+*Figure 1. The shared mailbox Ekonomi - Leverantörsfakturor in Outlook on the web.*
 
-The suppliers are found under Ekonomi > Leverantörer in Personalportalen. The organisation number and the email address of the supplier are compared with the invoice and with the sender of the email.
+The suppliers are found under Ekonomi > Leverantörer in Personalportalen. The numbers in Figure 2 match the columns that are used:
+
+1. **Organisationsnummer** is compared with the organisation number on the invoice.
+2. **E-post** is compared with the sender of the email.
+3. **Status** shows if the supplier is active.
 
 ![Suppliers in Personalportalen](Screenshots/staff-portal-suppliers.png)
 
-*Figure 2. The Leverantörer page in Personalportalen. Each supplier has an organisation number, an email address and a status.*
+*Figure 2. The Leverantörer page in Personalportalen.*
 
-The purchase orders are found under Ekonomi > Inköpsordrar. The amount of the order without VAT is the value that the invoice is compared with.
+The purchase orders are found under Ekonomi > Inköpsordrar. The numbers in Figure 3 match the columns that are used:
+
+1. **Order** is the purchase order number on the invoice.
+2. **Leverantör** is the supplier of the order.
+3. **Belopp exkl. moms** is the order amount without VAT, which the invoice is compared with.
 
 ![Purchase orders in Personalportalen](Screenshots/staff-portal-purchase-orders.png)
 
-*Figure 3. The Inköpsordrar page in Personalportalen. Each order shows the supplier and the order amount without VAT.*
+*Figure 3. The Inköpsordrar page in Personalportalen.*
 
 The problem is slow and repetitive work. Many emails are not even invoices, and small mistakes, like a wrong total or a missing order number, are easy to miss.
 
@@ -101,17 +114,21 @@ The package was added in Studio under Manage Packages > All Packages, by searchi
 
 ![The Microsoft 365 package in Manage Packages](Screenshots/studio-packages-office365.png)
 
-*Figure 4. Manage Packages in UiPath Studio. The red rectangle shows the installed Microsoft 365 package, version 3.12.10.*
+*Figure 4. Manage Packages in UiPath Studio with the installed Microsoft 365 package, version 3.12.10.*
 
 ### 3.2 Connecting UiPath to the Mailbox
 
 UiPath signs in to Microsoft 365 with a connection in Integration Service. The connection is created once, with the account of the finance assistant Andreas Henriksson, who has access to the shared mailbox. The password is entered only in the Microsoft sign-in window and is never stored in the workflow.
 
-When the connection is created, the needed permissions are selected. The robot needs to read and change emails and to send emails, also in a shared mailbox. Calendar permissions are not needed, so they were removed. The shared mailbox field is left empty, because the shared mailbox is chosen in each Outlook activity instead.
+When the connection is created, the needed settings are selected. The numbers in Figure 5 match these fields:
+
+1. The connection is stored in the folder **My Workspace**.
+2. **Scope** holds the permissions. The robot needs to read and change emails and to send emails, also in a shared mailbox. Calendar permissions are not needed, so they were removed.
+3. **Shared mailbox** is left empty, because the shared mailbox is chosen in each Outlook activity instead.
 
 ![Permissions of the Outlook connection](Screenshots/outlook-connection-scopes.png)
 
-*Figure 5. The new Outlook connection. The red rectangle shows the mail permissions, including the two permissions for the shared mailbox.*
+*Figure 5. The new Outlook connection.*
 
 The first sign-in showed the message "Need admin approval", because the organisation must allow the UiPath app once. The approval was given with the administrator account. During this step, a second connection with the administrator account was also created. It was removed, because the robot must only work with the account of the finance assistant.
 
@@ -132,21 +149,31 @@ The test workflow was built in `Main.xaml` in UiPath Studio. The activities were
 
 ![The test workflow in UiPath Studio](Screenshots/studio-main-workflow.png)
 
-*Figure 7. The workflow `Main.xaml` in the Studio designer. The red rectangles show the six steps.*
+*Figure 7. The workflow `Main.xaml` in the Studio designer.*
 
-Some options of Get Email List are not shown in the designer, but in the Properties panel. When the activity is selected, the panel shows that "Mark as read" is set to No, so the emails stay unread. The list of emails is saved in the output variable `inboxEmails`. The test does not move, label or send any email.
+Some options of Get Email List are not shown in the designer, but in the Properties panel. The numbers in Figure 8 match these parts:
+
+1. **Get Inbox Emails** is selected in the designer.
+2. **Mark as read** is set to No, so the emails stay unread.
+3. **Email list** saves the emails in the output variable `inboxEmails`.
+
+The test does not move, label or send any email.
 
 ![The properties of Get Inbox Emails](Screenshots/studio-get-emails-properties.png)
 
-*Figure 8. Get Inbox Emails is selected, and the Properties panel shows its options. "Mark as read" is No, and the result goes to `inboxEmails`.*
+*Figure 8. Get Inbox Emails and its options in the Properties panel.*
 
 ### 3.4 Result
 
-The workflow was started with Debug File in Studio. The Output panel shows 40 emails in the Inbox, and 33 of them are unread. This is the same as in Outlook on the web. The newest email in the list is `Order PO-2026-0011 - faktura 55655 betald?`. The invoice 49838 appears twice, because the same email was sent twice on purpose, to test duplicates. The last lines show that the PDF was saved and that the run took 10 seconds.
+The workflow was started with Debug File in Studio. The newest email in the list is `Order PO-2026-0011 - faktura 55655 betald?`, and the run took 10 seconds. The numbers in Figure 9 match these lines:
+
+1. There are 40 emails in the Inbox, and 33 of them are unread. This is the same as in Outlook on the web.
+2. The invoice 49838 appears twice, because the same email was sent twice on purpose, to test duplicates.
+3. The PDF was saved. The local folder path is blurred.
 
 ![The Output panel after the test run](Screenshots/studio-main-output.png)
 
-*Figure 9. The Output panel of the test run. The red rectangles show the number of emails, the invoice 49838 and the saved PDF. The local folder path is blurred.*
+*Figure 9. The Output panel of the test run.*
 
 The invoice file `norrlands-livsmedelsgrossist-ab_49838.pdf` was saved, and it opens as a normal invoice. The red rectangle shows the fields that the robot must read from each invoice later: supplier, organisation number, invoice number, dates, purchase order, cost centre, amounts and bankgiro.
 
@@ -179,11 +206,14 @@ The 40 emails are expected to end like this:
 
 To test the reading of the invoices without touching the mailbox every time, a copy of all attachments was saved in the project. This was done with a small helper workflow, `Tools/DownloadTestAttachments.xaml`.
 
-The CSV file is read with the activity Read CSV, which comes from the Excel package (`UiPath.Excel.Activities`). This package was added in Manage Packages in the same way as the Microsoft 365 package. It can also read and write Excel files without opening Excel.
+The CSV file is read with the activity Read CSV, which comes from the Excel package (`UiPath.Excel.Activities`). This package was added in Manage Packages in the same way as the Microsoft 365 package. It can also read and write Excel files without opening Excel. The numbers in Figure 11 match these parts:
+
+1. The package **UiPath.Excel.Activities** in the list of project dependencies.
+2. The installed version, 3.6.1.
 
 ![The Excel package in Manage Packages](Screenshots/studio-packages-excel.png)
 
-*Figure 11. Manage Packages with the installed Excel package, version 3.6.1.*
+*Figure 11. Manage Packages with the installed Excel package.*
 
 The numbers in Figure 12 match the steps of the workflow:
 
@@ -201,11 +231,14 @@ The numbers in Figure 12 match the steps of the workflow:
 
 *Figure 12. The workflow `Tools/DownloadTestAttachments.xaml` in the Studio designer.*
 
-The workflow was run with Debug File. No warning about an unknown email was shown, so all 40 emails were found in the CSV file. The attachments of the 32 emails that have attachments were saved. Like the first test, it does not mark, move or send any email.
+The workflow was run with Debug File. Like the first test, it does not mark, move or send any email. The numbers in Figure 13 match these lines:
+
+1. One line for each email with attachments: the scenario ID and the saved files. No warning about an unknown email was shown, so all 40 emails were found in the CSV file.
+2. The summary: 40 emails in the Inbox, and the attachments of 32 emails were saved.
 
 ![The Output panel of DownloadTestAttachments](Screenshots/studio-download-test-attachments-output.png)
 
-*Figure 13. The Output panel. Each line shows a scenario ID and its saved files, and the last line shows that 32 emails had attachments.*
+*Figure 13. The Output panel of DownloadTestAttachments.*
 
 The files were only saved, never opened. Some of them, such as the HTML file, the ZIP file and the photo, are suspicious or not readable on purpose.
 
@@ -217,17 +250,29 @@ The files were only saved, never opened. Some of them, such as the HTML file, th
 
 Two emails were checked manually in Personalportalen, to make sure that the expected results match the hospital data.
 
-The normal invoice 49838 from Norrlands Livsmedelsgrossist AB is found under Ekonomi > Fakturor. The invoice number, the purchase order PO-2026-0001 and the total 17 851,68 kr are the same as in the PDF. The amount of the purchase order without VAT (14 281,34 kr) is also the same as on the invoice, so this invoice is expected to be processed.
+The normal invoice 49838 from Norrlands Livsmedelsgrossist AB is found under Ekonomi > Fakturor. The numbers in Figure 15 match the values that are the same as in the PDF:
+
+1. The invoice number 49838.
+2. The purchase order PO-2026-0001.
+3. The total 17 851,68 kr.
+
+The amount of the purchase order without VAT (14 281,34 kr) is also the same as on the invoice, so this invoice is expected to be processed.
 
 ![Invoice 49838 in Personalportalen](Screenshots/staff-portal-invoice-49838.png)
 
-*Figure 15. Invoice 49838 in Personalportalen. The supplier, the purchase order and the total match the PDF.*
+*Figure 15. Invoice 49838 in Personalportalen.*
 
-Invoice 70870 from Nordisk Sjukvårdsmaterial AB has 58 061,41 kr without VAT, but its purchase order PO-2026-0024 has 64 512,68 kr. The amounts are different, so this invoice is expected to go to Review.
+Invoice 70870 from Nordisk Sjukvårdsmaterial AB was checked in the same way. The numbers in Figure 16 match these values:
+
+1. The purchase order PO-2026-0024 of the invoice.
+2. The order amount without VAT, 64 512,68 kr.
+3. The invoiced amount, 58 061,41 kr.
+
+The amounts are different, so this invoice is expected to go to Review.
 
 ![Purchase order PO-2026-0024 in Personalportalen](Screenshots/staff-portal-po-2026-0024.png)
 
-*Figure 16. Purchase order PO-2026-0024 in Personalportalen. The order amount is 64 512,68 kr, but the invoice has 58 061,41 kr.*
+*Figure 16. Purchase order PO-2026-0024 in Personalportalen.*
 
 ### 4.4 The Order of the Checks
 
@@ -252,12 +297,16 @@ The file was created with a second helper workflow, `Tools/CreateConfig.xaml`. T
 2. **Create Folder** makes the folder `Data`.
 3. **Write Range Workbook** writes the table to the sheet Settings, starting in cell A1. This activity writes the Excel file directly, so Excel does not need to be open.
 4. **Log Message** writes how many settings were saved.
+5. The Output panel shows that 17 settings were written.
 
 ![The helper workflow CreateConfig and its output](Screenshots/studio-create-config.png)
 
-*Figure 17. The workflow `Tools/CreateConfig.xaml` on the left and its Output panel on the right. The log shows that 17 settings were written.*
+*Figure 17. The workflow `Tools/CreateConfig.xaml` on the left and its Output panel on the right.*
 
-The settings were typed in the Build Data Table window, which opens with the button DataTable... The table has three text columns: Name, Value and Description. The row LabCredential holds only the name of the Windows credential, not the password.
+The settings were typed in the Build Data Table window, which opens with the button DataTable... The numbers in Figure 18 match these parts:
+
+1. The table has three text columns: Name, Value and Description.
+2. The row LabCredential holds only the name of the Windows credential, not the password.
 
 ![The Build Data Table window](Screenshots/studio-build-data-table.png)
 
