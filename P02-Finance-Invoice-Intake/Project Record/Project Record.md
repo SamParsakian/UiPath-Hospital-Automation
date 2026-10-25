@@ -1148,3 +1148,110 @@ All 40 emails in the Inbox were handled, and no email failed (Figure 97). P02-E1
 OK   P02-E13: Invoice -> Processed, mail: None
 Report check: 40 of 40 emails have the expected class, folder and mail (1 reports).
 ```
+
+## 9. Running the Process From Orchestrator
+
+Until now, the process was always started in Studio. In the last part, the settings that can change between environments were moved to Orchestrator assets, the process was published to Orchestrator, and it was started as a job from UiPath Assistant.
+
+### 9.1 Settings as Orchestrator Assets
+
+Six settings from `Data/Config.xlsx` were created as assets in the folder My Workspace. They are the settings that are different between a test and a real environment: the mailbox, the two lab addresses, the two recipients and the test mode. The names start with `P02_`, so they are easy to find next to the assets of other projects. The numbers in Figure 98 match these fields:
+
+1. **Asset name**, for example `P02_InvoiceMailbox`.
+2. **Type** is Text for the addresses and Bool for the test mode.
+3. **Global value** is the same value as in `Config.xlsx`.
+
+![Adding an asset in Orchestrator](Screenshots/orchestrator-add-asset.png)
+
+*Figure 98. A new Text asset for the invoice mailbox.*
+
+Figure 99 shows the six assets (1). `P02_TestMode` is a Bool asset with the value True (2), so the robot still sends replies only to the test recipient.
+
+![The six assets in My Workspace](Screenshots/orchestrator-assets-list.png)
+
+*Figure 99. The six P02 assets in My Workspace.*
+
+The two logins for the lab API and the lab portal were not moved. They stay in Windows Credential Manager, because the robot runs attended on the same computer, and a password is not written in any file.
+
+### 9.2 Reading the Assets in ReadConfig
+
+`Workflows/ReadConfig.xaml` still reads the Settings sheet first, so all 18 settings have a value. After that, the six asset values are read on top of the Excel values. The numbers in Figure 100 match the steps:
+
+1. **Assign** "Set Asset Names" creates a list with the six setting names.
+2. **For Each** "For Each Asset Name" goes through the list.
+3. **Try Catch** "Try Get Asset" holds the reading of one asset.
+4. **Get Asset** reads the asset `"P02_" & assetName` from Orchestrator.
+5. **Assign** "Use Asset Value" writes the asset value into the config, in place of the Excel value.
+6. **Assign** "Count Asset" counts the assets that were read.
+7. The **Catch** writes a warning when an asset cannot be read. The value from `Config.xlsx` is then used, and the loop goes on with the next name.
+8. **Log Message** writes how many settings were read and how many of them came from Orchestrator.
+
+![ReadConfig with the asset loop](Screenshots/studio-read-config-assets.png)
+
+*Figure 100. The asset loop at the end of `ReadConfig.xaml`.*
+
+Figure 101 shows the properties of **Get Asset**:
+
+1. **Orchestrator folder path** is empty, so the asset is read from the folder where the process runs.
+2. **Asset Name** is built from `P02_` and the setting name.
+3. **Cache Strategy** is None, so a changed asset is read again in the next run.
+4. **Value** is saved in the variable `assetValue` of the type Object. It is changed to text with `.ToString()`, so the Bool asset becomes the text `True`, the same as in Excel.
+
+![The properties of Get Asset](Screenshots/studio-get-asset-properties.png)
+
+*Figure 101. Get Asset with its properties.*
+
+### 9.3 Checking the Assets in Studio
+
+`Tests/Test_GetFinanceData.xaml` was run in Studio with the folder My Workspace selected. All six values were read from Orchestrator, and the test passed (Figure 102).
+
+![The test output with six assets](Screenshots/studio-test-finance-data-assets.png)
+
+*Figure 102. "Config read: 18 settings, 6 of them from Orchestrator assets".*
+
+The same test was also run once without an Orchestrator folder. Then every asset gave a warning, and the values from Excel were used:
+
+```
+Asset P02_InvoiceMailbox could not be read, the value from Config.xlsx is used: Status code: 400 (Bad Request). Orchestrator response: A folder is required for this action. Error code: 1101
+Config read: 18 settings, 0 of them from Orchestrator assets
+```
+
+This showed that the fallback works. The process does not stop when Orchestrator cannot give an asset.
+
+### 9.4 Publishing the Package
+
+The package was built from a clean copy of the committed project files. In this way, the private notes, the `Output` folder and other files that are ignored by Git were not packed. The package `P02_FinanceInvoiceIntake` version 1.0.0 was published to the personal workspace feed. Orchestrator created the process in My Workspace with the entry point `Main.xaml` (Figure 103).
+
+![The process in Orchestrator](Screenshots/orchestrator-process-p02.png)
+
+*Figure 103. The process P02_FinanceInvoiceIntake, version 1.0.0, with the entry point Main.xaml.*
+
+### 9.5 An Attended Job From Assistant
+
+The process was started from UiPath Assistant. At that time, only the 6 emails that are not invoices were left in the Inbox, so no message was sent. The numbers in Figure 104 match these parts:
+
+1. The process P02_FinanceInvoiceIntake in the list of automations.
+2. The job on the Jobs tab, with the state Success.
+
+![The job in Assistant](Screenshots/assistant-job-success.png)
+
+*Figure 104. The finished job in UiPath Assistant.*
+
+In Orchestrator, the job was shown as an attended RPA job from the source Assistant. It took 1 minute and 25 seconds (Figure 105).
+
+![The job in Orchestrator](Screenshots/orchestrator-job-attended.png)
+
+*Figure 105. The successful attended job in Orchestrator.*
+
+The robot sends its log lines to Orchestrator, so the whole run can be read on the Logs tab of the process. The newest line is at the top. The numbers in Figure 106 match these lines:
+
+1. The config was read with six values from the assets.
+2. The history was read from the Processed folder.
+3. The 6 emails were not invoices. They stayed in the Inbox with the category Robot: Ignored, and no message was sent.
+4. The summary: 6 emails, 6 handled and 0 failed.
+
+![The job logs in Orchestrator](Screenshots/orchestrator-job-logs.png)
+
+*Figure 106. The log of the attended job in Orchestrator.*
+
+A job from Assistant runs in the folder of the installed package, not in the project folder. For this reason, the processed log of the project was not found, and the 6 emails were handled again, with the same result as before. The report and the processed log of this run were written to the `Output` folder next to the installed package.
