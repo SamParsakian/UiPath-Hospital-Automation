@@ -9,12 +9,14 @@ All data in these projects is fictional. The hospital web systems are part of a 
 | Project | What it does | Demo |
 |---|---|---|
 | [P01 - Patient Administration Reconciliation](P01-Patient-Admin-Reconciliation/) | Compares referral records between the Staff Portal and the Coordination system and reports missing, duplicated and conflicting records. | [Video](https://youtu.be/h75j1saIfDk) |
+| [P02 - Finance Invoice Intake and Exception Routing](P02-Finance-Invoice-Intake/) | Reads supplier invoices from a shared Outlook mailbox, checks them against the finance data and moves each email to Processed, Review or Error. | [Video](https://youtu.be/t9rrWSBVjEg) |
 
 ## Technologies
 
 - UiPath Studio 2026 (Windows, VB.NET expressions)
 - UI Automation in Chrome with the Object Repository
-- UiPath Orchestrator and UiPath Assistant
+- Microsoft Outlook 365 through Integration Service, PDF activities and REST API calls
+- UiPath Orchestrator (assets) and UiPath Assistant
 
 ## How to Open a Project
 
