@@ -1,0 +1,190 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Tests_Test_ClassifyEmails" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sc="clr-namespace:System.Collections;assembly=System.Private.CoreLib" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Activities.Mail</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Test Classify Emails" sap2010:WorkflowViewState.IdRef="Sequence_3">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:Dictionary(x:String, x:String)" Name="config" />
+      <Variable x:TypeArguments="sd:DataTable" Name="suppliers" />
+      <Variable x:TypeArguments="sd:DataTable" Name="invoices" />
+      <Variable x:TypeArguments="sd:DataTable" Name="purchaseOrders" />
+      <Variable x:TypeArguments="sd:DataTable" Name="history" />
+      <Variable x:TypeArguments="sd:DataTable" Name="expected" />
+      <Variable x:TypeArguments="scg:List(umm:Office365Message)" Name="inboxEmails" />
+      <Variable x:TypeArguments="sd:DataTable" Name="results" />
+      <Variable x:TypeArguments="x:String" Name="attachmentFolder" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="passedCount" />
+    </Sequence.Variables>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Read Config" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\ReadConfig.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="out_Config">[config]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Get Finance Data" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\GetFinanceData.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+        <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_Suppliers">[suppliers]</OutArgument>
+        <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_Invoices">[invoices]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Get Purchase Orders" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4" UnSafe="False" WorkflowFileName="Workflows\GetPurchaseOrders.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+        <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_PurchaseOrders">[purchaseOrders]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Get Processed History" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_5" UnSafe="False" WorkflowFileName="Workflows\GetProcessedHistory.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+        <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_History">[history]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:ReadCsvFile PathResource="{x:Null}" DataTable="[expected]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" DisplayName="Read Expected Results" FilePath="[Path.Combine(Environment.CurrentDirectory, &quot;TestData&quot;, &quot;expected_results.csv&quot;)]" sap2010:WorkflowViewState.IdRef="ReadCsvFile_1" />
+    <ui:AddDataColumn x:TypeArguments="x:String" Column="{x:Null}" ColumnName="Used" DataTable="[expected]" DefaultValue="[&quot;No&quot;]" DisplayName="Add Used Column" sap2010:WorkflowViewState.IdRef="AddDataColumn`1_1" />
+    <Assign x:TypeArguments="x:String" DisplayName="Set Attachment Folder" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[attachmentFolder]" Value="[Path.Combine(Environment.CurrentDirectory, config(&quot;AttachmentFolder&quot;))]" />
+    <umam:GetEmailListConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Get Inbox Emails" EmailList="[inboxEmails]" IncludeAttachments="None" IncludeSubfolders="False" MarkAsRead="False" MaxResults="0" UnreadOnly="False" UseConnectionService="True" WithAttachmentsOnly="False" sap2010:WorkflowViewState.IdRef="GetEmailListConnections_1">
+      <umam:GetEmailListConnections.FilterSelectionBackup>
+        <usau:BackupSlot x:TypeArguments="umame:FilterMode" StoredValue="ConditionBuilder">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umame:FilterMode, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umam:GetEmailListConnections.FilterSelectionBackup>
+      <umam:GetEmailListConnections.MailFolderArgument>
+        <umamm:MailFolderArgument SelectionMode="EnterPath">
+          <umamm:MailFolderArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:ItemSelectionMode" StoredValue="EnterPath">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailFolderArgument.Backup>
+          <umamm:MailFolderArgument.ManualEntryFolder>
+            <InArgument x:TypeArguments="x:String">[config(&quot;Folder_Inbox&quot;)]</InArgument>
+          </umamm:MailFolderArgument.ManualEntryFolder>
+        </umamm:MailFolderArgument>
+      </umam:GetEmailListConnections.MailFolderArgument>
+      <umam:GetEmailListConnections.MailboxArg>
+        <umamm:MailboxArgument UseSharedMailbox="True">
+          <umamm:MailboxArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailboxArgument.Backup>
+          <umamm:MailboxArgument.SharedMailbox>
+            <InArgument x:TypeArguments="x:String">[config(&quot;InvoiceMailbox&quot;)]</InArgument>
+          </umamm:MailboxArgument.SharedMailbox>
+        </umamm:MailboxArgument>
+      </umam:GetEmailListConnections.MailboxArg>
+    </umam:GetEmailListConnections>
+    <Assign x:TypeArguments="scg:List(umm:Office365Message)" DisplayName="Sort Oldest First" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[inboxEmails]" Value="[inboxEmails.OrderBy(Function(m) m.ReceivedDateTime).ToList()]" />
+    <ui:BuildDataTable DataTable="[results]" DisplayName="Build Results Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;Results&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;Results&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;ScenarioId&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Subject&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ExpectedClass&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ActualClass&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ExpectedFolder&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ActualFolder&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Supplier&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;InvoiceNumbers&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Reason&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Passed&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <ui:ForEach x:TypeArguments="umm:Office365Message" CurrentIndex="{x:Null}" DisplayName="For Each Inbox Email" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[inboxEmails]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="umm:Office365Message">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="umm:Office365Message" Name="email" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:String" Name="emailClass" />
+              <Variable x:TypeArguments="x:String" Name="reason" />
+              <Variable x:TypeArguments="x:String" Name="folder" />
+              <Variable x:TypeArguments="x:String" Name="supplierName" />
+              <Variable x:TypeArguments="x:String" Name="invoiceNumbers" />
+              <Variable x:TypeArguments="sd:DataRow[]" Name="expectedRows" />
+              <Variable x:TypeArguments="x:String" Name="scenarioId" />
+              <Variable x:TypeArguments="x:String" Name="expectedClass" />
+              <Variable x:TypeArguments="x:String" Name="expectedFolder" />
+              <Variable x:TypeArguments="x:Boolean" Name="passed" />
+            </Sequence.Variables>
+            <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Classify Email" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\ClassifyEmail.xaml">
+              <ui:InvokeWorkflowFile.Arguments>
+                <InArgument x:TypeArguments="umm:Office365Message" x:Key="in_Email">[email]</InArgument>
+                <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+                <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Suppliers">[suppliers]</InArgument>
+                <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Invoices">[invoices]</InArgument>
+                <InArgument x:TypeArguments="sd:DataTable" x:Key="in_PurchaseOrders">[purchaseOrders]</InArgument>
+                <InArgument x:TypeArguments="sd:DataTable" x:Key="in_History">[history]</InArgument>
+                <InArgument x:TypeArguments="x:String" x:Key="in_AttachmentFolder">[attachmentFolder]</InArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_Class">[emailClass]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_Folder">[folder]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_SupplierName">[supplierName]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceNumbers">[invoiceNumbers]</OutArgument>
+              </ui:InvokeWorkflowFile.Arguments>
+            </ui:InvokeWorkflowFile>
+            <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Expected Result" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[expectedRows]" Value="[expected.Select(&quot;Subject = '&quot; &amp; email.Subject.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;' AND Sender LIKE '%&lt;&quot; &amp; email.FromAddress &amp; &quot;&gt;' AND Used = 'No'&quot;)]" />
+            <If Condition="[expectedRows.Length &gt; 0]" DisplayName="Expected Row Found?" sap2010:WorkflowViewState.IdRef="If_1">
+              <If.Then>
+                <Assign x:TypeArguments="x:Object" DisplayName="Mark Expected Row As Used" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[expectedRows(0)(&quot;Used&quot;)]" Value="[&quot;Yes&quot;]" />
+              </If.Then>
+            </If>
+            <Assign x:TypeArguments="x:String" DisplayName="Get Scenario ID" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[scenarioId]" Value="[If(expectedRows.Length = 0, &quot;unknown&quot;, expectedRows(0)(&quot;ScenarioId&quot;).ToString())]" />
+            <Assign x:TypeArguments="x:String" DisplayName="Get Expected Class" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[expectedClass]" Value="[If(expectedRows.Length = 0, &quot;&quot;, expectedRows(0)(&quot;ExpectedClass&quot;).ToString())]" />
+            <Assign x:TypeArguments="x:String" DisplayName="Get Expected Folder" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[expectedFolder]" Value="[If(expectedRows.Length = 0, &quot;&quot;, expectedRows(0)(&quot;ExpectedFolder&quot;).ToString())]" />
+            <Assign x:TypeArguments="x:Boolean" DisplayName="Compare With Expected" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[passed]" Value="[emailClass = expectedClass AndAlso folder = expectedFolder]" />
+            <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{scenarioId, email.Subject, expectedClass, emailClass, expectedFolder, folder, supplierName, invoiceNumbers, reason, If(passed, &quot;Yes&quot;, &quot;No&quot;)}]" DataTable="[results]" DisplayName="Add Result Row" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
+            <If Condition="[passed]" DisplayName="Passed?" sap2010:WorkflowViewState.IdRef="If_2">
+              <If.Then>
+                <Sequence DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Sequence_1">
+                  <Assign x:TypeArguments="x:Int32" DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[passedCount]" Value="[passedCount + 1]" />
+                  <ui:LogMessage DisplayName="Log Passed" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;OK   {scenarioId}: {emailClass} -&gt; {folder}&quot;]" />
+                </Sequence>
+              </If.Then>
+              <If.Else>
+                <ui:LogMessage DisplayName="Log Failed" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Warn" Message="[$&quot;FAIL {scenarioId}: expected {expectedClass} -&gt; {expectedFolder}, got {emailClass} -&gt; {folder} ({reason})&quot;]" />
+              </If.Else>
+            </If>
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <ui:WriteCsvFile AddHeaders="True" DataTable="[results]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" DisplayName="Write Test Results" FilePath="[Path.Combine(Environment.CurrentDirectory, &quot;Output&quot;, &quot;classify_results.csv&quot;)]" sap2010:WorkflowViewState.IdRef="WriteCsvFile_1" ShouldQuote="True" />
+    <ui:LogMessage DisplayName="Log Folder Counts" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[$&quot;Folders: Processed {results.Select(&quot;ActualFolder = 'Processed'&quot;).Length}, Review {results.Select(&quot;ActualFolder = 'Review'&quot;).Length}, Error {results.Select(&quot;ActualFolder = 'Error'&quot;).Length}, Inbox (ignored) {results.Select(&quot;ActualFolder = 'Inbox'&quot;).Length}&quot;]" />
+    <ui:LogMessage DisplayName="Log Summary" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[$&quot;Dry run: {passedCount} of {inboxEmails.Count} emails got the expected class and folder. Nothing was moved or sent.&quot;]" />
+  </Sequence>
+</Activity>

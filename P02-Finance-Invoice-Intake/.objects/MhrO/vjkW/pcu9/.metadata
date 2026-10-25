@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Purchase Orders Page",
+  "Description": "The purchase orders list (Inkopsordrar) in the Ekonomi section of Personalportalen",
+  "Type": "Screen",
+  "Id": "pcu961cVPUqH9eqsRZavWA",
+  "Reference": "OEmMk564hEmw20ClD15V9g/pcu961cVPUqH9eqsRZavWA",
+  "ParentRef": "OEmMk564hEmw20ClD15V9g/vjkWXl4MlUOLUZAKSx7eNw",
+  "Created": "2026-10-21T11:45:26.6935624Z",
+  "Updated": "2026-10-21T11:45:26.6935624Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

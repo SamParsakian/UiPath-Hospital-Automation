@@ -1,0 +1,58 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Tools_CreateConfig" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Create Config File" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sd:DataTable" Name="settings" />
+      <Variable x:TypeArguments="x:String" Name="dataFolder" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:BuildDataTable DataTable="[settings]" DisplayName="Build Settings Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;Settings&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;Settings&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;Name&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Value&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Description&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;InvoiceMailbox&lt;/Name&gt;&lt;Value&gt;fakturor@stockholmdemohospital.onmicrosoft.com&lt;/Value&gt;&lt;Description&gt;Shared mailbox that the robot reads&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;Folder_Inbox&lt;/Name&gt;&lt;Value&gt;Inbox&lt;/Value&gt;&lt;Description&gt;Folder with new emails&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;Folder_Processed&lt;/Name&gt;&lt;Value&gt;Processed&lt;/Value&gt;&lt;Description&gt;Folder for correct invoices&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;Folder_Review&lt;/Name&gt;&lt;Value&gt;Review&lt;/Value&gt;&lt;Description&gt;Folder for invoices that need a person&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;Folder_Error&lt;/Name&gt;&lt;Value&gt;Error&lt;/Value&gt;&lt;Description&gt;Folder for broken files or data&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;Category_Processed&lt;/Name&gt;&lt;Value&gt;Robot: Processed&lt;/Value&gt;&lt;Description&gt;Category for correct invoices&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;Category_Review&lt;/Name&gt;&lt;Value&gt;Robot: Review&lt;/Value&gt;&lt;Description&gt;Category for invoices that need a person&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;Category_Error&lt;/Name&gt;&lt;Value&gt;Robot: Error&lt;/Value&gt;&lt;Description&gt;Category for broken files or data&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;Category_Ignored&lt;/Name&gt;&lt;Value&gt;Robot: Ignored&lt;/Value&gt;&lt;Description&gt;Category for emails that are not invoices&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;ReviewRecipient&lt;/Name&gt;&lt;Value&gt;frida.sjoberg@stockholmdemohospital.onmicrosoft.com&lt;/Value&gt;&lt;Description&gt;Controller who gets the review notifications&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;TestMode&lt;/Name&gt;&lt;Value&gt;True&lt;/Value&gt;&lt;Description&gt;When True, replies to suppliers go to the test recipient&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;TestReplyRecipient&lt;/Name&gt;&lt;Value&gt;frida.sjoberg@stockholmdemohospital.onmicrosoft.com&lt;/Value&gt;&lt;Description&gt;Receives the supplier replies in test mode&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;LabPortalUrl&lt;/Name&gt;&lt;Value&gt;http://100.99.72.90:8080&lt;/Value&gt;&lt;Description&gt;Address of Personalportalen&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;LabApiUrl&lt;/Name&gt;&lt;Value&gt;http://100.99.72.90:8082&lt;/Value&gt;&lt;Description&gt;Address of the hospital REST API&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;LabCredential&lt;/Name&gt;&lt;Value&gt;P01_HospitalDemo&lt;/Value&gt;&lt;Description&gt;Name of the Windows credential with the Personalportalen login (the password is not stored here)&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;LabApiCredential&lt;/Name&gt;&lt;Value&gt;P02_LabApi&lt;/Value&gt;&lt;Description&gt;Name of the Windows credential with the lab API login, role finance (the password is not stored here)&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;AttachmentFolder&lt;/Name&gt;&lt;Value&gt;Output\Attachments&lt;/Value&gt;&lt;Description&gt;Where the invoice files are saved during a run&lt;/Description&gt;&lt;/Settings&gt;&#xA;  &lt;Settings&gt;&lt;Name&gt;ReportFolder&lt;/Name&gt;&lt;Value&gt;Output&lt;/Value&gt;&lt;Description&gt;Where the report and the processed log are written&lt;/Description&gt;&lt;/Settings&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <Assign x:TypeArguments="x:String" DisplayName="Set Data Folder" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[dataFolder]" Value="[Path.Combine(Environment.CurrentDirectory, &quot;Data&quot;)]" />
+    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Data Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[dataFolder]" />
+    <ui:WriteRange DataTable="[settings]" DisplayName="Write Config File" sap2010:WorkflowViewState.IdRef="WriteRange_1" SheetName="Settings" StartingCell="A1" WorkbookPath="[Path.Combine(dataFolder, &quot;Config.xlsx&quot;)]" />
+    <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;Config.xlsx written with {settings.Rows.Count} settings&quot;]" />
+  </Sequence>
+</Activity>
