@@ -1,0 +1,16 @@
+﻿TestId;Scenario;Input;Role;OperatorChoice;ExpectedProposal;ExpectedResult;CaseStatusAfter
+T01;Valid case, records agree;C-2026-00082;Samordnare;Cancel;Register case;Cancelled, nothing changed;Inkommen
+T02;Operator confirms;C-2026-00082;Samordnare;Confirm;Register case;Registered and verified;Registrerad
+T03;Same action again;C-2026-00082;Samordnare;-;No action (already registered);Nothing to do;Registrerad
+T04;Empty or wrong case ID;(empty) / abc / C-2026-123;-;-;-;Clear message, ID asked again;-
+T05;Case not found;C-2026-09999;Samordnare;-;-;Case not found, nothing changed;-
+T06;Two cases for one referral;C-2026-00101;Samordnare;-;No action (two cases for R-2026-0055);Both case IDs shown, nothing changed;Inkommen
+T07;Different statuses;C-2026-00004;Samordnare;-;No action (case is Klar);Statuses Klar and Bokad shown, nothing changed;Klar
+T08;Personal number differs;C-2026-00020;Samordnare;-;No action (personal number differs);Difference shown, nothing changed;Inkommen
+T09;Referral missing;C-2026-00105;Samordnare;-;No action (referral R-2026-9309 not found);Missing referral shown, nothing changed;Inkommen
+T10;Personal number missing in case;C-2026-00096;Samordnare;-;No action (personal number missing);Difference shown, nothing changed;Inkommen
+T11;Role without permission;C-2026-00003;Kodare;-;No action (role Kodare may not change cases);Nothing changed;Inkommen
+T12;Case changed before confirmation;C-2026-00003;Samordnare;Confirm after the case was changed in the browser;Register case;Blocked, nothing written by the robot;Registrerad (by the person)
+T13;Personalportalen not available;C-2026-00082;Samordnare;-;-;Controlled stop with a clear message, nothing changed;Inkommen
+T14;Connection lost after the click;C-2026-00082;Samordnare;Confirm (TestFault=AfterClick);Register case;Real status read, registered, no second click;Registrerad
+T15;Connection lost before the click;C-2026-00003;Samordnare;Confirm (TestFault=BeforeClick);Register case;Real status read, still Inkommen, one safe retry, registered;Registrerad
