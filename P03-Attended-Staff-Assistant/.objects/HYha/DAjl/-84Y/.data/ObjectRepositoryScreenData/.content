@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-16"?>
-<ObjectRepositoryScreenData ContentHash="Ati2nKksR0OOisdy32aqag" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ObjectRepositoryScreenData ContentHash="xKGtLoeP2EmVVagBf1a1tg" Reference="yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:p="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <ObjectRepositoryScreenData.Data>
-    <TargetApp x:Key="TargetApp" Area="-12, -12, 2584, 1464" BrowserType="Chrome" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3">
-      <imageRef attrName="InformativeScreenshot" originalValue="2917ec3a41b372b0aa566cd11230d3bf.jpg" xmlns="">0OLP2vuHElUmnJRtJqBcBHA</imageRef>
+    <TargetApp x:Key="TargetApp" Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="Ati2nKksR0OOisdy32aqag" Reference="yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3">
+      <TargetApp.Arguments>
+        <p:InArgument x:TypeArguments="x:String" />
+      </TargetApp.Arguments>
+      <TargetApp.WorkingDirectory>
+        <p:InArgument x:TypeArguments="x:String" />
+      </TargetApp.WorkingDirectory>
+      <imageRef attrName="InformativeScreenshot" originalValue="2917ec3a41b372b0aa566cd11230d3bf.jpg" xmlns="">0W34lKVvtQkaAoVJosqc5fQ</imageRef>
     </TargetApp>
   </ObjectRepositoryScreenData.Data>
 </ObjectRepositoryScreenData>
