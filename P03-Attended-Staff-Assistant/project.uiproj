@@ -1,0 +1,6 @@
+{
+  "Name": "P03_AttendedStaffAssistant",
+  "ProjectType": "Process",
+  "Description": "Attended assistant that looks up a hospital case in Journalsamordning and Personalportalen, proposes registering the incoming case, and does it only after the staff member confirms.\n",
+  "MainFile": "Main.xaml"
+}

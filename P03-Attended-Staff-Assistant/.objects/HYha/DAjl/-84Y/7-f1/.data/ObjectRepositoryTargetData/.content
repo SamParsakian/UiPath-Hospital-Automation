@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="6ma0zBbu0k2QNQVVbgv4yw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="951, 758, 548, 53" DesignTimeScaleFactor="1.3499999046325684" ElementType="InputBoxPassword" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl action='/login' method='post' tag='FORM' matching:action='fuzzy' fuzzylevel:action='0.0' matching:method='fuzzy' fuzzylevel:method='0.0' /&gt;&lt;webctrl id='password' tag='INPUT' type='password' class='' placeholder='Ange ditt lösenord' aaname='Lösenord' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="06a4392c-643e-4a44-83e6-be0ba624e480" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+      <TargetAnchorable.Anchors>
+        <scg:List x:TypeArguments="ITarget" Capacity="1">
+          <Target DesignTimeRectangle="951, 726, 548, 27" ElementType="Text" FuzzySelectorArgument="&lt;webctrl aaname='Lösenord' tag='LABEL' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Lösenord' /&gt;" Guid="63e73beb-4c72-44d7-820b-540f9524ca84" SearchSteps="FuzzySelector" />
+        </scg:List>
+      </TargetAnchorable.Anchors>
+      <imageRef attrName="InformativeScreenshot" originalValue="c4401abffa8d9d34ed125cb13f628968.jpg" xmlns="">0DDHs8xESjUi-ZuJ5YWG49g</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

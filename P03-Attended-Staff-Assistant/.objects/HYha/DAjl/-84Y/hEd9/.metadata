@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Login Error Message",
+  "Description": "Red error box above the login form, shown after a failed login",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "hEd9vdhoJkmZRLZEPFdTIQ",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/hEd9vdhoJkmZRLZEPFdTIQ",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-26T14:48:58.8895236Z",
+  "Updated": "2026-10-26T14:48:58.8895236Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

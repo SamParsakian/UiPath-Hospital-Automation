@@ -1,0 +1,15 @@
+﻿{
+  "Name": "User Role Title",
+  "Description": "Role title of the logged-in user under the user name, top-right of the page header",
+  "Type": "Element",
+  "TaxonomyType": "None",
+  "Id": "dvupgXavAkSTqfOadtsSGQ",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/dvupgXavAkSTqfOadtsSGQ",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-26T15:05:20.5393179Z",
+  "Updated": "2026-10-26T15:05:20.5393179Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
