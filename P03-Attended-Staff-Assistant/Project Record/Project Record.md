@@ -180,3 +180,123 @@ The test workflow `Tests/Test_Logins.xaml` calls the login workflow once for eac
 *Figure 11. `Tests/Test_Logins.xaml` and its result in the Output panel.*
 
 The first run of the test failed with the message that the user name or the password was wrong, for both accounts. The new login check found the problem at once: the passwords that had been saved were not the passwords of the lab accounts. After the two credentials were corrected in Credential Manager, both logins worked, as shown in Figure 11.
+
+In this step, everything the assistant needs was checked: UiPath Studio, the two hospital systems and the two user accounts. A login workflow was also built and tested. The assistant can now log in to Journalsamordning, which is the first thing it does every time it runs.
+
+## 3. Test Data and Expected Results
+
+Before the assistant was built, the test cases were chosen and the expected result of each one was written down. In this way, it is clear what the assistant must do in every situation, and the real result can be compared with the expected one afterwards.
+
+### 3.1 The Order of the Checks
+
+Some cases have more than one problem, so the checks are always done in the same order, and the first problem that is found decides the result:
+
+1. **Case ID:** the ID must have the form `C-2026-00082`. An empty or wrong ID is asked for again.
+2. **Case exists:** the case must be found in Journalsamordning.
+3. **Status:** the case must still be Inkommen. A case with another status is not changed.
+4. **Role:** the logged-in role must be allowed to change cases.
+5. **Referral exists:** the referral of the case must be found in Personalportalen.
+6. **One case per referral:** only one case may point to the referral.
+7. **Referral open:** the referral must not be rejected or closed.
+8. **Patient agrees:** the name, the birth date and the personal number must be the same in both systems. The dash in the personal number is ignored, and a missing personal number counts as a difference.
+
+Only when all checks pass, the assistant proposes to register the case. In every other situation, it shows the reason and proposes no action.
+
+### 3.2 Finding Test Cases in the Lab
+
+The hospital data already contains cases with typical problems. Two of them were checked manually before they were used as test cases.
+
+The referral R-2026-0055 was searched in the list of incoming cases in Journalsamordning (Figure 12):
+
+1. The search text R-2026-0055.
+2. Two cases are found for the same referral, C-2026-00101 and C-2026-00046.
+3. One case is Inkommen and the other one is already Registrerad.
+
+![Two cases for referral R-2026-0055](Screenshots/coordination-two-cases-r-2026-0055.png)
+
+*Figure 12. Two cases in Journalsamordning that point to the same referral.*
+
+A person cannot tell which of the two cases is the right one, so the assistant must not register case C-2026-00101. It shows both case IDs instead.
+
+The second sample is case C-2026-00020. Its personal number is 198204044654 (Figure 13).
+
+![Case C-2026-00020 in Journalsamordning](Screenshots/coordination-case-c-2026-00020.png)
+
+*Figure 13. Case C-2026-00020 and its personal number in Journalsamordning.*
+
+The same patient, P-000105, has the personal number 19820404-4644 in Personalportalen (Figure 14). The name and the birth date are the same, but one digit of the personal number is different. This is exactly the kind of small difference that is easy to miss when reading by hand.
+
+![Patient P-000105 in Personalportalen](Screenshots/staff-portal-patient-p-000105.png)
+
+*Figure 14. Patient P-000105 and the personal number in Personalportalen.*
+
+### 3.3 The Expected Results
+
+The expected results were written in `TestData/expected_results.csv`. Each row has the test ID, the scenario, the case ID, the role, the choice of the staff member, the expected proposal, the expected result and the expected status of the case afterwards.
+
+| Group | Tests | Examples |
+|---|---|---|
+| Normal use | T01-T03 | Cancel, Confirm, and the same case once more after it was registered |
+| Wrong input | T04-T05 | an empty or wrong case ID, a case that does not exist |
+| Data problems | T06-T10 | two cases for one referral, different statuses, a personal number that differs or is missing, a missing referral |
+| Safety | T11-T13 | a role without permission, a case that was changed before the confirmation, Personalportalen not available |
+| Lost connection | T14-T15 | the connection is lost just after or just before the click on Spara status |
+
+The two tests with a lost connection are important for an action that changes data. If the connection is lost after the click, the assistant does not know if the status was saved. Clicking again could register the case twice, so the real status of the case is read first. Only if the case is still Inkommen, one more attempt is made.
+
+The whole file is shown in Figure 15.
+
+![The expected results](Screenshots/excel-expected-results.png)
+
+*Figure 15. The 15 test cases in `TestData/expected_results.csv`.*
+
+### 3.4 The Config File
+
+The settings of the assistant are kept in `Data/Config.xlsx`, so they can be changed without changing the workflows. The Excel file is written and read with the Excel package `UiPath.Excel.Activities`, version 3.6.1, which was added under Manage Packages (Figure 16).
+
+![The Excel package in Manage Packages](Screenshots/studio-packages-excel-p03.png)
+
+*Figure 16. The Excel package in the project dependencies.*
+
+The file was created with a small helper workflow, `Tools/CreateConfig.xaml` (Figure 17):
+
+1. **Build Data Table** holds the settings.
+2. **Assign** sets the path of the folder `Data`, and **Create Folder** creates it.
+3. **Write Range Workbook** writes the table to the sheet Settings, starting in cell A1. Excel does not need to be open for this.
+4. **Log Message** writes how many settings were saved.
+5. The Output panel shows that 9 settings were written.
+
+![The helper workflow CreateConfig and its output](Screenshots/studio-create-config.png)
+
+*Figure 17. `Tools/CreateConfig.xaml` on the left and its Output panel on the right.*
+
+The settings were typed in the Build Data Table window, which opens with the button DataTable... (Figure 18):
+
+1. The addresses of Journalsamordning and Personalportalen.
+2. The names of the two logins in Windows Credential Manager. Only the names are stored here, never the passwords.
+3. The rules of the action: the form of a case ID, the status the case must have, and the new status.
+4. The folder for the audit log.
+5. A test setting. With the value None, the assistant works normally. The values BeforeClick and AfterClick simulate a lost connection around the click on Spara status, for tests T14 and T15.
+
+![The Build Data Table window](Screenshots/studio-build-settings-table.png)
+
+*Figure 18. The Build Data Table window with the 9 settings.*
+
+![The config file in Excel](Screenshots/excel-config-settings.png)
+
+*Figure 19. The sheet Settings in `Data/Config.xlsx`.*
+
+The config file is read by the workflow `Workflows/ReadConfig.xaml`, which gives back all settings as a dictionary (Figure 20):
+
+1. **Read Range Workbook** reads the sheet Settings into a data table.
+2. **Assign** creates an empty dictionary.
+3. **For Each Row in Data Table** goes through the settings one by one.
+4. **If** skips empty rows. Every other row is added to the dictionary with its name as the key.
+5. **Log Message** writes how many settings were read.
+6. The Output panel shows that 9 settings were read.
+
+![The workflow ReadConfig and its output](Screenshots/studio-read-config.png)
+
+*Figure 20. `Workflows/ReadConfig.xaml` on the left and its Output panel on the right.*
+
+In this step, the rules of the assistant were decided before it was built. The checks have a fixed order, 15 test cases were chosen from the hospital data, and the expected result of each test was written down. All settings are kept in one config file. With this, every real result of the assistant can be compared with the expected result.
