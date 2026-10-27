@@ -1,0 +1,424 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Tests_Test_CaseLookup" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Test Case Lookup" sap2010:WorkflowViewState.IdRef="Sequence_64">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:Dictionary(x:String, x:String)" Name="config" />
+      <Variable x:TypeArguments="sd:DataTable" Name="expected" />
+      <Variable x:TypeArguments="x:String" Name="userRole" />
+      <Variable x:TypeArguments="x:Boolean" Name="found" />
+      <Variable x:TypeArguments="x:String" Name="status" />
+      <Variable x:TypeArguments="x:String" Name="proposal" />
+      <Variable x:TypeArguments="x:String" Name="reason" />
+      <Variable x:TypeArguments="x:String" Name="summary" />
+      <Variable x:TypeArguments="x:String" Name="expectedProposal" />
+      <Variable x:TypeArguments="x:Boolean" Name="valid" />
+      <Variable x:TypeArguments="x:String" Name="message" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="passed" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="failed" />
+    </Sequence.Variables>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Read Config" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_16" UnSafe="False" WorkflowFileName="Workflows\ReadConfig.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="out_Config">[config]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:ReadCsvFile PathResource="{x:Null}" DataTable="[expected]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" DisplayName="Read Expected Results" FilePath="[Path.Combine(Environment.CurrentDirectory, &quot;TestData&quot;, &quot;expected_results.csv&quot;)]" sap2010:WorkflowViewState.IdRef="ReadCsvFile_1" />
+    <Sequence DisplayName="T04 Case ID Format" sap2010:WorkflowViewState.IdRef="Sequence_39">
+      <Sequence DisplayName="Check ID (empty)" sap2010:WorkflowViewState.IdRef="Sequence_29">
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Validate Empty ID" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_17" UnSafe="False" WorkflowFileName="Workflows\ValidateCaseId.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;&quot;]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_Pattern">[config(&quot;CaseIdPattern&quot;)]</InArgument>
+            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Valid">[valid]</OutArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Message">[message]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <If Condition="[valid = False]" DisplayName="Validation As Expected Empty?" sap2010:WorkflowViewState.IdRef="If_27">
+          <If.Then>
+            <Sequence DisplayName="Pass" sap2010:WorkflowViewState.IdRef="Sequence_27">
+              <ui:LogMessage DisplayName="Log Pass Empty" sap2010:WorkflowViewState.IdRef="LogMessage_11" Level="Info" Message="[&quot;PASS T04 '': valid = &quot; &amp; valid.ToString() &amp; &quot; &quot; &amp; message]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass Empty" sap2010:WorkflowViewState.IdRef="Assign`1_48" To="[passed]" Value="[passed + 1]" />
+            </Sequence>
+          </If.Then>
+          <If.Else>
+            <Sequence DisplayName="Fail" sap2010:WorkflowViewState.IdRef="Sequence_28">
+              <ui:LogMessage DisplayName="Log Fail Empty" sap2010:WorkflowViewState.IdRef="LogMessage_12" Level="Error" Message="[&quot;FAIL T04 '': valid = &quot; &amp; valid.ToString()]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail Empty" sap2010:WorkflowViewState.IdRef="Assign`1_49" To="[failed]" Value="[failed + 1]" />
+            </Sequence>
+          </If.Else>
+        </If>
+      </Sequence>
+      <Sequence DisplayName="Check ID abc" sap2010:WorkflowViewState.IdRef="Sequence_32">
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Validate abc" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_18" UnSafe="False" WorkflowFileName="Workflows\ValidateCaseId.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;abc&quot;]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_Pattern">[config(&quot;CaseIdPattern&quot;)]</InArgument>
+            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Valid">[valid]</OutArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Message">[message]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <If Condition="[valid = False]" DisplayName="Validation As Expected abc?" sap2010:WorkflowViewState.IdRef="If_28">
+          <If.Then>
+            <Sequence DisplayName="Pass" sap2010:WorkflowViewState.IdRef="Sequence_30">
+              <ui:LogMessage DisplayName="Log Pass abc" sap2010:WorkflowViewState.IdRef="LogMessage_13" Level="Info" Message="[&quot;PASS T04 'abc': valid = &quot; &amp; valid.ToString() &amp; &quot; &quot; &amp; message]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass abc" sap2010:WorkflowViewState.IdRef="Assign`1_50" To="[passed]" Value="[passed + 1]" />
+            </Sequence>
+          </If.Then>
+          <If.Else>
+            <Sequence DisplayName="Fail" sap2010:WorkflowViewState.IdRef="Sequence_31">
+              <ui:LogMessage DisplayName="Log Fail abc" sap2010:WorkflowViewState.IdRef="LogMessage_14" Level="Error" Message="[&quot;FAIL T04 'abc': valid = &quot; &amp; valid.ToString()]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail abc" sap2010:WorkflowViewState.IdRef="Assign`1_51" To="[failed]" Value="[failed + 1]" />
+            </Sequence>
+          </If.Else>
+        </If>
+      </Sequence>
+      <Sequence DisplayName="Check ID C-2026-123" sap2010:WorkflowViewState.IdRef="Sequence_35">
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Validate C-2026-123" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_19" UnSafe="False" WorkflowFileName="Workflows\ValidateCaseId.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-123&quot;]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_Pattern">[config(&quot;CaseIdPattern&quot;)]</InArgument>
+            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Valid">[valid]</OutArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Message">[message]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <If Condition="[valid = False]" DisplayName="Validation As Expected C-2026-123?" sap2010:WorkflowViewState.IdRef="If_29">
+          <If.Then>
+            <Sequence DisplayName="Pass" sap2010:WorkflowViewState.IdRef="Sequence_33">
+              <ui:LogMessage DisplayName="Log Pass C-2026-123" sap2010:WorkflowViewState.IdRef="LogMessage_15" Level="Info" Message="[&quot;PASS T04 'C-2026-123': valid = &quot; &amp; valid.ToString() &amp; &quot; &quot; &amp; message]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass C-2026-123" sap2010:WorkflowViewState.IdRef="Assign`1_52" To="[passed]" Value="[passed + 1]" />
+            </Sequence>
+          </If.Then>
+          <If.Else>
+            <Sequence DisplayName="Fail" sap2010:WorkflowViewState.IdRef="Sequence_34">
+              <ui:LogMessage DisplayName="Log Fail C-2026-123" sap2010:WorkflowViewState.IdRef="LogMessage_16" Level="Error" Message="[&quot;FAIL T04 'C-2026-123': valid = &quot; &amp; valid.ToString()]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail C-2026-123" sap2010:WorkflowViewState.IdRef="Assign`1_53" To="[failed]" Value="[failed + 1]" />
+            </Sequence>
+          </If.Else>
+        </If>
+      </Sequence>
+      <Sequence DisplayName="Check ID C-2026-00082" sap2010:WorkflowViewState.IdRef="Sequence_38">
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Validate C-2026-00082" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_20" UnSafe="False" WorkflowFileName="Workflows\ValidateCaseId.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-00082&quot;]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_Pattern">[config(&quot;CaseIdPattern&quot;)]</InArgument>
+            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Valid">[valid]</OutArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Message">[message]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+        <If Condition="[valid = True]" DisplayName="Validation As Expected C-2026-00082?" sap2010:WorkflowViewState.IdRef="If_30">
+          <If.Then>
+            <Sequence DisplayName="Pass" sap2010:WorkflowViewState.IdRef="Sequence_36">
+              <ui:LogMessage DisplayName="Log Pass C-2026-00082" sap2010:WorkflowViewState.IdRef="LogMessage_17" Level="Info" Message="[&quot;PASS T04 'C-2026-00082': valid = &quot; &amp; valid.ToString() &amp; &quot; &quot; &amp; message]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass C-2026-00082" sap2010:WorkflowViewState.IdRef="Assign`1_54" To="[passed]" Value="[passed + 1]" />
+            </Sequence>
+          </If.Then>
+          <If.Else>
+            <Sequence DisplayName="Fail" sap2010:WorkflowViewState.IdRef="Sequence_37">
+              <ui:LogMessage DisplayName="Log Fail C-2026-00082" sap2010:WorkflowViewState.IdRef="LogMessage_18" Level="Error" Message="[&quot;FAIL T04 'C-2026-00082': valid = &quot; &amp; valid.ToString()]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail C-2026-00082" sap2010:WorkflowViewState.IdRef="Assign`1_55" To="[failed]" Value="[failed + 1]" />
+            </Sequence>
+          </If.Else>
+        </If>
+      </Sequence>
+    </Sequence>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Log In As Samordnare" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_21" UnSafe="False" WorkflowFileName="Workflows\Login_Coordination.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_CredentialTarget">[&quot;P03_Samordnare&quot;]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_UserRole">[userRole]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Log In To Personalportalen" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_22" UnSafe="False" WorkflowFileName="Workflows\Login_StaffPortal.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <Sequence DisplayName="Test T01" sap2010:WorkflowViewState.IdRef="Sequence_42">
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up C-2026-00082" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_23" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-00082&quot;]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[userRole]</InArgument>
+          <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[proposal]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T01" sap2010:WorkflowViewState.IdRef="Assign`1_56" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T01'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T01?" sap2010:WorkflowViewState.IdRef="If_31">
+        <If.Then>
+          <Sequence DisplayName="Pass T01" sap2010:WorkflowViewState.IdRef="Sequence_40">
+            <ui:LogMessage DisplayName="Log Pass T01" sap2010:WorkflowViewState.IdRef="LogMessage_19" Level="Info" Message="[&quot;PASS T01 C-2026-00082: &quot; &amp; proposal]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T01" sap2010:WorkflowViewState.IdRef="Assign`1_57" To="[passed]" Value="[passed + 1]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <Sequence DisplayName="Fail T01" sap2010:WorkflowViewState.IdRef="Sequence_41">
+            <ui:LogMessage DisplayName="Log Fail T01" sap2010:WorkflowViewState.IdRef="LogMessage_20" Level="Error" Message="[&quot;FAIL T01 C-2026-00082: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T01" sap2010:WorkflowViewState.IdRef="Assign`1_58" To="[failed]" Value="[failed + 1]" />
+          </Sequence>
+        </If.Else>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Test T05" sap2010:WorkflowViewState.IdRef="Sequence_45">
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up C-2026-09999" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_24" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-09999&quot;]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[userRole]</InArgument>
+          <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[proposal]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T05" sap2010:WorkflowViewState.IdRef="Assign`1_59" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T05'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T05?" sap2010:WorkflowViewState.IdRef="If_32">
+        <If.Then>
+          <Sequence DisplayName="Pass T05" sap2010:WorkflowViewState.IdRef="Sequence_43">
+            <ui:LogMessage DisplayName="Log Pass T05" sap2010:WorkflowViewState.IdRef="LogMessage_21" Level="Info" Message="[&quot;PASS T05 C-2026-09999: &quot; &amp; proposal]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T05" sap2010:WorkflowViewState.IdRef="Assign`1_60" To="[passed]" Value="[passed + 1]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <Sequence DisplayName="Fail T05" sap2010:WorkflowViewState.IdRef="Sequence_44">
+            <ui:LogMessage DisplayName="Log Fail T05" sap2010:WorkflowViewState.IdRef="LogMessage_22" Level="Error" Message="[&quot;FAIL T05 C-2026-09999: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T05" sap2010:WorkflowViewState.IdRef="Assign`1_61" To="[failed]" Value="[failed + 1]" />
+          </Sequence>
+        </If.Else>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Test T06" sap2010:WorkflowViewState.IdRef="Sequence_48">
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up C-2026-00101" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_25" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-00101&quot;]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[userRole]</InArgument>
+          <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[proposal]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T06" sap2010:WorkflowViewState.IdRef="Assign`1_62" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T06'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T06?" sap2010:WorkflowViewState.IdRef="If_33">
+        <If.Then>
+          <Sequence DisplayName="Pass T06" sap2010:WorkflowViewState.IdRef="Sequence_46">
+            <ui:LogMessage DisplayName="Log Pass T06" sap2010:WorkflowViewState.IdRef="LogMessage_23" Level="Info" Message="[&quot;PASS T06 C-2026-00101: &quot; &amp; proposal]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T06" sap2010:WorkflowViewState.IdRef="Assign`1_63" To="[passed]" Value="[passed + 1]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <Sequence DisplayName="Fail T06" sap2010:WorkflowViewState.IdRef="Sequence_47">
+            <ui:LogMessage DisplayName="Log Fail T06" sap2010:WorkflowViewState.IdRef="LogMessage_24" Level="Error" Message="[&quot;FAIL T06 C-2026-00101: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T06" sap2010:WorkflowViewState.IdRef="Assign`1_64" To="[failed]" Value="[failed + 1]" />
+          </Sequence>
+        </If.Else>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Test T07" sap2010:WorkflowViewState.IdRef="Sequence_51">
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up C-2026-00004" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_26" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-00004&quot;]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[userRole]</InArgument>
+          <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[proposal]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T07" sap2010:WorkflowViewState.IdRef="Assign`1_65" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T07'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T07?" sap2010:WorkflowViewState.IdRef="If_34">
+        <If.Then>
+          <Sequence DisplayName="Pass T07" sap2010:WorkflowViewState.IdRef="Sequence_49">
+            <ui:LogMessage DisplayName="Log Pass T07" sap2010:WorkflowViewState.IdRef="LogMessage_25" Level="Info" Message="[&quot;PASS T07 C-2026-00004: &quot; &amp; proposal]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T07" sap2010:WorkflowViewState.IdRef="Assign`1_66" To="[passed]" Value="[passed + 1]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <Sequence DisplayName="Fail T07" sap2010:WorkflowViewState.IdRef="Sequence_50">
+            <ui:LogMessage DisplayName="Log Fail T07" sap2010:WorkflowViewState.IdRef="LogMessage_26" Level="Error" Message="[&quot;FAIL T07 C-2026-00004: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T07" sap2010:WorkflowViewState.IdRef="Assign`1_67" To="[failed]" Value="[failed + 1]" />
+          </Sequence>
+        </If.Else>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Test T08" sap2010:WorkflowViewState.IdRef="Sequence_54">
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up C-2026-00020" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_27" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-00020&quot;]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[userRole]</InArgument>
+          <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[proposal]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T08" sap2010:WorkflowViewState.IdRef="Assign`1_68" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T08'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T08?" sap2010:WorkflowViewState.IdRef="If_35">
+        <If.Then>
+          <Sequence DisplayName="Pass T08" sap2010:WorkflowViewState.IdRef="Sequence_52">
+            <ui:LogMessage DisplayName="Log Pass T08" sap2010:WorkflowViewState.IdRef="LogMessage_27" Level="Info" Message="[&quot;PASS T08 C-2026-00020: &quot; &amp; proposal]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T08" sap2010:WorkflowViewState.IdRef="Assign`1_69" To="[passed]" Value="[passed + 1]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <Sequence DisplayName="Fail T08" sap2010:WorkflowViewState.IdRef="Sequence_53">
+            <ui:LogMessage DisplayName="Log Fail T08" sap2010:WorkflowViewState.IdRef="LogMessage_28" Level="Error" Message="[&quot;FAIL T08 C-2026-00020: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T08" sap2010:WorkflowViewState.IdRef="Assign`1_70" To="[failed]" Value="[failed + 1]" />
+          </Sequence>
+        </If.Else>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Test T09" sap2010:WorkflowViewState.IdRef="Sequence_57">
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up C-2026-00105" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_28" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-00105&quot;]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[userRole]</InArgument>
+          <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[proposal]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T09" sap2010:WorkflowViewState.IdRef="Assign`1_71" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T09'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T09?" sap2010:WorkflowViewState.IdRef="If_36">
+        <If.Then>
+          <Sequence DisplayName="Pass T09" sap2010:WorkflowViewState.IdRef="Sequence_55">
+            <ui:LogMessage DisplayName="Log Pass T09" sap2010:WorkflowViewState.IdRef="LogMessage_29" Level="Info" Message="[&quot;PASS T09 C-2026-00105: &quot; &amp; proposal]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T09" sap2010:WorkflowViewState.IdRef="Assign`1_72" To="[passed]" Value="[passed + 1]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <Sequence DisplayName="Fail T09" sap2010:WorkflowViewState.IdRef="Sequence_56">
+            <ui:LogMessage DisplayName="Log Fail T09" sap2010:WorkflowViewState.IdRef="LogMessage_30" Level="Error" Message="[&quot;FAIL T09 C-2026-00105: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T09" sap2010:WorkflowViewState.IdRef="Assign`1_73" To="[failed]" Value="[failed + 1]" />
+          </Sequence>
+        </If.Else>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Test T10" sap2010:WorkflowViewState.IdRef="Sequence_60">
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up C-2026-00096" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_29" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-00096&quot;]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[userRole]</InArgument>
+          <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[proposal]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T10" sap2010:WorkflowViewState.IdRef="Assign`1_74" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T10'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T10?" sap2010:WorkflowViewState.IdRef="If_37">
+        <If.Then>
+          <Sequence DisplayName="Pass T10" sap2010:WorkflowViewState.IdRef="Sequence_58">
+            <ui:LogMessage DisplayName="Log Pass T10" sap2010:WorkflowViewState.IdRef="LogMessage_31" Level="Info" Message="[&quot;PASS T10 C-2026-00096: &quot; &amp; proposal]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T10" sap2010:WorkflowViewState.IdRef="Assign`1_75" To="[passed]" Value="[passed + 1]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <Sequence DisplayName="Fail T10" sap2010:WorkflowViewState.IdRef="Sequence_59">
+            <ui:LogMessage DisplayName="Log Fail T10" sap2010:WorkflowViewState.IdRef="LogMessage_32" Level="Error" Message="[&quot;FAIL T10 C-2026-00096: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T10" sap2010:WorkflowViewState.IdRef="Assign`1_76" To="[failed]" Value="[failed + 1]" />
+          </Sequence>
+        </If.Else>
+      </If>
+    </Sequence>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Log In As Kodare" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_30" UnSafe="False" WorkflowFileName="Workflows\Login_Coordination.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_CredentialTarget">[&quot;P03_Kodare&quot;]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_UserRole">[userRole]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <Sequence DisplayName="Test T11" sap2010:WorkflowViewState.IdRef="Sequence_63">
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up C-2026-00003" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_31" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[&quot;C-2026-00003&quot;]</InArgument>
+          <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[userRole]</InArgument>
+          <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[proposal]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T11" sap2010:WorkflowViewState.IdRef="Assign`1_77" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T11'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T11?" sap2010:WorkflowViewState.IdRef="If_38">
+        <If.Then>
+          <Sequence DisplayName="Pass T11" sap2010:WorkflowViewState.IdRef="Sequence_61">
+            <ui:LogMessage DisplayName="Log Pass T11" sap2010:WorkflowViewState.IdRef="LogMessage_33" Level="Info" Message="[&quot;PASS T11 C-2026-00003: &quot; &amp; proposal]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T11" sap2010:WorkflowViewState.IdRef="Assign`1_78" To="[passed]" Value="[passed + 1]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <Sequence DisplayName="Fail T11" sap2010:WorkflowViewState.IdRef="Sequence_62">
+            <ui:LogMessage DisplayName="Log Fail T11" sap2010:WorkflowViewState.IdRef="LogMessage_34" Level="Error" Message="[&quot;FAIL T11 C-2026-00003: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T11" sap2010:WorkflowViewState.IdRef="Assign`1_79" To="[failed]" Value="[failed + 1]" />
+          </Sequence>
+        </If.Else>
+      </If>
+    </Sequence>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Log In As Samordnare Again" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_32" UnSafe="False" WorkflowFileName="Workflows\Login_Coordination.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_CredentialTarget">[&quot;P03_Samordnare&quot;]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_UserRole">[userRole]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_35" Level="Info" Message="[$&quot;Case lookup tests: {passed} passed, {failed} failed&quot;]" />
+    <If Condition="[failed &gt; 0]" DisplayName="Any Test Failed?" sap2010:WorkflowViewState.IdRef="If_39">
+      <If.Then>
+        <Throw DisplayName="Throw Tests Failed" Exception="[New BusinessRuleException(failed.ToString() &amp; &quot; case lookup test(s) failed.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_3" />
+      </If.Then>
+    </If>
+  </Sequence>
+</Activity>
