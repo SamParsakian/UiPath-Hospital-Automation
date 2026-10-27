@@ -1,0 +1,134 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadPatient" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sdp="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:sdr="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_PatientId" Type="InArgument(x:String)" />
+    <x:Property Name="out_Found" Type="OutArgument(x:Boolean)" />
+    <x:Property Name="out_PersonalNumber" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Name" Type="OutArgument(x:String)" />
+    <x:Property Name="out_BirthDate" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.UIAutomationNext.Enums</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Read Patient" sap2010:WorkflowViewState.IdRef="Sequence_21">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="patientFacts" />
+    </Sequence.Variables>
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Personalportalen" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_5" OpenMode="IfNotOpen" ScopeGuid="d3650802-0e6a-4680-a284-34fb9fa034c7" Version="V2">
+      <uix:NApplicationCard.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_19">
+            <uix:NGoToUrl DisplayName="Open Patient Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_5" ScopeIdentifier="d3650802-0e6a-4680-a284-34fb9fa034c7" Url="[in_Config(&quot;PortalUrl&quot;) &amp; &quot;/patienter/&quot; &amp; in_PatientId]" Version="V5" />
+            <uix:NCheckState DisplayName="Check Patient Found" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_6" ScopeIdentifier="d3650802-0e6a-4680-a284-34fb9fa034c7" Timeout="5" Version="V5">
+              <uix:NCheckState.IfExists>
+                <Sequence DisplayName="Read Patient Details" sap2010:WorkflowViewState.IdRef="Sequence_18">
+                  <Assign x:TypeArguments="x:Boolean" DisplayName="Set Found" sap2010:WorkflowViewState.IdRef="Assign`1_25" To="[out_Found]" Value="[True]" />
+                  <uix:NGetText DisplayName="Get Patient Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_7" ScopeIdentifier="d3650802-0e6a-4680-a284-34fb9fa034c7" TextString="[patientFacts]" Version="V5">
+                    <uix:NGetText.Target>
+                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='patient-facts' tag='DL' /&gt;" Guid="d40a103a-a859-4935-ac7e-9113fb989cfd" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NGetText.Target>
+                  </uix:NGetText>
+                </Sequence>
+              </uix:NCheckState.IfExists>
+              <uix:NCheckState.IfNotExists>
+                <Assign x:TypeArguments="x:Boolean" DisplayName="Set Not Found" sap2010:WorkflowViewState.IdRef="Assign`1_26" To="[out_Found]" Value="[False]" />
+              </uix:NCheckState.IfNotExists>
+              <uix:NCheckState.Target>
+                <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='patient-facts' tag='DL' /&gt;" Guid="0bba6c8f-a012-4a40-8925-9d5a27f3865f" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NCheckState.Target>
+            </uix:NCheckState>
+          </Sequence>
+        </ActivityAction>
+      </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sdr:Image, scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sdr:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
+      <uix:NApplicationCard.TargetApp>
+        <uix:TargetApp BrowserType="Chrome" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" Url="http://100.99.72.90:8080/login" Version="V3" />
+      </uix:NApplicationCard.TargetApp>
+    </uix:NApplicationCard>
+    <If Condition="[out_Found]" DisplayName="Was the Patient Found?" sap2010:WorkflowViewState.IdRef="If_10">
+      <If.Then>
+        <Sequence DisplayName="Take Values From Facts" sap2010:WorkflowViewState.IdRef="Sequence_20">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Personnummer" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_8" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Personnummer&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_PersonalNumber]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Namn" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_9" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Namn&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_Name]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Födelsedatum" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_10" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Födelsedatum&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_BirthDate]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Found AndAlso out_PersonalNumber.Trim() = &quot;-&quot;]" DisplayName="Is the Personal Number Missing?" sap2010:WorkflowViewState.IdRef="If_11">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Clear Personal Number" sap2010:WorkflowViewState.IdRef="Assign`1_27" To="[out_PersonalNumber]" Value="[&quot;&quot;]" />
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Patient" sap2010:WorkflowViewState.IdRef="LogMessage_8" Level="Info" Message="[$&quot;Patient {in_PatientId}: found = {out_Found}&quot;]" />
+  </Sequence>
+</Activity>

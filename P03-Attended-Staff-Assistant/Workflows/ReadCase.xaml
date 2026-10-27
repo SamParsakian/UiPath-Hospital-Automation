@@ -1,0 +1,180 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadCase" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sdp="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:sdr="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_CaseId" Type="InArgument(x:String)" />
+    <x:Property Name="out_Found" Type="OutArgument(x:Boolean)" />
+    <x:Property Name="out_Status" Type="OutArgument(x:String)" />
+    <x:Property Name="out_ReferralId" Type="OutArgument(x:String)" />
+    <x:Property Name="out_PatientId" Type="OutArgument(x:String)" />
+    <x:Property Name="out_PatientName" Type="OutArgument(x:String)" />
+    <x:Property Name="out_PersonalNumber" Type="OutArgument(x:String)" />
+    <x:Property Name="out_BirthDate" Type="OutArgument(x:String)" />
+    <x:Property Name="out_CanEdit" Type="OutArgument(x:Boolean)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.UIAutomationNext.Enums</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Read Case" sap2010:WorkflowViewState.IdRef="Sequence_7">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="patientFacts" />
+      <Variable x:TypeArguments="x:String" Name="caseFacts" />
+    </Sequence.Variables>
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Journalsamordning" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" Version="V2">
+      <uix:NApplicationCard.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_5">
+            <uix:NGoToUrl DisplayName="Open Case Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" Url="[in_Config(&quot;CoordinationUrl&quot;) &amp; &quot;/arenden/&quot; &amp; in_CaseId]" Version="V5" />
+            <uix:NCheckState DisplayName="Check Case Found" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_2" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" Timeout="5" Version="V5">
+              <uix:NCheckState.IfExists>
+                <Sequence DisplayName="Read Case Details" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                  <Assign x:TypeArguments="x:Boolean" DisplayName="Set Found" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[out_Found]" Value="[True]" />
+                  <uix:NGetText DisplayName="Get Patient Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" TextString="[patientFacts]" Version="V5">
+                    <uix:NGetText.Target>
+                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-patient' tag='DL' /&gt;" Guid="97d08215-a003-466d-b08a-03b809f860c4" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NGetText.Target>
+                  </uix:NGetText>
+                  <uix:NGetText DisplayName="Get Case Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_2" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" TextString="[caseFacts]" Version="V5">
+                    <uix:NGetText.Target>
+                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-case' tag='DL' /&gt;" Guid="ddfeb183-d6c3-4201-b34f-aca155af4996" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NGetText.Target>
+                  </uix:NGetText>
+                  <uix:NGetText DisplayName="Get Status" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_3" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" TextString="[out_Status]" Version="V5">
+                    <uix:NGetText.Target>
+                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl tag='H1' /&gt;&lt;webctrl tag='SPAN' idx='2' /&gt;" Guid="06740ef6-a19f-4a66-8df1-29cbeccaabb7" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NGetText.Target>
+                  </uix:NGetText>
+                  <uix:NCheckState DisplayName="Check Status Form Shown" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" Timeout="2" Version="V5">
+                    <uix:NCheckState.IfExists>
+                      <Assign x:TypeArguments="x:Boolean" DisplayName="Set Can Edit" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[out_CanEdit]" Value="[True]" />
+                    </uix:NCheckState.IfExists>
+                    <uix:NCheckState.IfNotExists>
+                      <Assign x:TypeArguments="x:Boolean" DisplayName="Set Cannot Edit" sap2010:WorkflowViewState.IdRef="Assign`1_11" To="[out_CanEdit]" Value="[False]" />
+                    </uix:NCheckState.IfNotExists>
+                    <uix:NCheckState.Target>
+                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='change-status' tag='BUTTON' /&gt;" Guid="6932e5f3-5ded-418f-b829-77ace5fb4530" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NCheckState.Target>
+                  </uix:NCheckState>
+                </Sequence>
+              </uix:NCheckState.IfExists>
+              <uix:NCheckState.IfNotExists>
+                <Assign x:TypeArguments="x:Boolean" DisplayName="Set Not Found" sap2010:WorkflowViewState.IdRef="Assign`1_12" To="[out_Found]" Value="[False]" />
+              </uix:NCheckState.IfNotExists>
+              <uix:NCheckState.Target>
+                <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-patient' tag='DL' /&gt;" Guid="e96eaafd-3491-4009-9fdd-1d964a261250" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NCheckState.Target>
+            </uix:NCheckState>
+          </Sequence>
+        </ActivityAction>
+      </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sdr:Image, scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sdr:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
+      <uix:NApplicationCard.TargetApp>
+        <uix:TargetApp BrowserType="Chrome" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3" />
+      </uix:NApplicationCard.TargetApp>
+    </uix:NApplicationCard>
+    <If Condition="[out_Found]" DisplayName="Was the Case Found?" sap2010:WorkflowViewState.IdRef="If_4">
+      <If.Then>
+        <Sequence DisplayName="Take Values From Facts" sap2010:WorkflowViewState.IdRef="Sequence_6">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Namn" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Namn&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_PatientName]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Personnummer" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Personnummer&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_PersonalNumber]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Födelsedatum" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Födelsedatum&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_BirthDate]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Patient-ID (delat)" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Patient-ID (delat)&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_PatientId]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Remiss-ID (delat)" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_5" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">[caseFacts]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Remiss-ID (delat)&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_ReferralId]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <Assign x:TypeArguments="x:String" DisplayName="Trim Status" sap2010:WorkflowViewState.IdRef="Assign`1_13" To="[out_Status]" Value="[out_Status.Trim()]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Found AndAlso out_PersonalNumber.Trim() = &quot;Saknas&quot;]" DisplayName="Is the Personal Number Missing?" sap2010:WorkflowViewState.IdRef="If_5">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Clear Personal Number" sap2010:WorkflowViewState.IdRef="Assign`1_14" To="[out_PersonalNumber]" Value="[&quot;&quot;]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Found AndAlso out_ReferralId.Trim() = &quot;-&quot;]" DisplayName="Is the Referral Missing?" sap2010:WorkflowViewState.IdRef="If_6">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Clear Referral ID" sap2010:WorkflowViewState.IdRef="Assign`1_15" To="[out_ReferralId]" Value="[&quot;&quot;]" />
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Case" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[$&quot;Case {in_CaseId}: found = {out_Found}, status = {out_Status}, referral = {out_ReferralId}&quot;]" />
+  </Sequence>
+</Activity>
