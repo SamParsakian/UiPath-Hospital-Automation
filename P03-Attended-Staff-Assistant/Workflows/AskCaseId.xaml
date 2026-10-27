@@ -1,0 +1,112 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_AskCaseId" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Pattern" Type="InArgument(x:String)" />
+    <x:Property Name="out_CaseId" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Stop" Type="OutArgument(x:Boolean)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Ask For Case ID" sap2010:WorkflowViewState.IdRef="Sequence_5">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="caseText" />
+      <Variable x:TypeArguments="x:Boolean" Name="valid" />
+      <Variable x:TypeArguments="x:String" Name="message" />
+      <Variable x:TypeArguments="x:String" Name="answer" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:Boolean" DisplayName="Start Without Stop" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[out_Stop]" Value="[False]" />
+    <Assign x:TypeArguments="x:Boolean" DisplayName="Start As Not Valid" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[valid]" Value="[False]" />
+    <While DisplayName="Until a Valid ID Or Stop" sap2010:WorkflowViewState.IdRef="While_1" Condition="[Not valid AndAlso Not out_Stop]">
+      <Sequence DisplayName="Ask Once" sap2010:WorkflowViewState.IdRef="Sequence_4">
+        <TryCatch DisplayName="Try Ask For Case ID" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+          <TryCatch.Try>
+            <ui:InputDialog Options="{x:Null}" OptionsString="{x:Null}" DisplayName="Ask For Case ID" IsPassword="False" Label="[&quot;Enter the case ID, for example C-2026-00082:&quot;]" Title="[&quot;Staff Assistant&quot;]" TopMost="True" sap2010:WorkflowViewState.IdRef="InputDialog_1">
+              <ui:InputDialog.Result>
+                <OutArgument x:TypeArguments="x:String">[caseText]</OutArgument>
+              </ui:InputDialog.Result>
+            </ui:InputDialog>
+          </TryCatch.Try>
+          <TryCatch.Catches>
+            <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+              <ActivityAction x:TypeArguments="s:Exception">
+                <ActivityAction.Argument>
+                  <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                </ActivityAction.Argument>
+                <Sequence DisplayName="Dialog Cancelled" sap2010:WorkflowViewState.IdRef="Sequence_1">
+                  <Assign x:TypeArguments="x:Boolean" DisplayName="Set Stop After Cancel" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[out_Stop]" Value="[True]" />
+                  <Assign x:TypeArguments="x:String" DisplayName="Clear Case ID" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[caseText]" Value="[&quot;&quot;]" />
+                </Sequence>
+              </ActivityAction>
+            </Catch>
+          </TryCatch.Catches>
+        </TryCatch>
+        <If Condition="[Not out_Stop]" DisplayName="Was an ID Entered?" sap2010:WorkflowViewState.IdRef="If_3">
+          <If.Then>
+            <Sequence DisplayName="Check Case ID" sap2010:WorkflowViewState.IdRef="Sequence_3">
+              <Assign x:TypeArguments="x:String" DisplayName="Clean Up Case ID" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[caseText]" Value="[If(caseText Is Nothing, &quot;&quot;, caseText.Trim().ToUpper())]" />
+              <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Validate Case ID" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\ValidateCaseId.xaml">
+                <ui:InvokeWorkflowFile.Arguments>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[caseText]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Pattern">[in_Pattern]</InArgument>
+                  <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Valid">[valid]</OutArgument>
+                  <OutArgument x:TypeArguments="x:String" x:Key="out_Message">[message]</OutArgument>
+                </ui:InvokeWorkflowFile.Arguments>
+              </ui:InvokeWorkflowFile>
+              <If Condition="[Not valid]" DisplayName="Is the Case ID Wrong?" sap2010:WorkflowViewState.IdRef="If_2">
+                <If.Then>
+                  <Sequence DisplayName="Ask To Try Again" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                    <ui:MessageBox AutoCloseAfter="00:00:00" Buttons="YesNo" Caption="[&quot;Staff Assistant&quot;]" ChosenButton="[answer]" DisplayName="Show Message" Text="[message &amp; vbCrLf &amp; vbCrLf &amp; &quot;Do you want to try again?&quot;]" TopMost="True" sap2010:WorkflowViewState.IdRef="MessageBox_1" />
+                    <If Condition="[answer = &quot;No&quot;]" DisplayName="Did the User Stop?" sap2010:WorkflowViewState.IdRef="If_1">
+                      <If.Then>
+                        <Assign x:TypeArguments="x:Boolean" DisplayName="Set Stop" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[out_Stop]" Value="[True]" />
+                      </If.Then>
+                    </If>
+                  </Sequence>
+                </If.Then>
+              </If>
+            </Sequence>
+          </If.Then>
+        </If>
+      </Sequence>
+    </While>
+    <Assign x:TypeArguments="x:String" DisplayName="Set Case ID" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[out_CaseId]" Value="[If(valid, caseText, &quot;&quot;)]" />
+    <ui:LogMessage DisplayName="Log Case ID" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[If(out_Stop, &quot;The user stopped&quot;, &quot;Case ID entered: &quot; &amp; out_CaseId)]" />
+  </Sequence>
+</Activity>
