@@ -56,7 +56,7 @@ The work is not difficult, but it needs two systems and careful reading. A small
 1. **Ask for the case:** The assistant asks the staff member for a case ID.
 2. **Read both systems:** The case is read in Journalsamordning, and the referral and the patient are read in Personalportalen.
 3. **Show a summary:** The assistant shows the case, the differences it found, and the proposed action, or the reason why no action is proposed.
-4. **Ask for confirmation:** Nothing is changed until the staff member clicks Confirm. Cancel stops without any change.
+4. **Ask for confirmation:** Nothing is changed until the staff member clicks Yes. No stops without any change.
 5. **Register the case:** The case is read again to make sure it has not changed, and then the status is set to Registrerad.
 6. **Check the result:** The case is read once more, the real status is shown to the staff member, and an audit line is written.
 
@@ -493,3 +493,204 @@ The test workflow `Tests/Test_CaseLookup.xaml` runs the test cases that do not c
 Nothing was changed in either system during these tests, because the lookup only reads pages.
 
 In this step, the assistant learned to find a case, read both systems and decide what to propose. All read-only test cases gave the expected proposal. The assistant can now say what it would do with a case, but it does not change anything yet.
+
+## 5. Registering a Case After Confirmation
+
+In this part, the assistant got its only action: it registers an incoming case, but only after the staff member has confirmed it. Before the change, the case is read again, and after the change, the real status is read back from Journalsamordning.
+
+### 5.1 Asking for Confirmation
+
+When the checks find no problem, the assistant shows the summary from the lookup and asks if the case should be registered (Figure 34). Yes registers the case, and No stops without any change.
+
+![The confirmation dialog](Screenshots/staff-assistant-confirm-dialog.png)
+
+*Figure 34. The summary of case C-2026-00082 and the question to register it.*
+
+The question is asked by the small workflow `Workflows/ConfirmAction.xaml` (Figure 35):
+
+1. **Message Box** shows the summary and the question, with the buttons Yes and No.
+2. **Assign** sets `out_Confirmed` to True only if the answer is Yes.
+3. **Log Message** writes the answer to the log.
+
+![The workflow ConfirmAction](Screenshots/studio-confirm-action.png)
+
+*Figure 35. `Workflows/ConfirmAction.xaml` in the Studio designer.*
+
+When no action is proposed, there is no question. The summary is shown with the reason and the text "Nothing was changed." (Figure 36).
+
+![The summary when no action is proposed](Screenshots/staff-assistant-no-action.png)
+
+*Figure 36. The summary of case C-2026-00101, which shares its referral with another case.*
+
+### 5.2 Registering the Case
+
+For the change, one more element was captured from the live case page and saved in the Object Repository: the drop-down list **Ny status** (new status). The first selector contained the address of the form, `/arenden/C-2026-00082/status`, so it would only work for this one case. The case ID in the address was replaced with the wildcard `*`, and the element was found again on the page.
+
+The workflow `Workflows/RegisterCase.xaml` makes the change (Figure 37):
+
+1. **Go To URL** opens the case page.
+2. **Get Text** reads the current status, and **Assign** removes extra spaces.
+3. **If** the case is still Inkommen, the new status is saved. Otherwise nothing is saved.
+4. **If** the setting `TestFault` is BeforeClick, an error is thrown here, as if the connection was lost before the click. This is only used in tests.
+5. **Select Item** chooses Registrerad in the list Ny status. The value comes from the config file.
+6. **Click** presses the button Spara status (save status).
+7. **If** `TestFault` is AfterClick, an error is thrown after the click. This is also only used in tests.
+8. **Assign** sets the result to "Saved".
+9. If the status was not Inkommen, the result is "Blocked", together with the status that was found. This protects a case that someone else changed while the summary was open.
+10. **Log Message** writes the result.
+
+![The workflow RegisterCase](Screenshots/studio-register-case.png)
+
+*Figure 37. `Workflows/RegisterCase.xaml` in the Studio designer.*
+
+In normal use, `TestFault` in `Data/Config.xlsx` is None, and the two test errors never happen.
+
+### 5.3 Reading the Result Back
+
+A click on Spara status does not prove that the status was saved. Because of this, the workflow `Workflows/VerifyResult.xaml` opens the case again and reads the real status (Figure 38):
+
+1. **Use Application/Browser** works in the Journalsamordning tab.
+2. **Go To URL** opens the case page again.
+3. **Get Text** reads the status, with the same element as in Section 4.3.
+4. **Assign** removes extra spaces.
+5. **Log Message** writes the real status.
+
+![The workflow VerifyResult](Screenshots/studio-verify-result.png)
+
+*Figure 38. `Workflows/VerifyResult.xaml` in the Studio designer.*
+
+When the status Registrerad was read back, the staff member got this message (Figure 39).
+
+![The message after the registration](Screenshots/staff-assistant-registered.png)
+
+*Figure 39. The message after case C-2026-00082 was registered.*
+
+The case page in Journalsamordning showed the same result (Figure 40):
+
+1. The status at the top of the page is Registrerad.
+2. The status in the card "Status och ansvar" is Registrerad.
+3. The history has a new line, "Registrerad (från Inkommen)", by the coordinator account that the assistant logged in with.
+
+![Case C-2026-00082 after the registration](Screenshots/coordination-case-registrerad.png)
+
+*Figure 40. Case C-2026-00082 in Journalsamordning after the registration.*
+
+### 5.4 Handling One Case
+
+The workflow `Workflows/HandleCase.xaml` puts the steps for one case together. The first version had an **If** inside an **If** inside another **If**, and the Workflow Analyzer warned that the nesting was too deep. It was rebuilt as numbered steps in a row. Each step is one **If**, and it only runs while the result is still empty, the same idea as the checks in Section 4.6. The first part looks up the case and asks for confirmation (Figure 41):
+
+1. **Look Up Case** runs the lookup from Section 4.7.
+2. Step 1: if no action is proposed, the summary is shown, and the result is "No action", or "Not found" for a case that does not exist.
+3. Step 2: the summary is shown with the question from Section 5.1.
+4. **Confirm Action** asks the question.
+5. If the staff member clicks No, the result is "Cancelled".
+
+![HandleCase, part 1](Screenshots/studio-handle-case-1.png)
+
+*Figure 41. The first part of `Workflows/HandleCase.xaml`.*
+
+The second part saves the status and reads it back (Figure 42):
+
+1. Step 3: **Try Catch** runs the registration, so a lost connection does not stop the assistant.
+2. **Register Case** calls the workflow from Section 5.2 with the `TestFault` value from the config file.
+3. If an error happens, the result of the save is "Error", and the message is kept and written to the log as a warning.
+4. Step 4: if the save was blocked, the result is "Blocked".
+5. Step 5: **Verify Result** reads the real status.
+
+![HandleCase, part 2](Screenshots/studio-handle-case-2.png)
+
+*Figure 42. The second part of `Workflows/HandleCase.xaml`.*
+
+After an error, the real status decides what happens next. If the case is already Registrerad, the click worked, and it must not be repeated. If the case is still Inkommen, the save is tried once more (Figure 43):
+
+1. Step 6 only runs after an error, when the case is still Inkommen.
+2. **Log Message** writes a warning that the save is tried again.
+3. **Assign** keeps the first error message and notes that a second try was made.
+4. **Try Catch** runs **Register Case** once more. This time `TestFault` is always None. The workflow reads the status again before it saves, so the case is only saved if it is still Inkommen.
+5. **Verify Result** reads the real status again.
+
+![HandleCase, part 3](Screenshots/studio-handle-case-3.png)
+
+*Figure 43. The third part of `Workflows/HandleCase.xaml`.*
+
+The last part decides the result and tells the staff member (Figure 44):
+
+1. Step 7: if the real status is Registrerad, the result is "Registered". The reason tells if the status was read after an error or saved on the second try.
+2. Step 8: if there is still no result, the result is "Failed", with the real status as reason.
+3. Step 9: after a confirmation, a message shows the result. If the case was not registered, the staff member is asked to check the case by hand.
+4. **Log Message** writes the result of the case.
+
+![HandleCase, part 4](Screenshots/studio-handle-case-4.png)
+
+*Figure 44. The last part of `Workflows/HandleCase.xaml`.*
+
+### 5.5 The Audit Log
+
+Every handled case gets one line in the audit file `Output/audit_log.csv`. The line has the time, the Windows user, the role, the case ID, the proposal, the result and the reason. Names and personal numbers are not written. The workflow `Workflows/WriteAudit.xaml` writes the line (Figure 45):
+
+1. **Assign** builds the folder from the setting `AuditFolder` and the file name.
+2. **Create Folder** makes sure that the folder exists.
+3. **If** the file is new, **Append Line** writes the header line first.
+4. **Append Line** adds the line for the case. A semicolon in the text is replaced, so it cannot break the columns.
+5. **Log Message** writes that the audit line was written.
+
+![The workflow WriteAudit](Screenshots/studio-write-audit.png)
+
+*Figure 45. `Workflows/WriteAudit.xaml` in the Studio designer.*
+
+### 5.6 The Main Workflow
+
+`Main.xaml` starts the assistant and handles one case after another (Figure 46):
+
+1. **Read Config** reads the settings from Section 3.4.
+2. The assistant logs in to Journalsamordning and to Personalportalen with the workflows from Sections 2.5 and 4.5.
+3. **While** repeats the steps for one case until the staff member stops.
+4. **Ask For Case ID** shows the dialog from Section 4.1.
+5. **If** the staff member closed the dialog, the loop stops.
+6. **Handle Case** runs the workflow from Section 5.4.
+7. **Write Audit** writes the audit line.
+8. **Message Box** asks "Do you want to check another case?". No ends the loop.
+9. **Log Message** writes that the assistant has finished.
+
+![The workflow Main](Screenshots/studio-main-loop.png)
+
+*Figure 46. `Main.xaml` in the Studio designer.*
+
+The variable for the stop answer was first called `stop`. The check of the workflow failed with an expression error, because `Stop` is a keyword in Visual Basic, so the variable was renamed to `userStopped`.
+
+### 5.7 Testing the Confirmed Action
+
+These tests change data, so they were run with `Main.xaml`. The staff member answered the dialogs, as in real use. After each test, the case status and its history were checked in the lab database. A status change cannot be undone in Journalsamordning, so the lab data was restored to its starting state with the lab command `./lab restore baseline` before T14 and T15.
+
+| Test | Case | What was done | Result |
+|---|---|---|---|
+| T01 | C-2026-00082 | No in the confirmation | Cancelled, the case stayed Inkommen |
+| T02 | C-2026-00082 | Yes in the confirmation | Registered, Registrerad read back, one new history line |
+| T03 | C-2026-00082 | The same case again | No action (already registered) |
+| T12 | C-2026-00003 | The case was registered by hand in the browser while the summary was open, then Yes | Blocked, nothing was saved by the assistant |
+| T14 | C-2026-00082 | Yes, with `TestFault` AfterClick | The real status Registrerad was read after the error, no second click |
+| T15 | C-2026-00003 | Yes, with `TestFault` BeforeClick | The case was still Inkommen after the error, one more try, registered |
+
+T11 was tested in Section 4.8. The role Kodare gets no proposal, so the question is never asked.
+
+In T03, the lookup found the status Registrerad from T02 and proposed no action (Figure 47).
+
+![The summary for a case that is already registered](Screenshots/staff-assistant-already-registered.png)
+
+*Figure 47. Case C-2026-00082 checked again after the registration.*
+
+In T12, the case was registered by hand while the summary was still open. When Yes was clicked, the assistant read the case again, found the status Registrerad, and did not save anything (Figure 48). The lab database showed only the change made by hand.
+
+![The message for a case that was changed](Screenshots/staff-assistant-blocked.png)
+
+*Figure 48. The message when the case was changed before the save.*
+
+In T14 and T15, the staff member saw the normal message from Figure 39, because the case was registered in the end. The difference is shown in the audit file (Figure 49). For each of the two cases, the lab database showed exactly one new history line, so no case was saved twice.
+
+![The audit file in Excel](Screenshots/excel-audit-log.png)
+
+*Figure 49. The audit file after all tests. The box marks the results of T14 and T15.*
+
+After the tests, `TestFault` was set back to None.
+
+In this step, the assistant learned to register a case after a clear Yes from the staff member, to protect a case that was changed in the meantime, and to read the real status back instead of trusting the click. After a lost connection, it saved the case once more only when the case was still Inkommen. All tests of the confirmed action gave the expected result.
