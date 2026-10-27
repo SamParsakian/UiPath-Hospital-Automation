@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="hQyHwywQK0efFSlfZW0M5g" Reference="yb9ZbGjCXkShps6ECnrLFw/RbBIwWBkFEig73cI-o6ZSA" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" ContentHash="EgqFaxtjo0mstJbrcX73xw" DesignTimeRectangle="2472, 215, 43, 43" DesignTimeScaleFactor="1.3499999046325684" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl action='/logout' tag='FORM' /&gt;&lt;webctrl aria-label='Logga ut' tag='BUTTON' /&gt;" Guid="ac488d6f-3eea-4ecc-bc7c-a4a1e247c56e" Reference="yb9ZbGjCXkShps6ECnrLFw/RbBIwWBkFEig73cI-o6ZSA" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="936edd3a8d22f9955fb010ad533668cd.jpg" xmlns="">0WfjQRmrNwkGKfuMgjTRQkA</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

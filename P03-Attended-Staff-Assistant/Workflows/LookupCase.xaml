@@ -67,7 +67,7 @@
       <Variable x:TypeArguments="x:String" Default="&quot;&quot;" Name="patientName" />
       <Variable x:TypeArguments="x:String" Default="&quot;&quot;" Name="patientBirthDate" />
     </Sequence.Variables>
-    <Assign x:TypeArguments="x:String" DisplayName="Start With Empty Summary" sap2010:WorkflowViewState.IdRef="Assign`1_43" To="[out_Summary]" Value="[&quot;&quot;]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Start With Empty Summary" sap2010:WorkflowViewState.IdRef="Assign`1_44" To="[out_Summary]" Value="[&quot;&quot;]" />
     <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Read Case" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_11" UnSafe="False" WorkflowFileName="Workflows\ReadCase.xaml">
       <ui:InvokeWorkflowFile.Arguments>
         <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[in_Config]</InArgument>
@@ -85,9 +85,9 @@
     <If Condition="[Not out_Found]" DisplayName="Was the Case Found?" sap2010:WorkflowViewState.IdRef="If_26">
       <If.Then>
         <Sequence DisplayName="Case Not Found" sap2010:WorkflowViewState.IdRef="Sequence_23">
-          <Assign x:TypeArguments="x:String" DisplayName="Set No Proposal" sap2010:WorkflowViewState.IdRef="Assign`1_44" To="[out_Proposal]" Value="[&quot;-&quot;]" />
-          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_45" To="[out_Reason]" Value="[&quot;case not found&quot;]" />
-          <Assign x:TypeArguments="x:String" DisplayName="Set Not Found Summary" sap2010:WorkflowViewState.IdRef="Assign`1_46" To="[out_Summary]" Value="[&quot;Case &quot; &amp; in_CaseId &amp; &quot; was not found in Journalsamordning. Nothing was changed.&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set No Proposal" sap2010:WorkflowViewState.IdRef="Assign`1_45" To="[out_Proposal]" Value="[&quot;-&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_46" To="[out_Reason]" Value="[&quot;case not found&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Not Found Summary" sap2010:WorkflowViewState.IdRef="Assign`1_47" To="[out_Summary]" Value="[&quot;Case &quot; &amp; in_CaseId &amp; &quot; was not found in Journalsamordning. Nothing was changed.&quot;]" />
         </Sequence>
       </If.Then>
       <If.Else>
@@ -149,7 +149,7 @@
               <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[out_Reason]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
-          <Assign x:TypeArguments="x:String" DisplayName="Build Summary" sap2010:WorkflowViewState.IdRef="Assign`1_47" To="[out_Summary]" Value="[&quot;Case: &quot; &amp; in_CaseId &amp; &quot; (&quot; &amp; out_Status &amp; &quot;)&quot; &amp; vbCrLf &amp; &quot;Patient: &quot; &amp; caseName &amp; &quot;, born &quot; &amp; caseBirthDate &amp; vbCrLf &amp; &quot;Referral: &quot; &amp; If(referralId = &quot;&quot;, &quot;none&quot;, referralId &amp; If(referralFound, &quot; (&quot; &amp; referralStatus &amp; &quot; in Personalportalen)&quot;, &quot; (not found in Personalportalen)&quot;)) &amp; vbCrLf &amp; &quot;Cases for the referral: &quot; &amp; If(caseIds = &quot;&quot;, &quot;-&quot;, caseIds) &amp; vbCrLf &amp; vbCrLf &amp; &quot;Proposed action: &quot; &amp; out_Proposal]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Build Summary" sap2010:WorkflowViewState.IdRef="Assign`1_48" To="[out_Summary]" Value="[&quot;Case: &quot; &amp; in_CaseId &amp; &quot; (&quot; &amp; out_Status &amp; &quot;)&quot; &amp; vbCrLf &amp; &quot;Patient: &quot; &amp; caseName &amp; &quot;, born &quot; &amp; caseBirthDate &amp; vbCrLf &amp; &quot;Referral: &quot; &amp; If(referralId = &quot;&quot;, &quot;none&quot;, referralId &amp; If(referralFound, &quot; (&quot; &amp; referralStatus &amp; &quot; in Personalportalen)&quot;, &quot; (not found in Personalportalen)&quot;)) &amp; vbCrLf &amp; &quot;Cases for the referral: &quot; &amp; If(caseIds = &quot;&quot;, &quot;-&quot;, caseIds) &amp; vbCrLf &amp; vbCrLf &amp; &quot;Proposed action: &quot; &amp; out_Proposal]" />
         </Sequence>
       </If.Else>
     </If>

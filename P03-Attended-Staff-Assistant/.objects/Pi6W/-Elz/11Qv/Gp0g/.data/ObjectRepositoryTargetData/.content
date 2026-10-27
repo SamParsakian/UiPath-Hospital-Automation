@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="T_GRprawGkKdMpRr0P1EnQ" Reference="yb9ZbGjCXkShps6ECnrLFw/GOnvMkWpWUKknMj2Iat7fQ" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" ContentHash="Vnj7O_xgP069HA3o9X7VaQ" DesignTimeRectangle="340, 581, 1239, 362" DesignTimeScaleFactor="1.3499999046325684" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='referral-facts' tag='DL' /&gt;" Guid="99d3d779-7fbf-4afd-add3-5e56889ec976" Reference="yb9ZbGjCXkShps6ECnrLFw/GOnvMkWpWUKknMj2Iat7fQ" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="0802c63516a3237d79b9cfe72d9857c5.jpg" xmlns="">0KXRaJ8isW0ee8UOPV0zWHg</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

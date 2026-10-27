@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadCase" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sdp="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:sdr="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap2010" x:Class="Workflows_ReadCase" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
     <x:Property Name="in_CaseId" Type="InArgument(x:String)" />
@@ -11,6 +11,10 @@
     <x:Property Name="out_BirthDate" Type="OutArgument(x:String)" />
     <x:Property Name="out_CanEdit" Type="OutArgument(x:Boolean)" />
   </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
       <x:String>GlobalConstantsNamespace</x:String>
@@ -62,34 +66,40 @@
       <Variable x:TypeArguments="x:String" Name="patientFacts" />
       <Variable x:TypeArguments="x:String" Name="caseFacts" />
     </Sequence.Variables>
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Journalsamordning" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" Version="V2">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Journalsamordning" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="05f2ee8f-49e9-4cb5-ad72-add0f5e0e250" Version="V2">
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
           <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_5">
-            <uix:NGoToUrl DisplayName="Open Case Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" Url="[in_Config(&quot;CoordinationUrl&quot;) &amp; &quot;/arenden/&quot; &amp; in_CaseId]" Version="V5" />
-            <uix:NCheckState DisplayName="Check Case Found" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_2" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" Timeout="5" Version="V5">
+            <uix:NGoToUrl DisplayName="Open Case Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="05f2ee8f-49e9-4cb5-ad72-add0f5e0e250" Url="[in_Config(&quot;CoordinationUrl&quot;) &amp; &quot;/arenden/&quot; &amp; in_CaseId]" Version="V5" />
+            <uix:NCheckState DisplayName="Check Case Found" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_2" ScopeIdentifier="05f2ee8f-49e9-4cb5-ad72-add0f5e0e250" Timeout="5" Version="V5">
               <uix:NCheckState.IfExists>
                 <Sequence DisplayName="Read Case Details" sap2010:WorkflowViewState.IdRef="Sequence_4">
                   <Assign x:TypeArguments="x:Boolean" DisplayName="Set Found" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[out_Found]" Value="[True]" />
-                  <uix:NGetText DisplayName="Get Patient Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" TextString="[patientFacts]" Version="V5">
+                  <uix:NGetText DisplayName="Get Patient Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="05f2ee8f-49e9-4cb5-ad72-add0f5e0e250" TextString="[patientFacts]" Version="V5">
                     <uix:NGetText.Target>
-                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-patient' tag='DL' /&gt;" Guid="97d08215-a003-466d-b08a-03b809f860c4" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                      <uix:TargetAnchorable ContentHash="3-h1WwoQ-ESX0H8nQAz2gw" DesignTimeRectangle="317, 388, 1238, 213" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-patient' tag='DL' /&gt;" Guid="593d7e3e-a263-431b-9aad-e8e38fe31a7a" InformativeScreenshot="a3656560d64d905dd51de7dc68c06fa4.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/3wKZmtRGU0mlERE_hNwJUQ" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                     </uix:NGetText.Target>
                   </uix:NGetText>
-                  <uix:NGetText DisplayName="Get Case Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_2" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" TextString="[caseFacts]" Version="V5">
+                  <uix:NGetText DisplayName="Get Case Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_2" ScopeIdentifier="05f2ee8f-49e9-4cb5-ad72-add0f5e0e250" TextString="[caseFacts]" Version="V5">
                     <uix:NGetText.Target>
-                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-case' tag='DL' /&gt;" Guid="ddfeb183-d6c3-4201-b34f-aca155af4996" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                      <uix:TargetAnchorable ContentHash="HQPTN-aTeEGyZcjxkQtStg" DesignTimeRectangle="329, 906, 1238, 251" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-case' tag='DL' /&gt;" Guid="1907c0dc-f79c-443d-96ff-216faf708be3" InformativeScreenshot="ad2bfcd53872a4b4ab05e26f10014e5b.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/1tYFfSJrV0WbLBkRh1Be8w" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                     </uix:NGetText.Target>
                   </uix:NGetText>
-                  <uix:NGetText DisplayName="Get Status" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_3" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" TextString="[out_Status]" Version="V5">
+                  <uix:NGetText DisplayName="Get Status" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_3" ScopeIdentifier="05f2ee8f-49e9-4cb5-ad72-add0f5e0e250" TextString="[out_Status]" Version="V5">
                     <uix:NGetText.Target>
-                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl tag='H1' /&gt;&lt;webctrl tag='SPAN' idx='2' /&gt;" Guid="06740ef6-a19f-4a66-8df1-29cbeccaabb7" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                      <uix:TargetAnchorable ContentHash="nHVcym00F0mri3GKHcJoig" DesignTimeRectangle="577, 806, 112, 32" ElementType="Text" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl tag='DIV' class='card' visibleinnertext='Status och ansvar*' matching:class='fuzzy' fuzzylevel:class='0.0' fuzzylevel:visibleinnertext='0.0' /&gt;&lt;webctrl tag='SPAN' class='chip*' fuzzylevel:class='0.0' /&gt;" Guid="5c6b4c48-65d9-4315-bee7-f638b54df5bf" InformativeScreenshot="37f4335019f746585b223fd0c5bdf74e.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/JDF9Lqbb0ECKSy4do1Dviw" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+                        <uix:TargetAnchorable.Anchors>
+                          <scg:List x:TypeArguments="uix:ITarget" Capacity="1">
+                            <uix:Target DesignTimeRectangle="329, 806, 229, 32" FuzzySelectorArgument="&lt;webctrl aaname='Status' tag='DT' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Status' /&gt;" Guid="90336e0a-2273-4c73-a678-6394e253b7e9" SearchSteps="FuzzySelector" />
+                          </scg:List>
+                        </uix:TargetAnchorable.Anchors>
+                      </uix:TargetAnchorable>
                     </uix:NGetText.Target>
                   </uix:NGetText>
-                  <uix:NCheckState DisplayName="Check Status Form Shown" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="ce7f6351-a2d3-4d27-97f8-04e03edcd40c" Timeout="2" Version="V5">
+                  <uix:NCheckState DisplayName="Check Status Form Shown" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="05f2ee8f-49e9-4cb5-ad72-add0f5e0e250" Timeout="2" Version="V5">
                     <uix:NCheckState.IfExists>
                       <Assign x:TypeArguments="x:Boolean" DisplayName="Set Can Edit" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[out_CanEdit]" Value="[True]" />
                     </uix:NCheckState.IfExists>
@@ -97,7 +107,7 @@
                       <Assign x:TypeArguments="x:Boolean" DisplayName="Set Cannot Edit" sap2010:WorkflowViewState.IdRef="Assign`1_11" To="[out_CanEdit]" Value="[False]" />
                     </uix:NCheckState.IfNotExists>
                     <uix:NCheckState.Target>
-                      <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='change-status' tag='BUTTON' /&gt;" Guid="6932e5f3-5ded-418f-b829-77ace5fb4530" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                      <uix:TargetAnchorable ContentHash="voZSnh16OEy8Or6LX2R7EQ" DesignTimeRectangle="1418, 1474, 149, 53" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl class='*inline-form*' tag='FORM' visibleinnertext='*Anteckning (krävs vid avvisning*' /&gt;&lt;webctrl id='change-status' tag='BUTTON' /&gt;" Guid="9274e7e2-d199-474a-801a-2de334d76b24" InformativeScreenshot="b0323fb12798253d3b1bc181dabb777d.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/dimjGwlMMEyQoRH_cAoyMA" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                     </uix:NCheckState.Target>
                   </uix:NCheckState>
                 </Sequence>
@@ -106,21 +116,21 @@
                 <Assign x:TypeArguments="x:Boolean" DisplayName="Set Not Found" sap2010:WorkflowViewState.IdRef="Assign`1_12" To="[out_Found]" Value="[False]" />
               </uix:NCheckState.IfNotExists>
               <uix:NCheckState.Target>
-                <uix:TargetAnchorable ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-patient' tag='DL' /&gt;" Guid="e96eaafd-3491-4009-9fdd-1d964a261250" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                <uix:TargetAnchorable ContentHash="3-h1WwoQ-ESX0H8nQAz2gw" DesignTimeRectangle="317, 388, 1238, 213" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='case-facts-patient' tag='DL' /&gt;" Guid="593d7e3e-a263-431b-9aad-e8e38fe31a7a" InformativeScreenshot="a3656560d64d905dd51de7dc68c06fa4.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/3wKZmtRGU0mlERE_hNwJUQ" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
               </uix:NCheckState.Target>
             </uix:NCheckState>
           </Sequence>
         </ActivityAction>
       </uix:NApplicationCard.Body>
       <uix:NApplicationCard.OCREngine>
-        <ActivityFunc x:TypeArguments="sdr:Image, scg:IEnumerable(scg:KeyValuePair(sdp:Rectangle, x:String))">
+        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
           <ActivityFunc.Argument>
-            <DelegateInArgument x:TypeArguments="sdr:Image" Name="Image" />
+            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
           </ActivityFunc.Argument>
         </ActivityFunc>
       </uix:NApplicationCard.OCREngine>
       <uix:NApplicationCard.TargetApp>
-        <uix:TargetApp BrowserType="Chrome" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3" />
+        <uix:TargetApp Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="xKGtLoeP2EmVVagBf1a1tg" InformativeScreenshot="2917ec3a41b372b0aa566cd11230d3bf.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3" />
       </uix:NApplicationCard.TargetApp>
     </uix:NApplicationCard>
     <If Condition="[out_Found]" DisplayName="Was the Case Found?" sap2010:WorkflowViewState.IdRef="If_4">
@@ -129,35 +139,35 @@
           <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Namn" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Namn&quot;]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Namn"]</InArgument>
               <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_PatientName]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
           <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Personnummer" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Personnummer&quot;]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Personnummer"]</InArgument>
               <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_PersonalNumber]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
           <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Födelsedatum" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Födelsedatum&quot;]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Födelsedatum"]</InArgument>
               <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_BirthDate]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
           <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Patient-ID (delat)" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Patient-ID (delat)&quot;]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Patient-ID (delat)"]</InArgument>
               <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_PatientId]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
           <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Remiss-ID (delat)" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_5" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[caseFacts]</InArgument>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Label">[&quot;Remiss-ID (delat)&quot;]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Remiss-ID (delat)"]</InArgument>
               <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_ReferralId]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>

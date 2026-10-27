@@ -75,13 +75,13 @@
           <If.Then>
             <Sequence DisplayName="Pass" sap2010:WorkflowViewState.IdRef="Sequence_27">
               <ui:LogMessage DisplayName="Log Pass Empty" sap2010:WorkflowViewState.IdRef="LogMessage_11" Level="Info" Message="[&quot;PASS T04 '': valid = &quot; &amp; valid.ToString() &amp; &quot; &quot; &amp; message]" />
-              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass Empty" sap2010:WorkflowViewState.IdRef="Assign`1_48" To="[passed]" Value="[passed + 1]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass Empty" sap2010:WorkflowViewState.IdRef="Assign`1_49" To="[passed]" Value="[passed + 1]" />
             </Sequence>
           </If.Then>
           <If.Else>
             <Sequence DisplayName="Fail" sap2010:WorkflowViewState.IdRef="Sequence_28">
               <ui:LogMessage DisplayName="Log Fail Empty" sap2010:WorkflowViewState.IdRef="LogMessage_12" Level="Error" Message="[&quot;FAIL T04 '': valid = &quot; &amp; valid.ToString()]" />
-              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail Empty" sap2010:WorkflowViewState.IdRef="Assign`1_49" To="[failed]" Value="[failed + 1]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail Empty" sap2010:WorkflowViewState.IdRef="Assign`1_50" To="[failed]" Value="[failed + 1]" />
             </Sequence>
           </If.Else>
         </If>
@@ -99,13 +99,13 @@
           <If.Then>
             <Sequence DisplayName="Pass" sap2010:WorkflowViewState.IdRef="Sequence_30">
               <ui:LogMessage DisplayName="Log Pass abc" sap2010:WorkflowViewState.IdRef="LogMessage_13" Level="Info" Message="[&quot;PASS T04 'abc': valid = &quot; &amp; valid.ToString() &amp; &quot; &quot; &amp; message]" />
-              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass abc" sap2010:WorkflowViewState.IdRef="Assign`1_50" To="[passed]" Value="[passed + 1]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass abc" sap2010:WorkflowViewState.IdRef="Assign`1_51" To="[passed]" Value="[passed + 1]" />
             </Sequence>
           </If.Then>
           <If.Else>
             <Sequence DisplayName="Fail" sap2010:WorkflowViewState.IdRef="Sequence_31">
               <ui:LogMessage DisplayName="Log Fail abc" sap2010:WorkflowViewState.IdRef="LogMessage_14" Level="Error" Message="[&quot;FAIL T04 'abc': valid = &quot; &amp; valid.ToString()]" />
-              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail abc" sap2010:WorkflowViewState.IdRef="Assign`1_51" To="[failed]" Value="[failed + 1]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail abc" sap2010:WorkflowViewState.IdRef="Assign`1_52" To="[failed]" Value="[failed + 1]" />
             </Sequence>
           </If.Else>
         </If>
@@ -123,13 +123,13 @@
           <If.Then>
             <Sequence DisplayName="Pass" sap2010:WorkflowViewState.IdRef="Sequence_33">
               <ui:LogMessage DisplayName="Log Pass C-2026-123" sap2010:WorkflowViewState.IdRef="LogMessage_15" Level="Info" Message="[&quot;PASS T04 'C-2026-123': valid = &quot; &amp; valid.ToString() &amp; &quot; &quot; &amp; message]" />
-              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass C-2026-123" sap2010:WorkflowViewState.IdRef="Assign`1_52" To="[passed]" Value="[passed + 1]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass C-2026-123" sap2010:WorkflowViewState.IdRef="Assign`1_53" To="[passed]" Value="[passed + 1]" />
             </Sequence>
           </If.Then>
           <If.Else>
             <Sequence DisplayName="Fail" sap2010:WorkflowViewState.IdRef="Sequence_34">
               <ui:LogMessage DisplayName="Log Fail C-2026-123" sap2010:WorkflowViewState.IdRef="LogMessage_16" Level="Error" Message="[&quot;FAIL T04 'C-2026-123': valid = &quot; &amp; valid.ToString()]" />
-              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail C-2026-123" sap2010:WorkflowViewState.IdRef="Assign`1_53" To="[failed]" Value="[failed + 1]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail C-2026-123" sap2010:WorkflowViewState.IdRef="Assign`1_54" To="[failed]" Value="[failed + 1]" />
             </Sequence>
           </If.Else>
         </If>
@@ -147,13 +147,13 @@
           <If.Then>
             <Sequence DisplayName="Pass" sap2010:WorkflowViewState.IdRef="Sequence_36">
               <ui:LogMessage DisplayName="Log Pass C-2026-00082" sap2010:WorkflowViewState.IdRef="LogMessage_17" Level="Info" Message="[&quot;PASS T04 'C-2026-00082': valid = &quot; &amp; valid.ToString() &amp; &quot; &quot; &amp; message]" />
-              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass C-2026-00082" sap2010:WorkflowViewState.IdRef="Assign`1_54" To="[passed]" Value="[passed + 1]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass C-2026-00082" sap2010:WorkflowViewState.IdRef="Assign`1_55" To="[passed]" Value="[passed + 1]" />
             </Sequence>
           </If.Then>
           <If.Else>
             <Sequence DisplayName="Fail" sap2010:WorkflowViewState.IdRef="Sequence_37">
               <ui:LogMessage DisplayName="Log Fail C-2026-00082" sap2010:WorkflowViewState.IdRef="LogMessage_18" Level="Error" Message="[&quot;FAIL T04 'C-2026-00082': valid = &quot; &amp; valid.ToString()]" />
-              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail C-2026-00082" sap2010:WorkflowViewState.IdRef="Assign`1_55" To="[failed]" Value="[failed + 1]" />
+              <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail C-2026-00082" sap2010:WorkflowViewState.IdRef="Assign`1_56" To="[failed]" Value="[failed + 1]" />
             </Sequence>
           </If.Else>
         </If>
@@ -183,18 +183,18 @@
           <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
         </ui:InvokeWorkflowFile.Arguments>
       </ui:InvokeWorkflowFile>
-      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T01" sap2010:WorkflowViewState.IdRef="Assign`1_56" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T01'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T01" sap2010:WorkflowViewState.IdRef="Assign`1_57" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T01'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
       <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T01?" sap2010:WorkflowViewState.IdRef="If_31">
         <If.Then>
           <Sequence DisplayName="Pass T01" sap2010:WorkflowViewState.IdRef="Sequence_40">
             <ui:LogMessage DisplayName="Log Pass T01" sap2010:WorkflowViewState.IdRef="LogMessage_19" Level="Info" Message="[&quot;PASS T01 C-2026-00082: &quot; &amp; proposal]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T01" sap2010:WorkflowViewState.IdRef="Assign`1_57" To="[passed]" Value="[passed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T01" sap2010:WorkflowViewState.IdRef="Assign`1_58" To="[passed]" Value="[passed + 1]" />
           </Sequence>
         </If.Then>
         <If.Else>
           <Sequence DisplayName="Fail T01" sap2010:WorkflowViewState.IdRef="Sequence_41">
             <ui:LogMessage DisplayName="Log Fail T01" sap2010:WorkflowViewState.IdRef="LogMessage_20" Level="Error" Message="[&quot;FAIL T01 C-2026-00082: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T01" sap2010:WorkflowViewState.IdRef="Assign`1_58" To="[failed]" Value="[failed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T01" sap2010:WorkflowViewState.IdRef="Assign`1_59" To="[failed]" Value="[failed + 1]" />
           </Sequence>
         </If.Else>
       </If>
@@ -212,18 +212,18 @@
           <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
         </ui:InvokeWorkflowFile.Arguments>
       </ui:InvokeWorkflowFile>
-      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T05" sap2010:WorkflowViewState.IdRef="Assign`1_59" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T05'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T05" sap2010:WorkflowViewState.IdRef="Assign`1_60" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T05'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
       <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T05?" sap2010:WorkflowViewState.IdRef="If_32">
         <If.Then>
           <Sequence DisplayName="Pass T05" sap2010:WorkflowViewState.IdRef="Sequence_43">
             <ui:LogMessage DisplayName="Log Pass T05" sap2010:WorkflowViewState.IdRef="LogMessage_21" Level="Info" Message="[&quot;PASS T05 C-2026-09999: &quot; &amp; proposal]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T05" sap2010:WorkflowViewState.IdRef="Assign`1_60" To="[passed]" Value="[passed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T05" sap2010:WorkflowViewState.IdRef="Assign`1_61" To="[passed]" Value="[passed + 1]" />
           </Sequence>
         </If.Then>
         <If.Else>
           <Sequence DisplayName="Fail T05" sap2010:WorkflowViewState.IdRef="Sequence_44">
             <ui:LogMessage DisplayName="Log Fail T05" sap2010:WorkflowViewState.IdRef="LogMessage_22" Level="Error" Message="[&quot;FAIL T05 C-2026-09999: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T05" sap2010:WorkflowViewState.IdRef="Assign`1_61" To="[failed]" Value="[failed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T05" sap2010:WorkflowViewState.IdRef="Assign`1_62" To="[failed]" Value="[failed + 1]" />
           </Sequence>
         </If.Else>
       </If>
@@ -241,18 +241,18 @@
           <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
         </ui:InvokeWorkflowFile.Arguments>
       </ui:InvokeWorkflowFile>
-      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T06" sap2010:WorkflowViewState.IdRef="Assign`1_62" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T06'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T06" sap2010:WorkflowViewState.IdRef="Assign`1_63" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T06'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
       <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T06?" sap2010:WorkflowViewState.IdRef="If_33">
         <If.Then>
           <Sequence DisplayName="Pass T06" sap2010:WorkflowViewState.IdRef="Sequence_46">
             <ui:LogMessage DisplayName="Log Pass T06" sap2010:WorkflowViewState.IdRef="LogMessage_23" Level="Info" Message="[&quot;PASS T06 C-2026-00101: &quot; &amp; proposal]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T06" sap2010:WorkflowViewState.IdRef="Assign`1_63" To="[passed]" Value="[passed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T06" sap2010:WorkflowViewState.IdRef="Assign`1_64" To="[passed]" Value="[passed + 1]" />
           </Sequence>
         </If.Then>
         <If.Else>
           <Sequence DisplayName="Fail T06" sap2010:WorkflowViewState.IdRef="Sequence_47">
             <ui:LogMessage DisplayName="Log Fail T06" sap2010:WorkflowViewState.IdRef="LogMessage_24" Level="Error" Message="[&quot;FAIL T06 C-2026-00101: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T06" sap2010:WorkflowViewState.IdRef="Assign`1_64" To="[failed]" Value="[failed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T06" sap2010:WorkflowViewState.IdRef="Assign`1_65" To="[failed]" Value="[failed + 1]" />
           </Sequence>
         </If.Else>
       </If>
@@ -270,18 +270,18 @@
           <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
         </ui:InvokeWorkflowFile.Arguments>
       </ui:InvokeWorkflowFile>
-      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T07" sap2010:WorkflowViewState.IdRef="Assign`1_65" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T07'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T07" sap2010:WorkflowViewState.IdRef="Assign`1_66" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T07'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
       <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T07?" sap2010:WorkflowViewState.IdRef="If_34">
         <If.Then>
           <Sequence DisplayName="Pass T07" sap2010:WorkflowViewState.IdRef="Sequence_49">
             <ui:LogMessage DisplayName="Log Pass T07" sap2010:WorkflowViewState.IdRef="LogMessage_25" Level="Info" Message="[&quot;PASS T07 C-2026-00004: &quot; &amp; proposal]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T07" sap2010:WorkflowViewState.IdRef="Assign`1_66" To="[passed]" Value="[passed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T07" sap2010:WorkflowViewState.IdRef="Assign`1_67" To="[passed]" Value="[passed + 1]" />
           </Sequence>
         </If.Then>
         <If.Else>
           <Sequence DisplayName="Fail T07" sap2010:WorkflowViewState.IdRef="Sequence_50">
             <ui:LogMessage DisplayName="Log Fail T07" sap2010:WorkflowViewState.IdRef="LogMessage_26" Level="Error" Message="[&quot;FAIL T07 C-2026-00004: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T07" sap2010:WorkflowViewState.IdRef="Assign`1_67" To="[failed]" Value="[failed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T07" sap2010:WorkflowViewState.IdRef="Assign`1_68" To="[failed]" Value="[failed + 1]" />
           </Sequence>
         </If.Else>
       </If>
@@ -299,18 +299,18 @@
           <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
         </ui:InvokeWorkflowFile.Arguments>
       </ui:InvokeWorkflowFile>
-      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T08" sap2010:WorkflowViewState.IdRef="Assign`1_68" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T08'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T08" sap2010:WorkflowViewState.IdRef="Assign`1_69" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T08'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
       <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T08?" sap2010:WorkflowViewState.IdRef="If_35">
         <If.Then>
           <Sequence DisplayName="Pass T08" sap2010:WorkflowViewState.IdRef="Sequence_52">
             <ui:LogMessage DisplayName="Log Pass T08" sap2010:WorkflowViewState.IdRef="LogMessage_27" Level="Info" Message="[&quot;PASS T08 C-2026-00020: &quot; &amp; proposal]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T08" sap2010:WorkflowViewState.IdRef="Assign`1_69" To="[passed]" Value="[passed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T08" sap2010:WorkflowViewState.IdRef="Assign`1_70" To="[passed]" Value="[passed + 1]" />
           </Sequence>
         </If.Then>
         <If.Else>
           <Sequence DisplayName="Fail T08" sap2010:WorkflowViewState.IdRef="Sequence_53">
             <ui:LogMessage DisplayName="Log Fail T08" sap2010:WorkflowViewState.IdRef="LogMessage_28" Level="Error" Message="[&quot;FAIL T08 C-2026-00020: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T08" sap2010:WorkflowViewState.IdRef="Assign`1_70" To="[failed]" Value="[failed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T08" sap2010:WorkflowViewState.IdRef="Assign`1_71" To="[failed]" Value="[failed + 1]" />
           </Sequence>
         </If.Else>
       </If>
@@ -328,18 +328,18 @@
           <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
         </ui:InvokeWorkflowFile.Arguments>
       </ui:InvokeWorkflowFile>
-      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T09" sap2010:WorkflowViewState.IdRef="Assign`1_71" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T09'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T09" sap2010:WorkflowViewState.IdRef="Assign`1_72" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T09'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
       <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T09?" sap2010:WorkflowViewState.IdRef="If_36">
         <If.Then>
           <Sequence DisplayName="Pass T09" sap2010:WorkflowViewState.IdRef="Sequence_55">
             <ui:LogMessage DisplayName="Log Pass T09" sap2010:WorkflowViewState.IdRef="LogMessage_29" Level="Info" Message="[&quot;PASS T09 C-2026-00105: &quot; &amp; proposal]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T09" sap2010:WorkflowViewState.IdRef="Assign`1_72" To="[passed]" Value="[passed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T09" sap2010:WorkflowViewState.IdRef="Assign`1_73" To="[passed]" Value="[passed + 1]" />
           </Sequence>
         </If.Then>
         <If.Else>
           <Sequence DisplayName="Fail T09" sap2010:WorkflowViewState.IdRef="Sequence_56">
             <ui:LogMessage DisplayName="Log Fail T09" sap2010:WorkflowViewState.IdRef="LogMessage_30" Level="Error" Message="[&quot;FAIL T09 C-2026-00105: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T09" sap2010:WorkflowViewState.IdRef="Assign`1_73" To="[failed]" Value="[failed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T09" sap2010:WorkflowViewState.IdRef="Assign`1_74" To="[failed]" Value="[failed + 1]" />
           </Sequence>
         </If.Else>
       </If>
@@ -357,18 +357,18 @@
           <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
         </ui:InvokeWorkflowFile.Arguments>
       </ui:InvokeWorkflowFile>
-      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T10" sap2010:WorkflowViewState.IdRef="Assign`1_74" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T10'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T10" sap2010:WorkflowViewState.IdRef="Assign`1_75" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T10'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
       <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T10?" sap2010:WorkflowViewState.IdRef="If_37">
         <If.Then>
           <Sequence DisplayName="Pass T10" sap2010:WorkflowViewState.IdRef="Sequence_58">
             <ui:LogMessage DisplayName="Log Pass T10" sap2010:WorkflowViewState.IdRef="LogMessage_31" Level="Info" Message="[&quot;PASS T10 C-2026-00096: &quot; &amp; proposal]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T10" sap2010:WorkflowViewState.IdRef="Assign`1_75" To="[passed]" Value="[passed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T10" sap2010:WorkflowViewState.IdRef="Assign`1_76" To="[passed]" Value="[passed + 1]" />
           </Sequence>
         </If.Then>
         <If.Else>
           <Sequence DisplayName="Fail T10" sap2010:WorkflowViewState.IdRef="Sequence_59">
             <ui:LogMessage DisplayName="Log Fail T10" sap2010:WorkflowViewState.IdRef="LogMessage_32" Level="Error" Message="[&quot;FAIL T10 C-2026-00096: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T10" sap2010:WorkflowViewState.IdRef="Assign`1_76" To="[failed]" Value="[failed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T10" sap2010:WorkflowViewState.IdRef="Assign`1_77" To="[failed]" Value="[failed + 1]" />
           </Sequence>
         </If.Else>
       </If>
@@ -392,18 +392,18 @@
           <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
         </ui:InvokeWorkflowFile.Arguments>
       </ui:InvokeWorkflowFile>
-      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T11" sap2010:WorkflowViewState.IdRef="Assign`1_77" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T11'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
+      <Assign x:TypeArguments="x:String" DisplayName="Get Expected Proposal T11" sap2010:WorkflowViewState.IdRef="Assign`1_78" To="[expectedProposal]" Value="[expected.Select(&quot;TestId = 'T11'&quot;)(0)(&quot;ExpectedProposal&quot;).ToString()]" />
       <If Condition="[proposal = expectedProposal]" DisplayName="Proposal As Expected T11?" sap2010:WorkflowViewState.IdRef="If_38">
         <If.Then>
           <Sequence DisplayName="Pass T11" sap2010:WorkflowViewState.IdRef="Sequence_61">
             <ui:LogMessage DisplayName="Log Pass T11" sap2010:WorkflowViewState.IdRef="LogMessage_33" Level="Info" Message="[&quot;PASS T11 C-2026-00003: &quot; &amp; proposal]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T11" sap2010:WorkflowViewState.IdRef="Assign`1_78" To="[passed]" Value="[passed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Pass T11" sap2010:WorkflowViewState.IdRef="Assign`1_79" To="[passed]" Value="[passed + 1]" />
           </Sequence>
         </If.Then>
         <If.Else>
           <Sequence DisplayName="Fail T11" sap2010:WorkflowViewState.IdRef="Sequence_62">
             <ui:LogMessage DisplayName="Log Fail T11" sap2010:WorkflowViewState.IdRef="LogMessage_34" Level="Error" Message="[&quot;FAIL T11 C-2026-00003: got &quot;&quot;&quot; &amp; proposal &amp; &quot;&quot;&quot;, expected &quot;&quot;&quot; &amp; expectedProposal &amp; &quot;&quot;&quot;&quot;]" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T11" sap2010:WorkflowViewState.IdRef="Assign`1_79" To="[failed]" Value="[failed + 1]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Count Fail T11" sap2010:WorkflowViewState.IdRef="Assign`1_80" To="[failed]" Value="[failed + 1]" />
           </Sequence>
         </If.Else>
       </If>

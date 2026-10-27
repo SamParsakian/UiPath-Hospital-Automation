@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Password Field",
+  "Description": "Password box on the Personalportalen login form",
+  "Type": "Element",
+  "TaxonomyType": "Password",
+  "Id": "_WVHdqJa_U6fkzq8j06ZLA",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/_WVHdqJa_U6fkzq8j06ZLA",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/11Qv92p8u0m2n_IPTXIulA",
+  "Created": "2026-10-27T10:23:19.5904764Z",
+  "Updated": "2026-10-27T10:23:19.5904764Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
