@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="PQDAXHWt6E281c_AmIm8uw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="340, 986, 156, 76" DesignTimeScaleFactor="1.3499999046325684" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl aaname='Ärende-ID Patient Personnummer Avsändare Ärendetyp Inkommet ↓ Status Prioritet Ansvarig Åtgärder' tag='TABLE' /&gt;&lt;webctrl colName='Ärende-ID' parentid='case-table' tableCol='1' tableRow='{0}' tag='TD' /&gt;&quot;, tableRow)]" Guid="2cb027a7-75b3-4c0d-9c55-d9757814cad8" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="dd885b1a8f8709997b970e5423e88a78.jpg" xmlns="">0QrQbRA1-h0OhJkivi2ou0Q</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

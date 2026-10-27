@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Case Status",
+  "Description": "Status chip in the Status och ansvar card of the case page",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "JDF9Lqbb0ECKSy4do1Dviw",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/JDF9Lqbb0ECKSy4do1Dviw",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-27T10:12:44.1160945Z",
+  "Updated": "2026-10-27T10:12:44.1160945Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

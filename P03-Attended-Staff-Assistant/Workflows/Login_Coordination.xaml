@@ -66,7 +66,7 @@
             <uix:NCheckState DisplayName="Check Already Logged In" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_3" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" Timeout="3" Version="V5">
               <uix:NCheckState.IfExists>
                 <Sequence DisplayName="Target appears" sap2010:WorkflowViewState.IdRef="Sequence_8">
-                  <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click Log Out" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_2" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" Version="V5">
+                  <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click Log Out" HealingAgentBehavior="SameAsCard" InteractionMode="Simulate" sap2010:WorkflowViewState.IdRef="NClick_2" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" Version="V5">
                     <uix:NClick.Target>
                       <uix:TargetAnchorable ContentHash="X92ugm5gh0W1JSziWxFwhw" DesignTimeRectangle="2472, 215, 43, 43" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl action='/logout' tag='FORM' /&gt;&lt;webctrl aria-label='Logga ut' tag='BUTTON' /&gt;" Guid="e55cbd18-44bb-4fa2-9897-9aa9f9955c94" InformativeScreenshot="7b3f173449129fc7c55e8a793fc261ba.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/7PYJspyYxke-5E60bhVPUA" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                     </uix:NClick.Target>
@@ -88,7 +88,7 @@
                 </Sequence>
               </If.Then>
             </If>
-            <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="Single" DisplayName="Type Username" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NTypeInto_1" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" Text="[username]" Version="V5">
+            <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="None" DisplayName="Type Username" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" InteractionMode="Simulate" sap2010:WorkflowViewState.IdRef="NTypeInto_1" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" Text="[username]" Version="V5">
               <uix:NTypeInto.Target>
                 <uix:TargetAnchorable ContentHash="6-z2OM92gUCzSKD9wJ-cJg" DesignTimeRectangle="951, 655, 548, 52" ElementType="InputBox" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl action='/login' method='post' tag='FORM' matching:action='fuzzy' fuzzylevel:action='0.0' matching:method='fuzzy' fuzzylevel:method='0.0' /&gt;&lt;webctrl id='username' tag='INPUT' type='text' class='' placeholder='ange din e-post eller användarnamn' aaname='E-post eller användarnamn' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="71673328-497c-45f3-8117-f1b1f94faadb" InformativeScreenshot="2fcbc6f7824de47fce78d5e92d30455f.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/hOtim46HS0Kf0IHXAcLwGA" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
                   <uix:TargetAnchorable.Anchors>
@@ -99,7 +99,7 @@
                 </uix:TargetAnchorable>
               </uix:NTypeInto.Target>
             </uix:NTypeInto>
-            <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="Single" DisplayName="Type Password" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NTypeInto_2" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" SecureText="[password]" Version="V5">
+            <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="None" DisplayName="Type Password" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" InteractionMode="Simulate" sap2010:WorkflowViewState.IdRef="NTypeInto_2" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" SecureText="[password]" Version="V5">
               <uix:NTypeInto.Target>
                 <uix:TargetAnchorable ContentHash="6ma0zBbu0k2QNQVVbgv4yw" DesignTimeRectangle="951, 758, 548, 53" ElementType="InputBoxPassword" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl action='/login' method='post' tag='FORM' matching:action='fuzzy' fuzzylevel:action='0.0' matching:method='fuzzy' fuzzylevel:method='0.0' /&gt;&lt;webctrl id='password' tag='INPUT' type='password' class='' placeholder='Ange ditt lösenord' aaname='Lösenord' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="06a4392c-643e-4a44-83e6-be0ba624e480" InformativeScreenshot="c4401abffa8d9d34ed125cb13f628968.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/7-f1Fwneo02nm8EMMR1CZg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
                   <uix:TargetAnchorable.Anchors>
@@ -110,7 +110,7 @@
                 </uix:TargetAnchorable>
               </uix:NTypeInto.Target>
             </uix:NTypeInto>
-            <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click Log In" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_1" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" Version="V5">
+            <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click Log In" HealingAgentBehavior="SameAsCard" InteractionMode="Simulate" sap2010:WorkflowViewState.IdRef="NClick_1" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="59010852-5081-4177-bfe7-7eceffb87169" Version="V5">
               <uix:NClick.Target>
                 <uix:TargetAnchorable ContentHash="qfKhia9whUynEfSjElQSig" DesignTimeRectangle="951, 830, 548, 61" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl action='/login' method='post' tag='FORM' visibleinnertext='*E-post eller användarnamn*' /&gt;&lt;webctrl id='login-button' tag='BUTTON' /&gt;" Guid="529722ad-97b4-41c1-9e37-3738ef260b7e" InformativeScreenshot="6317b696c608d4f93de4023bc09cc936.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/vJH2jCJfRUu3ouBbzXqF3g" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
               </uix:NClick.Target>

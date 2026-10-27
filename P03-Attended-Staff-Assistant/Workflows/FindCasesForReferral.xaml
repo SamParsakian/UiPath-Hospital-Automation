@@ -1,0 +1,116 @@
+<Activity mc:Ignorable="sap2010" x:Class="Workflows_FindCasesForReferral" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_ReferralId" Type="InArgument(x:String)" />
+    <x:Property Name="out_CaseCount" Type="OutArgument(x:Int32)" />
+    <x:Property Name="out_CaseIds" Type="OutArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.UIAutomationNext.Enums</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Find Cases For Referral" sap2010:WorkflowViewState.IdRef="Sequence_10">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="listHeader" />
+      <Variable x:TypeArguments="x:String" Name="caseId" />
+      <Variable x:TypeArguments="x:Int32" Name="rowNumber" />
+      <Variable x:TypeArguments="x:Int32" Name="tableRow" />
+    </Sequence.Variables>
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Journalsamordning" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="2f61c99c-9f6d-4a1e-b6bf-ea48ef4587d9" Version="V2">
+      <uix:NApplicationCard.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_9">
+            <uix:NGoToUrl DisplayName="Search Cases For Referral" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="2f61c99c-9f6d-4a1e-b6bf-ea48ef4587d9" Url="[in_Config(&quot;CoordinationUrl&quot;) &amp; &quot;/arenden?q=&quot; &amp; in_ReferralId]" Version="V5" />
+            <uix:NGetText DisplayName="Get Number Of Cases" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_2" ScopeIdentifier="2f61c99c-9f6d-4a1e-b6bf-ea48ef4587d9" TextString="[listHeader]" Version="V5">
+              <uix:NGetText.Target>
+                <uix:TargetAnchorable ContentHash="wXfebayw40eq4yyEhNpKMg" DesignTimeRectangle="340, 892, 129, 32" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl tag='DIV' class='list-meta' /&gt;&lt;webctrl tag='B' /&gt;" Guid="0f4e4e44-3ab1-4d62-b850-71a9fd622e9b" InformativeScreenshot="e14eae60243e368e5e323cecb498fc32.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/1b4k9WgbIUuAKox7Jtg9mg" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NGetText.Target>
+            </uix:NGetText>
+            <Assign x:TypeArguments="x:Int32" DisplayName="Convert Number Of Cases" sap2010:WorkflowViewState.IdRef="Assign`1_20" To="[out_CaseCount]" Value="[CInt(listHeader.Substring(listHeader.IndexOf(&quot;(&quot;) + 1).Replace(&quot;)&quot;, &quot;&quot;).Trim())]" />
+            <Assign x:TypeArguments="x:String" DisplayName="Start With No Case IDs" sap2010:WorkflowViewState.IdRef="Assign`1_21" To="[out_CaseIds]" Value="[&quot;&quot;]" />
+            <Assign x:TypeArguments="x:Int32" DisplayName="Start At First Row" sap2010:WorkflowViewState.IdRef="Assign`1_22" To="[rowNumber]" Value="[1]" />
+            <While DisplayName="While There Are More Rows" sap2010:WorkflowViewState.IdRef="While_1" Condition="[rowNumber &lt;= out_CaseCount AndAlso rowNumber &lt;= 10]">
+              <Sequence DisplayName="Read One Row" sap2010:WorkflowViewState.IdRef="Sequence_8">
+                <Assign x:TypeArguments="x:Int32" DisplayName="Table Row Below the Header" sap2010:WorkflowViewState.IdRef="Assign`1_16" To="[tableRow]" Value="[rowNumber + 1]" />
+                <uix:NGetText DisplayName="Get Case ID" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="2f61c99c-9f6d-4a1e-b6bf-ea48ef4587d9" TextString="[caseId]" Version="V5">
+                  <uix:NGetText.Target>
+                    <uix:TargetAnchorable ContentHash="PQDAXHWt6E281c_AmIm8uw" DesignTimeRectangle="340, 986, 156, 76" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl aaname='Ärende-ID Patient Personnummer Avsändare Ärendetyp Inkommet ↓ Status Prioritet Ansvarig Åtgärder' tag='TABLE' /&gt;&lt;webctrl colName='Ärende-ID' parentid='case-table' tableCol='1' tableRow='{0}' tag='TD' /&gt;&quot;, tableRow)]" Guid="2cb027a7-75b3-4c0d-9c55-d9757814cad8" InformativeScreenshot="dd885b1a8f8709997b970e5423e88a78.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/OhSXp3uAJUWpWVBq7eln7A" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                  </uix:NGetText.Target>
+                </uix:NGetText>
+                <If Condition="[out_CaseIds = &quot;&quot;]" DisplayName="Is It the First Case?" sap2010:WorkflowViewState.IdRef="If_7">
+                  <If.Then>
+                    <Assign x:TypeArguments="x:String" DisplayName="Set First Case ID" sap2010:WorkflowViewState.IdRef="Assign`1_17" To="[out_CaseIds]" Value="[caseId.Trim()]" />
+                  </If.Then>
+                  <If.Else>
+                    <Assign x:TypeArguments="x:String" DisplayName="Add Case ID" sap2010:WorkflowViewState.IdRef="Assign`1_18" To="[out_CaseIds]" Value="[out_CaseIds &amp; &quot;, &quot; &amp; caseId.Trim()]" />
+                  </If.Else>
+                </If>
+                <Assign x:TypeArguments="x:Int32" DisplayName="Next Row" sap2010:WorkflowViewState.IdRef="Assign`1_19" To="[rowNumber]" Value="[rowNumber + 1]" />
+              </Sequence>
+            </While>
+          </Sequence>
+        </ActivityAction>
+      </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
+      <uix:NApplicationCard.TargetApp>
+        <uix:TargetApp Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="xKGtLoeP2EmVVagBf1a1tg" InformativeScreenshot="2917ec3a41b372b0aa566cd11230d3bf.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3" />
+      </uix:NApplicationCard.TargetApp>
+    </uix:NApplicationCard>
+    <ui:LogMessage DisplayName="Log Cases" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[$&quot;Referral {in_ReferralId}: {out_CaseCount} case(s) {out_CaseIds}&quot;]" />
+  </Sequence>
+</Activity>

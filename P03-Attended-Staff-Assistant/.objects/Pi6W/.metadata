@@ -1,0 +1,12 @@
+﻿{
+  "Name": "Personalportalen_App",
+  "Type": "App",
+  "Id": "Pi6Wdgac_USGeH96JHpMvw",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/Pi6Wdgac_USGeH96JHpMvw",
+  "Created": "2026-10-27T10:17:21.7574998Z",
+  "Updated": "2026-10-27T10:17:21.7574998Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

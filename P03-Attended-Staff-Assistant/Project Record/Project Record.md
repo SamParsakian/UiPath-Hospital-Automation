@@ -300,3 +300,196 @@ The config file is read by the workflow `Workflows/ReadConfig.xaml`, which gives
 *Figure 20. `Workflows/ReadConfig.xaml` on the left and its Output panel on the right.*
 
 In this step, the rules of the assistant were decided before it was built. The checks have a fixed order, 15 test cases were chosen from the hospital data, and the expected result of each test was written down. All settings are kept in one config file. With this, every real result of the assistant can be compared with the expected result.
+
+## 4. Looking Up a Case
+
+In this part, the assistant learned to read everything it needs for the decision, without changing anything. It asks for a case ID, reads the case in Journalsamordning and the referral and the patient in Personalportalen, and runs the checks from Section 3.1.
+
+### 4.1 Asking for the Case ID
+
+The staff member enters the case ID in a small dialog (Figure 21).
+
+![The dialog for the case ID](Screenshots/staff-assistant-case-id-dialog.png)
+
+*Figure 21. The dialog of the assistant with the case ID C-2026-00082.*
+
+The dialog is shown by the workflow `Workflows/AskCaseId.xaml` (Figure 22):
+
+1. **Assign** sets the starting values: the user has not stopped, and no valid ID has been entered yet.
+2. **While** repeats the question until a valid ID is entered or the user stops.
+3. **Try Catch** with **Input Dialog** asks for the ID. If the user closes the dialog, the error is caught, and the assistant stops in a normal way.
+4. **Assign** removes spaces and writes the ID in capital letters. Then the small workflow `Workflows/ValidateCaseId.xaml` checks the ID against the pattern from the config file.
+5. **If** the ID is wrong, **Message Box** explains the problem and asks if the user wants to try again. No means stop.
+6. The valid case ID is given back, and **Log Message** writes it to the log.
+
+![The workflow AskCaseId](Screenshots/studio-ask-case-id.png)
+
+*Figure 22. `Workflows/AskCaseId.xaml` in the Studio designer.*
+
+To test a wrong ID, `abc` was entered in the dialog (Figure 23, left). The assistant then showed a message and asked if the user wanted to try again (Figure 23, right). The ID is shown as "ABC", because it is written in capital letters before the check.
+
+![A wrong case ID and the message](Screenshots/staff-assistant-invalid-id.png)
+
+*Figure 23. The wrong case ID `abc` in the dialog, and the message for a case ID with the wrong form.*
+
+With the valid ID C-2026-00082, the workflow ended and wrote the ID to the log (Figure 24).
+
+![The output of AskCaseId](Screenshots/studio-ask-case-id-output.png)
+
+*Figure 24. `Workflows/AskCaseId.xaml` and its Output panel after a valid case ID.*
+
+The workflow can also be started alone with Run File. For that, the argument `in_Pattern` got a default value, the same pattern as in the config file. Without it, the first test stopped with the error "Value cannot be null", because no pattern was given to the check.
+
+### 4.2 The Pages in the Object Repository
+
+All elements that the assistant reads or clicks were captured from the live pages and saved in the Object Repository. In this way, every activity uses the same tested element, and the designer shows a small picture of it (Figure 25):
+
+1. The screen **Journalsamordning** with the elements of the case page and the case list, next to the login elements from Section 2.5.
+2. The new screen **Personalportalen** with the login elements, the patient details and the referral details.
+
+![The Object Repository](Screenshots/studio-object-repository.png)
+
+*Figure 25. The two screens and their elements in the Object Repository.*
+
+The window of Personalportalen is found only by its address, `http://100.99.72.90:8080/*`. The page title was not used, because the login page has another title than the other pages.
+
+### 4.3 Reading the Case in Journalsamordning
+
+The workflow `Workflows/ReadCase.xaml` opens the case page and reads it (Figure 26):
+
+1. **Use Application/Browser** works in the open Journalsamordning tab.
+2. **Go To URL** opens the case page, for example `/arenden/C-2026-00082`.
+3. **Check App State** looks for the list of patient details. If it is not shown, the case does not exist.
+4. **Get Text** reads the whole list of patient details and the whole list of case details.
+5. **Get Text** reads the status. The element is the status chip in the card "Status och ansvar", and the label "Status" next to it is used as an anchor.
+6. **Check App State** looks for the button Spara status. It is only shown to a role that may change cases, so this tells if the logged-in user may register the case.
+7. If the case was not found, only `out_Found` is set to False.
+
+![ReadCase, part 1](Screenshots/studio-read-case-1.png)
+
+*Figure 26. The first part of `Workflows/ReadCase.xaml`.*
+
+The second part takes the single values out of the two lists (Figure 27):
+
+1. The small workflow `GetFactValue` is called once for each value: name, personal number, birth date, patient ID and referral ID.
+2. **If** the page shows "Saknas" (missing) for the personal number, or "-" for the referral, the value is cleared, so the checks see an empty value.
+3. **Log Message** writes the case, the status and the referral, but no personal data.
+
+![ReadCase, part 2](Screenshots/studio-read-case-2.png)
+
+*Figure 27. The second part of `Workflows/ReadCase.xaml`.*
+
+**Get Text** on a list gives one line for each row, with the label and the value together, for example `Personnummer198204044654`. The workflow `Workflows/GetFactValue.xaml` finds the right line by its label (Figure 28):
+
+1. **Assign** starts with an empty value and splits the text into lines.
+2. **For Each** goes through the lines.
+3. **If** a line starts with the label, the rest of the line is the value.
+4. **Log Message** writes on Trace level if the label was found.
+
+![The workflow GetFactValue](Screenshots/studio-get-fact-value.png)
+
+*Figure 28. `Workflows/GetFactValue.xaml` in the Studio designer.*
+
+The first version read each value with its own **Get Text** and the position of the row in the list. The Workflow Analyzer of UiPath stopped the build, because positions above 2 are seen as unreliable. Reading the whole list and finding the value by its label solved this, and it also keeps working if a row is added to the page.
+
+### 4.4 Finding Other Cases for the Referral
+
+The workflow `Workflows/FindCasesForReferral.xaml` searches the case list for the referral ID and counts the cases (Figure 29):
+
+1. **Use Application/Browser** works in the Journalsamordning tab.
+2. **Go To URL** opens the case list with the referral ID as search text.
+3. **Get Text** reads the heading above the table, for example "Ärenden (2)", and **Assign** takes the number out of it.
+4. **Assign** prepares an empty list of case IDs and starts at the first row.
+5. **While** reads one row at a time, at most 10 rows.
+6. **Assign** calculates the table row below the header, and **Get Text** reads the case ID in that row. The row number is a variable in the selector of the element.
+7. **If** this is the first case, the ID is saved, otherwise it is added after a comma.
+8. **Assign** moves to the next row.
+9. **Log Message** writes the number of cases and their IDs.
+
+![The workflow FindCasesForReferral](Screenshots/studio-find-cases-for-referral.png)
+
+*Figure 29. `Workflows/FindCasesForReferral.xaml` in the Studio designer.*
+
+### 4.5 Reading Personalportalen
+
+Personalportalen is read in the same way as Journalsamordning:
+
+| Workflow | What it does |
+|---|---|
+| `Workflows/Login_StaffPortal.xaml` | Logs in with the credential `P01_HospitalDemo`, but only if the login form is shown |
+| `Workflows/ReadReferral.xaml` | Opens the referral page and reads the patient ID and the status of the referral |
+| `Workflows/ReadPatient.xaml` | Opens the patient page and reads the personal number, the name and the birth date |
+
+During the tests, a login once failed with "wrong user name or password", although the password was correct. The log of the lab showed that the login had been sent with an empty user name. The two systems were open in two Chrome windows on top of each other, and the normal input method sends real mouse clicks and keystrokes to the screen, so they reached the wrong window. The login activities of both systems were changed to the input method **Simulate**, which works directly on the element. After that, the logins worked every time.
+
+### 4.6 Checking the Case
+
+The workflow `Workflows/CheckAction.xaml` runs the checks from Section 3.1. Each check is one **If**, and it only runs when no earlier check has found a problem. In this way, the first problem decides the reason. The first part handles the case and the referral (Figure 30):
+
+1. **Assign** starts with no reason.
+2. The status: a case that is already Registrerad gives "already registered", and any other status than Inkommen gives "case is" and the status.
+3. The role must be allowed to change cases.
+4. The case must have a referral, and the referral must exist in Personalportalen.
+5. Only one case may point to the referral.
+6. The referral must not be Avvisad or Avslutad.
+
+![CheckAction, part 1](Screenshots/studio-check-action-1.png)
+
+*Figure 30. The first part of `Workflows/CheckAction.xaml`.*
+
+The second part compares the patient (Figure 31):
+
+1. The personal number must exist in the case and be the same in both systems. The dash is removed before the comparison.
+2. **Assign** writes the name in the case, for example "SJÖBERG, Annika", in the same order as in Personalportalen, "Annika Sjöberg".
+3. The name and the birth date must be the same.
+4. **If** no check found a problem, the proposal is "Register case". Otherwise it is "No action" with the reason.
+5. **Log Message** writes the proposal.
+
+![CheckAction, part 2](Screenshots/studio-check-action-2.png)
+
+*Figure 31. The second part of `Workflows/CheckAction.xaml`.*
+
+### 4.7 Putting the Lookup Together
+
+The workflow `Workflows/LookupCase.xaml` calls the other workflows in the right order (Figure 32):
+
+1. **Read Case** reads the case in Journalsamordning.
+2. If the case was not found, there is no proposal, and the summary says that nothing was changed.
+3. If the case has a referral, the other cases for the referral, the referral and the patient are read.
+4. **Check Action** runs the checks.
+5. **Assign** builds the summary for the staff member: the case and its status, the patient, the referral and its status, the cases for the referral, and the proposed action.
+6. **Log Message** writes the result of the lookup.
+
+![The workflow LookupCase](Screenshots/studio-lookup-case.png)
+
+*Figure 32. `Workflows/LookupCase.xaml` in the Studio designer.*
+
+### 4.8 Testing the Lookup
+
+The test workflow `Tests/Test_CaseLookup.xaml` runs the test cases that do not change any data and compares each proposal with the column ExpectedProposal in `TestData/expected_results.csv` (Figure 33):
+
+1. T04 checks four case IDs: an empty one, `abc` and `C-2026-123` must be refused, and `C-2026-00082` must be accepted.
+2. The test logs in to Journalsamordning as coordinator and to Personalportalen.
+3. T01 and T05-T10 look up one case each.
+4. The test logs in as coder and runs T11.
+5. Each test writes PASS or FAIL with the proposal.
+6. The result: 12 passed, 0 failed.
+
+![The test of the case lookup](Screenshots/studio-test-case-lookup.png)
+
+*Figure 33. `Tests/Test_CaseLookup.xaml` and its result in the Output panel.*
+
+| Test | Case | Proposal |
+|---|---|---|
+| T01 | C-2026-00082 | Register case |
+| T05 | C-2026-09999 | - (case not found) |
+| T06 | C-2026-00101 | No action (two cases for R-2026-0055) |
+| T07 | C-2026-00004 | No action (case is Klar) |
+| T08 | C-2026-00020 | No action (personal number differs) |
+| T09 | C-2026-00105 | No action (referral R-2026-9309 not found) |
+| T10 | C-2026-00096 | No action (personal number missing) |
+| T11 | C-2026-00003, as coder | No action (role Kodare may not change cases) |
+
+Nothing was changed in either system during these tests, because the lookup only reads pages.
+
+In this step, the assistant learned to find a case, read both systems and decide what to propose. All read-only test cases gave the expected proposal. The assistant can now say what it would do with a case, but it does not change anything yet.
