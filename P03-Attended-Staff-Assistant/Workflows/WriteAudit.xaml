@@ -52,10 +52,17 @@
       <Variable x:TypeArguments="x:String" Name="auditFolder" />
       <Variable x:TypeArguments="x:String" Name="auditFile" />
     </Sequence.Variables>
-    <Assign x:TypeArguments="x:String" DisplayName="Set Audit Folder" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[auditFolder]" Value="[Path.Combine(Environment.CurrentDirectory, in_Config(&quot;AuditFolder&quot;))]" />
-    <Assign x:TypeArguments="x:String" DisplayName="Set Audit File" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[auditFile]" Value="[Path.Combine(auditFolder, &quot;audit_log.csv&quot;)]" />
+    <If Condition="[Path.IsPathRooted(in_Config(&quot;AuditFolder&quot;))]" DisplayName="Is the Audit Folder a Full Path?" sap2010:WorkflowViewState.IdRef="If_4">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Use the Full Path" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[auditFolder]" Value="[in_Config(&quot;AuditFolder&quot;)]" />
+      </If.Then>
+      <If.Else>
+        <Assign x:TypeArguments="x:String" DisplayName="Use a Folder In Documents" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[auditFolder]" Value="[Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), &quot;P03_AttendedStaffAssistant&quot;, in_Config(&quot;AuditFolder&quot;))]" />
+      </If.Else>
+    </If>
+    <Assign x:TypeArguments="x:String" DisplayName="Set Audit File" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[auditFile]" Value="[Path.Combine(auditFolder, &quot;audit_log.csv&quot;)]" />
     <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Audit Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[auditFolder]" />
-    <If Condition="[Not File.Exists(auditFile)]" DisplayName="Is the Audit File New?" sap2010:WorkflowViewState.IdRef="If_4">
+    <If Condition="[Not File.Exists(auditFile)]" DisplayName="Is the Audit File New?" sap2010:WorkflowViewState.IdRef="If_5">
       <If.Then>
         <ui:AppendLine File="{x:Null}" DisplayName="Write Header" Encoding="utf-8" FileName="[auditFile]" Text="[&quot;Time;WindowsUser;Role;CaseId;Proposal;Result;Reason&quot;]" UseDefaultEncoding="False" sap2010:WorkflowViewState.IdRef="AppendLine_1" />
       </If.Then>
