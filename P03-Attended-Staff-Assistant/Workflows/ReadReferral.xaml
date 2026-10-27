@@ -56,24 +56,24 @@
       <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Read Referral" sap2010:WorkflowViewState.IdRef="Sequence_17">
+  <Sequence DisplayName="Read Referral" sap2010:WorkflowViewState.IdRef="Sequence_21">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="referralFacts" />
       <Variable x:TypeArguments="x:String" Name="patientText" />
     </Sequence.Variables>
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Personalportalen" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="0663827c-853e-4b9b-bad0-bf0193ed63fd" Version="V2">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Personalportalen" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="595b9d32-97a2-493e-908a-c615ac547f65" Version="V2">
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
-          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_15">
-            <uix:NGoToUrl DisplayName="Open Referral Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="0663827c-853e-4b9b-bad0-bf0193ed63fd" Url="[in_Config(&quot;PortalUrl&quot;) &amp; &quot;/remisser/&quot; &amp; in_ReferralId]" Version="V5" />
-            <uix:NCheckState DisplayName="Check Referral Found" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="0663827c-853e-4b9b-bad0-bf0193ed63fd" Timeout="5" Version="V5">
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_19">
+            <uix:NGoToUrl DisplayName="Open Referral Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="595b9d32-97a2-493e-908a-c615ac547f65" Url="[in_Config(&quot;PortalUrl&quot;) &amp; &quot;/remisser/&quot; &amp; in_ReferralId]" Version="V5" />
+            <uix:NCheckState DisplayName="Check Referral Found" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="595b9d32-97a2-493e-908a-c615ac547f65" Timeout="5" Version="V5">
               <uix:NCheckState.IfExists>
-                <Sequence DisplayName="Read Referral Details" sap2010:WorkflowViewState.IdRef="Sequence_14">
-                  <Assign x:TypeArguments="x:Boolean" DisplayName="Set Found" sap2010:WorkflowViewState.IdRef="Assign`1_23" To="[out_Found]" Value="[True]" />
-                  <uix:NGetText DisplayName="Get Referral Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="0663827c-853e-4b9b-bad0-bf0193ed63fd" TextString="[referralFacts]" Version="V5">
+                <Sequence DisplayName="Read Referral Details" sap2010:WorkflowViewState.IdRef="Sequence_18">
+                  <Assign x:TypeArguments="x:Boolean" DisplayName="Set Found" sap2010:WorkflowViewState.IdRef="Assign`1_29" To="[out_Found]" Value="[True]" />
+                  <uix:NGetText DisplayName="Get Referral Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="595b9d32-97a2-493e-908a-c615ac547f65" TextString="[referralFacts]" Version="V5">
                     <uix:NGetText.Target>
                       <uix:TargetAnchorable ContentHash="T_GRprawGkKdMpRr0P1EnQ" DesignTimeRectangle="340, 581, 1239, 362" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='referral-facts' tag='DL' /&gt;" Guid="99d3d779-7fbf-4afd-add3-5e56889ec976" InformativeScreenshot="0802c63516a3237d79b9cfe72d9857c5.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/Gp0gbozbOEKtJI9l0FHecQ" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                     </uix:NGetText.Target>
@@ -81,7 +81,7 @@
                 </Sequence>
               </uix:NCheckState.IfExists>
               <uix:NCheckState.IfNotExists>
-                <Assign x:TypeArguments="x:Boolean" DisplayName="Set Not Found" sap2010:WorkflowViewState.IdRef="Assign`1_24" To="[out_Found]" Value="[False]" />
+                <Assign x:TypeArguments="x:Boolean" DisplayName="Set Not Found" sap2010:WorkflowViewState.IdRef="Assign`1_30" To="[out_Found]" Value="[False]" />
               </uix:NCheckState.IfNotExists>
               <uix:NCheckState.Target>
                 <uix:TargetAnchorable ContentHash="T_GRprawGkKdMpRr0P1EnQ" DesignTimeRectangle="340, 581, 1239, 362" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='referral-facts' tag='DL' /&gt;" Guid="99d3d779-7fbf-4afd-add3-5e56889ec976" InformativeScreenshot="0802c63516a3237d79b9cfe72d9857c5.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/Gp0gbozbOEKtJI9l0FHecQ" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
@@ -101,18 +101,27 @@
         <uix:TargetApp Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="VUcCjYmSPEma5A8zn2UKzg" InformativeScreenshot="2361791ac0cc37f2c24dd361574d9143.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/11Qv92p8u0m2n_IPTXIulA" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" Url="http://100.99.72.90:8080/patienter/P-000042" Version="V3" />
       </uix:NApplicationCard.TargetApp>
     </uix:NApplicationCard>
-    <If Condition="[out_Found]" DisplayName="Was the Referral Found?" sap2010:WorkflowViewState.IdRef="If_9">
+    <If Condition="[Not out_Found]" DisplayName="Is It a Real Not Found Page?" sap2010:WorkflowViewState.IdRef="If_13">
       <If.Then>
-        <Sequence DisplayName="Take Values From Facts" sap2010:WorkflowViewState.IdRef="Sequence_16">
-          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Patient" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_6" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Check Staff Portal Page" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_8" UnSafe="False" WorkflowFileName="Workflows\CheckStaffPortalPage.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[in_Config]</InArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+      </If.Then>
+    </If>
+    <If Condition="[out_Found]" DisplayName="Was the Referral Found?" sap2010:WorkflowViewState.IdRef="If_14">
+      <If.Then>
+        <Sequence DisplayName="Take Values From Facts" sap2010:WorkflowViewState.IdRef="Sequence_20">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Patient" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_9" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[referralFacts]</InArgument>
               <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Patient"]</InArgument>
               <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[patientText]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
-          <Assign x:TypeArguments="x:String" DisplayName="Get Patient ID From Text" sap2010:WorkflowViewState.IdRef="Assign`1_25" To="[out_PatientId]" Value="[patientText.Split(&quot; &quot;c)(0)]" />
-          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Status" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_7" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+          <Assign x:TypeArguments="x:String" DisplayName="Get Patient ID From Text" sap2010:WorkflowViewState.IdRef="Assign`1_31" To="[out_PatientId]" Value="[patientText.Split(&quot; &quot;c)(0)]" />
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Status" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_10" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[referralFacts]</InArgument>
               <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Status"]</InArgument>
@@ -122,6 +131,6 @@
         </Sequence>
       </If.Then>
     </If>
-    <ui:LogMessage DisplayName="Log Referral" sap2010:WorkflowViewState.IdRef="LogMessage_7" Level="Info" Message="[$&quot;Referral {in_ReferralId}: found = {out_Found}, status = {out_Status}, patient = {out_PatientId}&quot;]" />
+    <ui:LogMessage DisplayName="Log Referral" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Info" Message="[$&quot;Referral {in_ReferralId}: found = {out_Found}, status = {out_Status}, patient = {out_PatientId}&quot;]" />
   </Sequence>
 </Activity>

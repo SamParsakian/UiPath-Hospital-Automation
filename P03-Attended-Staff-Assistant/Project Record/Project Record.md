@@ -694,3 +694,151 @@ In T14 and T15, the staff member saw the normal message from Figure 39, because 
 After the tests, `TestFault` was set back to None.
 
 In this step, the assistant learned to register a case after a clear Yes from the staff member, to protect a case that was changed in the meantime, and to read the real status back instead of trusting the click. After a lost connection, it saved the case once more only when the case was still Inkommen. All tests of the confirmed action gave the expected result.
+
+## 6. Handling an Unavailable System
+
+An assistant that reads two systems must notice when one of them does not answer. In this part, T13 was tested, a wrong result was found, and the assistant was changed so that it stops with a clear message instead.
+
+### 6.1 The Problem With the Maintenance Page
+
+The lab has a scenario called `maintenance`. When it is on, Personalportalen shows the page "Systemet är inte tillgängligt" (the system is not available) with error code 503. The scenario was turned on with the lab command `./lab scenario on maintenance`, and `Main.xaml` was started.
+
+The assistant did not notice the maintenance page. It found no login form, so it logged "Already logged in to Personalportalen", and it asked for a case as usual (Figure 50).
+
+![The maintenance page and the case question](Screenshots/staff-assistant-maintenance-before-fix.png)
+
+*Figure 50. The maintenance page in Personalportalen, and the assistant still asks for a case.*
+
+For case C-2026-00020, the assistant could not find the referral details on the page, so it reported the referral as not found and proposed no action (Figure 51). The real problem with this case is a different personal number (Section 3.2), so the summary gave the staff member a wrong reason, and nothing showed that Personalportalen was down.
+
+![The wrong summary during maintenance](Screenshots/staff-assistant-maintenance-wrong-summary.png)
+
+*Figure 51. The summary for C-2026-00020 during maintenance, with the wrong reason "referral not found".*
+
+The cause was the same in two places. A missing element was taken as proof of something: no login form meant "already logged in", and no referral details meant "referral not found".
+
+### 6.2 What a Real "Not Found" Page Looks Like
+
+A referral that really does not exist gives a normal page in Personalportalen (Figure 52):
+
+1. The heading says "Remissen hittades inte" (the referral was not found).
+2. The page header with the logout button is still shown, because the user is logged in.
+
+![A referral that does not exist](Screenshots/staff-portal-referral-not-found.png)
+
+*Figure 52. The page for a referral that does not exist, with the logout button in the header.*
+
+The maintenance page and the login page have no logout button. So the logout button shows if the page is a normal page of a logged-in user, and only then can a missing element be trusted as "not found".
+
+### 6.3 Checking the Page
+
+The logout button was already in the Object Repository from the login workflows. One new element was captured from the live maintenance page: **Page Heading**, the main heading of the page. Its selector is only `<webctrl tag='H1' />`. It has no text on purpose, so it reads the heading of any page, for example "Systemet är inte tillgängligt" or "Logga in".
+
+The workflow `Workflows/CheckStaffPortalPage.xaml` checks the page in Personalportalen (Figure 53):
+
+1. **Check App State** waits up to 3 seconds for the logout button. If it appears, the page is a normal page.
+2. If it does not appear, the page is marked as not OK, and its heading is read.
+3. **Check App State** looks for a heading, and **Get Text** reads it. If there is no heading, the text "(no heading)" is used.
+4. **If** the page is not OK, **Throw** stops with the message "Personalportalen is not available or the login has expired. The page shows:" and the heading.
+5. **Log Message** writes that the page was checked.
+
+![The workflow CheckStaffPortalPage](Screenshots/studio-check-staff-portal-page.png)
+
+*Figure 53. `Workflows/CheckStaffPortalPage.xaml` in the Studio designer.*
+
+A second workflow, `Workflows/CheckCoordinationPage.xaml`, does the same check in Journalsamordning with its logout button, but without the heading.
+
+### 6.4 Using the Check
+
+The check only runs when an element was missing, so a normal lookup is not slower. In `Workflows/ReadReferral.xaml` it was added after the referral page (Figure 54):
+
+1. **Go To URL** opens the referral page.
+2. **Check App State** looks for the referral details. If they are missing, the referral is marked as not found.
+3. **If** the referral was not found, **Check Staff Portal Page** is called. On a normal page nothing happens, and the referral stays "not found". On any other page, the check stops with the message.
+
+![ReadReferral with the new check](Screenshots/studio-read-referral-check.png)
+
+*Figure 54. The first part of `Workflows/ReadReferral.xaml` with the new check.*
+
+The same **If** was added to `Workflows/ReadPatient.xaml`, and to `Workflows/ReadCase.xaml` with the check for Journalsamordning.
+
+The login to Personalportalen was changed in the same way (Figure 55):
+
+1. If the login form is not shown, the workflow only notes this.
+2. **If** there was no login form, the page is checked before anything else.
+3. **Check Staff Portal Page** stops with the message if the page is not a normal page.
+4. Only after a successful check, "Already logged in to Personalportalen" is written to the log.
+
+![Login_StaffPortal with the new check](Screenshots/studio-login-staff-portal-check.png)
+
+*Figure 55. The end of `Workflows/Login_StaffPortal.xaml` with the new check.*
+
+### 6.5 Error Handling in the Main Workflow
+
+The message from the check is an error, and `Main.xaml` decides what happens next. Two **Try Catch** activities were added. The first part of the workflow is shown in Figure 56:
+
+1. **Log Message** writes that the assistant has started.
+2. **Try Catch** "Try Session" contains the whole session, from reading the config file to the last case.
+3. The config file is read, and the assistant logs in to both systems, as before.
+4. **While** repeats the steps for one case.
+5. Before each case, the proposal, the result and the reason are cleared, so a failed case cannot show the values of the case before it.
+
+![Main.xaml, part 1](Screenshots/studio-main-error-handling-1.png)
+
+*Figure 56. The first part of `Main.xaml` with the Try Catch for the session.*
+
+The second part handles errors (Figure 57):
+
+1. **Try Catch** "Try Handle Case" runs the workflow for one case.
+2. If the case fails, the result is "Error", the reason is the error message, the error is logged, and the staff member gets a message. The session then goes on.
+3. The audit line is written for every case, also for a failed case, and the staff member is asked if another case should be checked.
+4. If an error happens outside a case, for example at the login, the catch "Controlled Stop" logs it and shows a message, and the assistant stops.
+5. **Log Message** writes that the assistant has finished.
+
+![Main.xaml, part 2](Screenshots/studio-main-error-handling-2.png)
+
+*Figure 57. The second part of `Main.xaml` with the error handling for one case and for the session.*
+
+An error in a case does not end the session, because the system may be back a minute later. An error at the login ends the session, because the assistant cannot work without both systems.
+
+### 6.6 Testing the Error Handling
+
+The lab scenario was turned on and off with the lab commands shown in Figure 58. Before the last test run, the lab data was restored with `./lab restore baseline`, because the registration tests in Section 5.7 had already changed some cases. All scenarios were off at the end.
+
+![The lab commands](Screenshots/lab-terminal-maintenance.png)
+
+*Figure 58. The lab commands for the maintenance scenario and the restore.*
+
+| Test | What was done | Result |
+|---|---|---|
+| T13 | Maintenance on before the start | The assistant stopped at the login with a clear message, and no case was asked for |
+| T13b | Maintenance turned on while the case question was open, case C-2026-00020 | The case got the result "Error" with the message, and the session went on |
+| T13c | Maintenance turned off, the same case again | The correct proposal "No action (personal number differs)" |
+| T13d | Logged out of Personalportalen by hand while the case question was open | The case got the result "Error", and the message showed the heading "Logga in" |
+| T01-T11 | The lookup tests from Section 4.8 after the restore | 12 of 12 passed, so a real "not found" is still reported as before |
+
+In T13, the assistant stopped right after the login to Journalsamordning (Figure 59).
+
+![The controlled stop](Screenshots/staff-assistant-controlled-stop.png)
+
+*Figure 59. The controlled stop when Personalportalen shows the maintenance page.*
+
+In T13b, the session was already running when the maintenance started. The case could not be handled, and the staff member was told to check the case by hand (Figure 60). Answering Yes to the next question started a new case.
+
+![The message for a failed case](Screenshots/staff-assistant-case-error.png)
+
+*Figure 60. The message when Personalportalen became unavailable during a case.*
+
+T13d shows that the same check also finds an expired login. After the logout, Personalportalen showed the login page, and its heading was shown in the message (Figure 61).
+
+![The message after the logout](Screenshots/staff-assistant-login-expired.png)
+
+*Figure 61. The message when the login to Personalportalen had expired.*
+
+The audit file shows the difference between the first run and the tests after the change (Figure 62). The line from 13:44 is the wrong result from Section 6.1. The box marks the lines from T13b, T13c and T13d: two lines with the result "Error" and the reason, and the correct proposal in between.
+
+![The audit file with the errors](Screenshots/excel-audit-log-errors.png)
+
+*Figure 62. The audit file after the tests. The box marks the lines from T13b, T13c and T13d.*
+
+In this step, the assistant learned not to trust a missing element on its own. A page now counts as "not found" only when the logout button shows a normal page of a logged-in user. An unavailable system or an expired login now gives a clear message and an "Error" line in the audit file instead of a wrong proposal, and one failed case no longer ends the session.
