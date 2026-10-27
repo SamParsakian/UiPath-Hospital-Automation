@@ -1,0 +1,66 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_WriteAudit" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_UserRole" Type="InArgument(x:String)" />
+    <x:Property Name="in_CaseId" Type="InArgument(x:String)" />
+    <x:Property Name="in_Proposal" Type="InArgument(x:String)" />
+    <x:Property Name="in_Result" Type="InArgument(x:String)" />
+    <x:Property Name="in_Reason" Type="InArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Write Audit" sap2010:WorkflowViewState.IdRef="Sequence_8">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="auditFolder" />
+      <Variable x:TypeArguments="x:String" Name="auditFile" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:String" DisplayName="Set Audit Folder" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[auditFolder]" Value="[Path.Combine(Environment.CurrentDirectory, in_Config(&quot;AuditFolder&quot;))]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Set Audit File" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[auditFile]" Value="[Path.Combine(auditFolder, &quot;audit_log.csv&quot;)]" />
+    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Audit Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[auditFolder]" />
+    <If Condition="[Not File.Exists(auditFile)]" DisplayName="Is the Audit File New?" sap2010:WorkflowViewState.IdRef="If_4">
+      <If.Then>
+        <ui:AppendLine File="{x:Null}" DisplayName="Write Header" Encoding="utf-8" FileName="[auditFile]" Text="[&quot;Time;WindowsUser;Role;CaseId;Proposal;Result;Reason&quot;]" UseDefaultEncoding="False" sap2010:WorkflowViewState.IdRef="AppendLine_1" />
+      </If.Then>
+    </If>
+    <ui:AppendLine File="{x:Null}" DisplayName="Write Audit Line" Encoding="utf-8" FileName="[auditFile]" Text="[DateTime.Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;) &amp; &quot;;&quot; &amp; Environment.UserName &amp; &quot;;&quot; &amp; in_UserRole &amp; &quot;;&quot; &amp; in_CaseId &amp; &quot;;&quot; &amp; in_Proposal.Replace(&quot;;&quot;, &quot;,&quot;) &amp; &quot;;&quot; &amp; in_Result &amp; &quot;;&quot; &amp; in_Reason.Replace(&quot;;&quot;, &quot;,&quot;)]" UseDefaultEncoding="False" sap2010:WorkflowViewState.IdRef="AppendLine_2" />
+    <ui:LogMessage DisplayName="Log Audit Written" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;Audit: &quot; &amp; in_CaseId &amp; &quot; &quot; &amp; in_Result]" />
+  </Sequence>
+</Activity>

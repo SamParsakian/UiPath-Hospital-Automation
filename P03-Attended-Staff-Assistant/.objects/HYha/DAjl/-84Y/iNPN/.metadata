@@ -1,0 +1,15 @@
+﻿{
+  "Name": "New Status Dropdown",
+  "Description": "Ny status dropdown in the status form of the case page, shown only to roles that may edit",
+  "Type": "Element",
+  "TaxonomyType": "Dropdown",
+  "Id": "iNPNlOyV3EStU8B3YzLjVA",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/iNPNlOyV3EStU8B3YzLjVA",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-27T11:22:04.5337871Z",
+  "Updated": "2026-10-27T11:22:04.5337871Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
