@@ -57,23 +57,23 @@
       <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Read Patient" sap2010:WorkflowViewState.IdRef="Sequence_21">
+  <Sequence DisplayName="Read Patient" sap2010:WorkflowViewState.IdRef="Sequence_25">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="patientFacts" />
     </Sequence.Variables>
-    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Personalportalen" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="68894ef1-3070-4411-8137-b1e287141138" Version="V2">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Personalportalen" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="0e0638bc-9db9-4341-a37e-dad87ecb711e" Version="V2">
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
-          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_19">
-            <uix:NGoToUrl DisplayName="Open Patient Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="68894ef1-3070-4411-8137-b1e287141138" Url="[in_Config(&quot;PortalUrl&quot;) &amp; &quot;/patienter/&quot; &amp; in_PatientId]" Version="V5" />
-            <uix:NCheckState DisplayName="Check Patient Found" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="68894ef1-3070-4411-8137-b1e287141138" Timeout="5" Version="V5">
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_23">
+            <uix:NGoToUrl DisplayName="Open Patient Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="0e0638bc-9db9-4341-a37e-dad87ecb711e" Url="[in_Config(&quot;PortalUrl&quot;) &amp; &quot;/patienter/&quot; &amp; in_PatientId]" Version="V5" />
+            <uix:NCheckState DisplayName="Check Patient Found" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="0e0638bc-9db9-4341-a37e-dad87ecb711e" Timeout="5" Version="V5">
               <uix:NCheckState.IfExists>
-                <Sequence DisplayName="Read Patient Details" sap2010:WorkflowViewState.IdRef="Sequence_18">
-                  <Assign x:TypeArguments="x:Boolean" DisplayName="Set Found" sap2010:WorkflowViewState.IdRef="Assign`1_26" To="[out_Found]" Value="[True]" />
-                  <uix:NGetText DisplayName="Get Patient Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="68894ef1-3070-4411-8137-b1e287141138" TextString="[patientFacts]" Version="V5">
+                <Sequence DisplayName="Read Patient Details" sap2010:WorkflowViewState.IdRef="Sequence_22">
+                  <Assign x:TypeArguments="x:Boolean" DisplayName="Set Found" sap2010:WorkflowViewState.IdRef="Assign`1_32" To="[out_Found]" Value="[True]" />
+                  <uix:NGetText DisplayName="Get Patient Facts" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="0e0638bc-9db9-4341-a37e-dad87ecb711e" TextString="[patientFacts]" Version="V5">
                     <uix:NGetText.Target>
                       <uix:TargetAnchorable ContentHash="D3JBLfipgkuQjYAJ1UotaQ" DesignTimeRectangle="317, 388, 1238, 362" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='patient-facts' tag='DL' /&gt;" Guid="4b197b23-3f35-472b-bcf2-3dbd7377f2c2" InformativeScreenshot="6a0b615186af13a21c938687da61c9bc.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/gEQwtLcbe0uKz9YemlN7MQ" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
                     </uix:NGetText.Target>
@@ -81,7 +81,7 @@
                 </Sequence>
               </uix:NCheckState.IfExists>
               <uix:NCheckState.IfNotExists>
-                <Assign x:TypeArguments="x:Boolean" DisplayName="Set Not Found" sap2010:WorkflowViewState.IdRef="Assign`1_27" To="[out_Found]" Value="[False]" />
+                <Assign x:TypeArguments="x:Boolean" DisplayName="Set Not Found" sap2010:WorkflowViewState.IdRef="Assign`1_33" To="[out_Found]" Value="[False]" />
               </uix:NCheckState.IfNotExists>
               <uix:NCheckState.Target>
                 <uix:TargetAnchorable ContentHash="D3JBLfipgkuQjYAJ1UotaQ" DesignTimeRectangle="317, 388, 1238, 362" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='patient-facts' tag='DL' /&gt;" Guid="4b197b23-3f35-472b-bcf2-3dbd7377f2c2" InformativeScreenshot="6a0b615186af13a21c938687da61c9bc.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/gEQwtLcbe0uKz9YemlN7MQ" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
@@ -101,24 +101,33 @@
         <uix:TargetApp Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="VUcCjYmSPEma5A8zn2UKzg" InformativeScreenshot="2361791ac0cc37f2c24dd361574d9143.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/11Qv92p8u0m2n_IPTXIulA" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" Url="http://100.99.72.90:8080/patienter/P-000042" Version="V3" />
       </uix:NApplicationCard.TargetApp>
     </uix:NApplicationCard>
-    <If Condition="[out_Found]" DisplayName="Was the Patient Found?" sap2010:WorkflowViewState.IdRef="If_10">
+    <If Condition="[Not out_Found]" DisplayName="Is It a Real Not Found Page?" sap2010:WorkflowViewState.IdRef="If_15">
       <If.Then>
-        <Sequence DisplayName="Take Values From Facts" sap2010:WorkflowViewState.IdRef="Sequence_20">
-          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Personnummer" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_8" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Check Staff Portal Page" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_11" UnSafe="False" WorkflowFileName="Workflows\CheckStaffPortalPage.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[in_Config]</InArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+      </If.Then>
+    </If>
+    <If Condition="[out_Found]" DisplayName="Was the Patient Found?" sap2010:WorkflowViewState.IdRef="If_16">
+      <If.Then>
+        <Sequence DisplayName="Take Values From Facts" sap2010:WorkflowViewState.IdRef="Sequence_24">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Personnummer" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_12" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
               <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Personnummer"]</InArgument>
               <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_PersonalNumber]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
-          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Namn" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_9" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Namn" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_13" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
               <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Namn"]</InArgument>
               <OutArgument x:TypeArguments="x:String" x:Key="out_Value">[out_Name]</OutArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
-          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Födelsedatum" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_10" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Get Födelsedatum" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_14" UnSafe="False" WorkflowFileName="Workflows\GetFactValue.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Text">[patientFacts]</InArgument>
               <InArgument x:TypeArguments="x:String" x:Key="in_Label">["Födelsedatum"]</InArgument>
@@ -128,11 +137,11 @@
         </Sequence>
       </If.Then>
     </If>
-    <If Condition="[out_Found AndAlso out_PersonalNumber.Trim() = &quot;-&quot;]" DisplayName="Is the Personal Number Missing?" sap2010:WorkflowViewState.IdRef="If_11">
+    <If Condition="[out_Found AndAlso out_PersonalNumber.Trim() = &quot;-&quot;]" DisplayName="Is the Personal Number Missing?" sap2010:WorkflowViewState.IdRef="If_17">
       <If.Then>
-        <Assign x:TypeArguments="x:String" DisplayName="Clear Personal Number" sap2010:WorkflowViewState.IdRef="Assign`1_28" To="[out_PersonalNumber]" Value="[&quot;&quot;]" />
+        <Assign x:TypeArguments="x:String" DisplayName="Clear Personal Number" sap2010:WorkflowViewState.IdRef="Assign`1_34" To="[out_PersonalNumber]" Value="[&quot;&quot;]" />
       </If.Then>
     </If>
-    <ui:LogMessage DisplayName="Log Patient" sap2010:WorkflowViewState.IdRef="LogMessage_8" Level="Info" Message="[$&quot;Patient {in_PatientId}: found = {out_Found}&quot;]" />
+    <ui:LogMessage DisplayName="Log Patient" sap2010:WorkflowViewState.IdRef="LogMessage_10" Level="Info" Message="[$&quot;Patient {in_PatientId}: found = {out_Found}&quot;]" />
   </Sequence>
 </Activity>
