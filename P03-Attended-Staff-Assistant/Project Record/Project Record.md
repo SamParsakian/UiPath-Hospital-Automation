@@ -842,3 +842,88 @@ The audit file shows the difference between the first run and the tests after th
 *Figure 62. The audit file after the tests. The box marks the lines from T13b, T13c and T13d.*
 
 In this step, the assistant learned not to trust a missing element on its own. A page now counts as "not found" only when the logout button shows a normal page of a logged-in user. An unavailable system or an expired login now gives a clear message and an "Error" line in the audit file instead of a wrong proposal, and one failed case no longer ends the session.
+
+## 7. Running the Assistant From UiPath Assistant
+
+Until now, the assistant was started from Studio. A staff member does not use Studio, so the project was published to Orchestrator and started from UiPath Assistant, the app where a staff member sees the automations of the workspace.
+
+### 7.1 Moving the Audit File
+
+A job that is started from UiPath Assistant does not run in the project folder. It runs in the folder of the installed package, under the NuGet package cache of the Windows user. The setting `AuditFolder` is `Output`, a relative folder, so the audit file from Section 5.5 would have been written inside the package cache, where nobody looks for it.
+
+`Workflows/WriteAudit.xaml` was changed with one **If** "Is the Audit Folder a Full Path?":
+
+1. If `AuditFolder` is a full path, for example a shared folder, it is used as it is.
+2. If it is a relative folder, it is placed under the Documents folder of the user, in `Documents\P03_AttendedStaffAssistant\`.
+
+With the setting `Output`, the audit file is now `Documents\P03_AttendedStaffAssistant\Output\audit_log.csv`, both from Studio and from UiPath Assistant.
+
+### 7.2 Packing and Uploading the Package
+
+The package was built from a clean copy of the committed files, so that local test output and the Project Record were not packed. The UiPath command line tool `uip` was used for both steps:
+
+```text
+uip rpa pack <clean copy> <output folder> --package-id P03_AttendedStaffAssistant --package-version 1.0.0
+uip or packages upload <output folder>/P03_AttendedStaffAssistant.1.0.0.nupkg --folder-key <My Workspace key>
+```
+
+The file list of the package was checked before the upload. It had the workflows, the Object Repository, `Data/Config.xlsx` and `project.json`, and no output files or screenshots. The package was uploaded to My Workspace, and Orchestrator created the process `P03_AttendedStaffAssistant` with version 1.0.0 next to the processes from the earlier projects (Figure 63).
+
+![The process in Orchestrator](Screenshots/orchestrator-process-p03.png)
+
+*Figure 63. The processes in My Workspace. The box marks the new process.*
+
+### 7.3 Starting the Assistant
+
+The process was shown in UiPath Assistant without any more setup, because My Workspace belongs to the same user (Figure 64):
+
+1. `P03_AttendedStaffAssistant` is in the list of automations. It had never run.
+2. The version is 1.0.0, the same as in Orchestrator.
+3. **Run** starts the assistant on this computer.
+
+![The process in UiPath Assistant](Screenshots/assistant-p03-details.png)
+
+*Figure 64. The details of the process in UiPath Assistant. The folder name is hidden, because it contains an email address.*
+
+The assistant behaved as when it was started from Studio. It logged in to both systems, asked for a case, and showed the proposal. Case C-2026-00082 was entered, and the proposal "Register case" was confirmed with Yes. The case was registered, and the status was read back (Figure 65).
+
+![The registered case](Screenshots/staff-assistant-registered-from-assistant.png)
+
+*Figure 65. The message after the registration, in the run from UiPath Assistant.*
+
+### 7.4 The Job in Orchestrator
+
+Every run from UiPath Assistant is a job in Orchestrator. The job of this run is shown in Figure 66:
+
+1. The job used the package `P03_AttendedStaffAssistant@1.0.0`.
+2. The state is **Successful**, the duration is 1 minute 49 seconds, and the source is **Assistant**.
+
+![The job in Orchestrator](Screenshots/orchestrator-job-from-assistant.png)
+
+*Figure 66. The job of the run from UiPath Assistant.*
+
+The log messages from the workflows are sent to Orchestrator, so the run can be followed without the computer of the staff member. The newest lines are at the top (Figure 67):
+
+1. The logins to Journalsamordning and Personalportalen.
+2. The case ID, the lookups of the case, the referral and the patient, and the proposal.
+3. The confirmation, the registration and the status that was read back.
+4. The result of the case and the audit line.
+5. The end of the run.
+
+![The log messages of the job](Screenshots/orchestrator-job-logs.png)
+
+*Figure 67. The log messages of the job in Orchestrator.*
+
+The audit file was written in the new place, `Documents\P03_AttendedStaffAssistant\Output` (Figure 68).
+
+![The audit folder in Documents](Screenshots/explorer-audit-folder-documents.png)
+
+*Figure 68. The audit folder under Documents.*
+
+The file has the header and one line for the run: the time, the Windows user, the role Samordnare, the case, the proposal and the result "Registered" (Figure 69).
+
+![The audit file from the run](Screenshots/excel-audit-log-documents.png)
+
+*Figure 69. The audit file after the run from UiPath Assistant.*
+
+In this step, the assistant was moved from Studio to the place where a staff member would use it. The package was published to Orchestrator, started from UiPath Assistant, and it registered a case in the same way as in Studio. Orchestrator showed the job and its log messages, and the audit file was written to the Documents folder, because the package folder is not a good place for it.
