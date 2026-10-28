@@ -1,0 +1,131 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_CheckAction" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_UserRole" Type="InArgument(x:String)" />
+    <x:Property Name="in_Status" Type="InArgument(x:String)" />
+    <x:Property Name="in_CanEdit" Type="InArgument(x:Boolean)" />
+    <x:Property Name="in_ReferralId" Type="InArgument(x:String)" />
+    <x:Property Name="in_ReferralFound" Type="InArgument(x:Boolean)" />
+    <x:Property Name="in_ReferralStatus" Type="InArgument(x:String)" />
+    <x:Property Name="in_CaseCount" Type="InArgument(x:Int32)" />
+    <x:Property Name="in_CaseName" Type="InArgument(x:String)" />
+    <x:Property Name="in_CaseBirthDate" Type="InArgument(x:String)" />
+    <x:Property Name="in_CasePersonalNumber" Type="InArgument(x:String)" />
+    <x:Property Name="in_PatientName" Type="InArgument(x:String)" />
+    <x:Property Name="in_PatientBirthDate" Type="InArgument(x:String)" />
+    <x:Property Name="in_PatientPersonalNumber" Type="InArgument(x:String)" />
+    <x:Property Name="out_Proposal" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Reason" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Check Action" sap2010:WorkflowViewState.IdRef="Sequence_22">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="caseNameFirstLast" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Reason" sap2010:WorkflowViewState.IdRef="Assign`1_29" To="[out_Reason]" Value="[&quot;&quot;]" />
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (in_Status = in_Config(&quot;NewStatus&quot;))]" DisplayName="Check 3a: Already Registered?" sap2010:WorkflowViewState.IdRef="If_12">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 3a" sap2010:WorkflowViewState.IdRef="Assign`1_30" To="[out_Reason]" Value="[&quot;already registered&quot;]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (in_Status &lt;&gt; in_Config(&quot;RequiredStatus&quot;))]" DisplayName="Check 3b: Status Is Inkommen?" sap2010:WorkflowViewState.IdRef="If_13">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 3b" sap2010:WorkflowViewState.IdRef="Assign`1_31" To="[out_Reason]" Value="[&quot;case is &quot; &amp; in_Status]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (Not in_CanEdit)]" DisplayName="Check 4: Role May Edit?" sap2010:WorkflowViewState.IdRef="If_14">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 4" sap2010:WorkflowViewState.IdRef="Assign`1_32" To="[out_Reason]" Value="[&quot;role &quot; &amp; in_UserRole &amp; &quot; may not change cases&quot;]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (in_ReferralId = &quot;&quot;)]" DisplayName="Check 5a: Case Has a Referral?" sap2010:WorkflowViewState.IdRef="If_15">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 5a" sap2010:WorkflowViewState.IdRef="Assign`1_33" To="[out_Reason]" Value="[&quot;the case has no referral&quot;]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (Not in_ReferralFound)]" DisplayName="Check 5b: Referral Exists?" sap2010:WorkflowViewState.IdRef="If_16">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 5b" sap2010:WorkflowViewState.IdRef="Assign`1_34" To="[out_Reason]" Value="[&quot;referral &quot; &amp; in_ReferralId &amp; &quot; not found&quot;]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (in_CaseCount &gt; 1)]" DisplayName="Check 6: Only One Case For the Referral?" sap2010:WorkflowViewState.IdRef="If_17">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 6" sap2010:WorkflowViewState.IdRef="Assign`1_35" To="[out_Reason]" Value="[If(in_CaseCount = 2, &quot;two&quot;, in_CaseCount.ToString()) &amp; &quot; cases for &quot; &amp; in_ReferralId]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (in_ReferralStatus = &quot;Avvisad&quot; OrElse in_ReferralStatus = &quot;Avslutad&quot;)]" DisplayName="Check 7: Referral Is Open?" sap2010:WorkflowViewState.IdRef="If_18">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 7" sap2010:WorkflowViewState.IdRef="Assign`1_36" To="[out_Reason]" Value="[&quot;referral is &quot; &amp; in_ReferralStatus]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (in_CasePersonalNumber.Trim() = &quot;&quot;)]" DisplayName="Check 8a: Personal Number In Case?" sap2010:WorkflowViewState.IdRef="If_19">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 8a" sap2010:WorkflowViewState.IdRef="Assign`1_37" To="[out_Reason]" Value="[&quot;personal number missing&quot;]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (in_CasePersonalNumber.Replace(&quot;-&quot;, &quot;&quot;).Trim() &lt;&gt; in_PatientPersonalNumber.Replace(&quot;-&quot;, &quot;&quot;).Trim())]" DisplayName="Check 8b: Same Personal Number?" sap2010:WorkflowViewState.IdRef="If_20">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 8b" sap2010:WorkflowViewState.IdRef="Assign`1_38" To="[out_Reason]" Value="[&quot;personal number differs&quot;]" />
+      </If.Then>
+    </If>
+    <Assign x:TypeArguments="x:String" DisplayName="Write Case Name As First Last" sap2010:WorkflowViewState.IdRef="Assign`1_39" To="[caseNameFirstLast]" Value="[If(in_CaseName.Contains(&quot;,&quot;), in_CaseName.Split(&quot;,&quot;c)(1).Trim() &amp; &quot; &quot; &amp; in_CaseName.Split(&quot;,&quot;c)(0).Trim(), in_CaseName.Trim())]" />
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (caseNameFirstLast.ToUpper() &lt;&gt; in_PatientName.Trim().ToUpper())]" DisplayName="Check 8c: Same Name?" sap2010:WorkflowViewState.IdRef="If_21">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 8c" sap2010:WorkflowViewState.IdRef="Assign`1_40" To="[out_Reason]" Value="[&quot;name differs&quot;]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot; AndAlso (in_CaseBirthDate.Trim() &lt;&gt; in_PatientBirthDate.Trim())]" DisplayName="Check 8d: Same Birth Date?" sap2010:WorkflowViewState.IdRef="If_22">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Set Reason 8d" sap2010:WorkflowViewState.IdRef="Assign`1_41" To="[out_Reason]" Value="[&quot;birth date differs&quot;]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Reason = &quot;&quot;]" DisplayName="Did All Checks Pass?" sap2010:WorkflowViewState.IdRef="If_23">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Propose Register" sap2010:WorkflowViewState.IdRef="Assign`1_42" To="[out_Proposal]" Value="[&quot;Register case&quot;]" />
+      </If.Then>
+      <If.Else>
+        <Assign x:TypeArguments="x:String" DisplayName="Propose No Action" sap2010:WorkflowViewState.IdRef="Assign`1_43" To="[out_Proposal]" Value="[&quot;No action (&quot; &amp; out_Reason &amp; &quot;)&quot;]" />
+      </If.Else>
+    </If>
+    <ui:LogMessage DisplayName="Log Proposal" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Info" Message="[$&quot;Proposal: {out_Proposal}&quot;]" />
+  </Sequence>
+</Activity>

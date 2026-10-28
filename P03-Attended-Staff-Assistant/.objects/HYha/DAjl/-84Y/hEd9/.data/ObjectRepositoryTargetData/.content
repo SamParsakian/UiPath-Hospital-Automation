@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="zCtDFWukUkGn5W-t8BPblA" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="951, 623, 548, 55" DesignTimeScaleFactor="1.3499999046325684" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl aaname='Fel användarnamn eller lösenord.' aria-role='alert' tag='DIV' /&gt;" Guid="1fbcd892-6c79-4996-97b7-3b826744130f" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="42b3482000fa0115d529639c14c1d4c6.jpg" xmlns="">0oKiN0FNPnEe-0X1imacuUw</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="oWvN3eBb4kesAtYh7t8Ndw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="914, 228, 756, 49" DesignTimeScaleFactor="1.3499999046325684" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl tag='H1' /&gt;" Guid="e4f8ed01-4999-4cc6-aaf8-7c9fc269eddc" ScopeSelectorArgument="&lt;html app='chrome.exe' title='Underhåll' url='http://100.99.72.90:8080/remisser*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="6a6510851809e096570b474b5af79284.jpg" xmlns="">0ZNe7Ao7sAEaKbP045En4sQ</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

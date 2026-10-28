@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Case Facts",
+  "Description": "List of case details (Ärendeinformation) on the case page, with the shared referral ID",
+  "Type": "Element",
+  "TaxonomyType": "None",
+  "Id": "1tYFfSJrV0WbLBkRh1Be8w",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/1tYFfSJrV0WbLBkRh1Be8w",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-27T10:12:44.0130973Z",
+  "Updated": "2026-10-27T10:12:44.0130973Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

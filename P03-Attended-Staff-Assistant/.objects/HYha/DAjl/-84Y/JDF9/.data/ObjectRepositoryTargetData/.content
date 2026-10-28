@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="nHVcym00F0mri3GKHcJoig" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="577, 806, 112, 32" DesignTimeScaleFactor="1.3499999046325684" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl tag='DIV' class='card' visibleinnertext='Status och ansvar*' /&gt;&lt;webctrl tag='SPAN' class='chip*' /&gt;" FuzzySelectorArgument="&lt;webctrl tag='DIV' class='card' visibleinnertext='Status och ansvar*' matching:class='fuzzy' fuzzylevel:class='0.0' fuzzylevel:visibleinnertext='0.0' /&gt;&lt;webctrl tag='SPAN' class='chip*' fuzzylevel:class='0.0' /&gt;" Guid="5c6b4c48-65d9-4315-bee7-f638b54df5bf" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+      <TargetAnchorable.Anchors>
+        <scg:List x:TypeArguments="ITarget" Capacity="1">
+          <Target DesignTimeRectangle="329, 806, 229, 32" FuzzySelectorArgument="&lt;webctrl aaname='Status' tag='DT' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Status' /&gt;" Guid="90336e0a-2273-4c73-a678-6394e253b7e9" SearchSteps="FuzzySelector" />
+        </scg:List>
+      </TargetAnchorable.Anchors>
+      <imageRef attrName="InformativeScreenshot" originalValue="37f4335019f746585b223fd0c5bdf74e.jpg" xmlns="">0IDsugWnbHEuDRbYvdzgiUA</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

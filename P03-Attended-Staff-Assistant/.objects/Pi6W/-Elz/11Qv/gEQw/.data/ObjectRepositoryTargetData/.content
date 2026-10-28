@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="D3JBLfipgkuQjYAJ1UotaQ" Reference="yb9ZbGjCXkShps6ECnrLFw/Us2D9xHH3UWW4VhE7Z6QKg" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" ContentHash="kYwSyzA9Mke8h6UEvMBMOg" DesignTimeRectangle="317, 388, 1238, 362" DesignTimeScaleFactor="1.3499999046325684" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='patient-facts' tag='DL' /&gt;" Guid="4b197b23-3f35-472b-bcf2-3dbd7377f2c2" Reference="yb9ZbGjCXkShps6ECnrLFw/Us2D9xHH3UWW4VhE7Z6QKg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="6a0b615186af13a21c938687da61c9bc.jpg" xmlns="">0zcMEcw2COUGDKfZWqmQw8Q</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="4pIV7yrtd0iRUFs8nww7fg" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="691, 994, 542, 61" DesignTimeScaleFactor="1.3499999046325684" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl action='/login' method='post' tag='FORM' visibleinnertext='*E-post eller användarnamn*' /&gt;&lt;webctrl id='login-button' tag='BUTTON' /&gt;" Guid="f7bcc36a-f028-4056-80e5-caa1c4808e1d" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="3d29a42257377bf52574780ff5127f2e.jpg" xmlns="">0r0fqAWxrZ0i5mnCSm1cA0Q</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

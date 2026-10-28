@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="z8JTCWyePUmp6H61L_S3gQ" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="2268, 238, 174, 21" DesignTimeScaleFactor="1.3499999046325684" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl parentclass='user-box' tag='SMALL' /&gt;" Guid="77737fb8-96df-49b8-9bcf-9559a8aa525c" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="a37b793578c5e8262d64762b46c9b53d.jpg" xmlns="">0UX2dQOIwI0eqpWyuSOizCQ</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

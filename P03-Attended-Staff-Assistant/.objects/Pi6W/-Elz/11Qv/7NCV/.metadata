@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Logout Button",
+  "Description": "Logga ut icon button at the far right of the page header, shown only to a logged-in user",
+  "Type": "Element",
+  "TaxonomyType": "Button",
+  "Id": "7NCVgq85TESV7MD_K8vIcg",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/7NCVgq85TESV7MD_K8vIcg",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/11Qv92p8u0m2n_IPTXIulA",
+  "Created": "2026-10-27T10:23:19.067937Z",
+  "Updated": "2026-10-27T10:23:19.067937Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

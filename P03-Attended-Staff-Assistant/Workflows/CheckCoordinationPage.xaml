@@ -1,0 +1,96 @@
+<Activity mc:Ignorable="sap2010" x:Class="Workflows_CheckCoordinationPage" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.UIAutomationNext.Enums</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Check Coordination Page" sap2010:WorkflowViewState.IdRef="Sequence_4">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:Boolean" Name="pageOk" />
+    </Sequence.Variables>
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Journalsamordning" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="aa2aa7e8-2a38-45fb-a6a9-723a2dacb4b5" Version="V2">
+      <uix:NApplicationCard.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+          </ActivityAction.Argument>
+          <uix:NCheckState DisplayName="Is the Logout Button Shown?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="aa2aa7e8-2a38-45fb-a6a9-723a2dacb4b5" Timeout="3" Version="V5">
+            <uix:NCheckState.IfExists>
+              <Assign x:TypeArguments="x:Boolean" DisplayName="Set Page OK" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[pageOk]" Value="[True]" />
+            </uix:NCheckState.IfExists>
+            <uix:NCheckState.IfNotExists>
+              <Assign x:TypeArguments="x:Boolean" DisplayName="Set Page Not OK" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[pageOk]" Value="[False]" />
+            </uix:NCheckState.IfNotExists>
+            <uix:NCheckState.Target>
+              <uix:TargetAnchorable ContentHash="X92ugm5gh0W1JSziWxFwhw" DesignTimeRectangle="2472, 215, 43, 43" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl action='/logout' tag='FORM' /&gt;&lt;webctrl aria-label='Logga ut' tag='BUTTON' /&gt;" Guid="e55cbd18-44bb-4fa2-9897-9aa9f9955c94" InformativeScreenshot="7b3f173449129fc7c55e8a793fc261ba.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/7PYJspyYxke-5E60bhVPUA" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+            </uix:NCheckState.Target>
+          </uix:NCheckState>
+        </ActivityAction>
+      </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
+      <uix:NApplicationCard.TargetApp>
+        <uix:TargetApp Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="4q3VC1gtBEeKnlNowqZOaA" InformativeScreenshot="2917ec3a41b372b0aa566cd11230d3bf.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3" />
+      </uix:NApplicationCard.TargetApp>
+    </uix:NApplicationCard>
+    <If Condition="[Not pageOk]" DisplayName="Is Journalsamordning Unavailable?" sap2010:WorkflowViewState.IdRef="If_4">
+      <If.Then>
+        <Throw DisplayName="Throw Coordination Not Available" Exception="[New Exception(&quot;Journalsamordning is not available or the login has expired.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Page OK" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Trace" Message="[&quot;Journalsamordning page checked: logged in&quot;]" />
+  </Sequence>
+</Activity>

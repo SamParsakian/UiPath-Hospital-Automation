@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Case List Count",
+  "Description": "Heading above the case table that shows the number of cases found, for example Ärenden (2)",
+  "Type": "Element",
+  "TaxonomyType": "None",
+  "Id": "1b4k9WgbIUuAKox7Jtg9mg",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/1b4k9WgbIUuAKox7Jtg9mg",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-27T10:15:35.0664033Z",
+  "Updated": "2026-10-27T10:15:35.0664033Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

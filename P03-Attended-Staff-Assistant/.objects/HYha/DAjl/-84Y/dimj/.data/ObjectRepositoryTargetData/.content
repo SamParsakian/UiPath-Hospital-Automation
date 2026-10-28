@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="voZSnh16OEy8Or6LX2R7EQ" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="1418, 1474, 149, 53" DesignTimeScaleFactor="1.3499999046325684" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl class='*inline-form*' tag='FORM' visibleinnertext='*Anteckning (krävs vid avvisning*' /&gt;&lt;webctrl id='change-status' tag='BUTTON' /&gt;" Guid="9274e7e2-d199-474a-801a-2de334d76b24" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="b0323fb12798253d3b1bc181dabb777d.jpg" xmlns="">0nX_7QvQ2zU-EvzoDX2Qfyg</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>
