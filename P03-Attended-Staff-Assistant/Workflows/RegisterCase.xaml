@@ -1,0 +1,140 @@
+<Activity mc:Ignorable="sap2010" x:Class="Workflows_RegisterCase" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_CaseId" Type="InArgument(x:String)" />
+    <x:Property Name="in_TestFault" Type="InArgument(x:String)" />
+    <x:Property Name="out_Result" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Message" Type="OutArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.UIAutomationNext.Enums</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Register Case" sap2010:WorkflowViewState.IdRef="Sequence_5">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="currentStatus" />
+    </Sequence.Variables>
+    <ui:LogMessage DisplayName="Log Start" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Registering &quot; &amp; in_CaseId &amp; &quot; (test fault: &quot; &amp; in_TestFault &amp; &quot;)&quot;]" />
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Journalsamordning" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="77b89bd7-e100-4b2f-b3e6-e28ed71ef037" Version="V2">
+      <uix:NApplicationCard.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_4">
+            <uix:NGoToUrl DisplayName="Open Case Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="77b89bd7-e100-4b2f-b3e6-e28ed71ef037" Url="[in_Config(&quot;CoordinationUrl&quot;) &amp; &quot;/arenden/&quot; &amp; in_CaseId]" Version="V5" />
+            <uix:NGetText DisplayName="Get Current Status" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="77b89bd7-e100-4b2f-b3e6-e28ed71ef037" TextString="[currentStatus]" Version="V5">
+              <uix:NGetText.Target>
+                <uix:TargetAnchorable ContentHash="nHVcym00F0mri3GKHcJoig" DesignTimeRectangle="577, 806, 112, 32" ElementType="Text" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl tag='DIV' class='card' visibleinnertext='Status och ansvar*' matching:class='fuzzy' fuzzylevel:class='0.0' fuzzylevel:visibleinnertext='0.0' /&gt;&lt;webctrl tag='SPAN' class='chip*' fuzzylevel:class='0.0' /&gt;" Guid="5c6b4c48-65d9-4315-bee7-f638b54df5bf" InformativeScreenshot="37f4335019f746585b223fd0c5bdf74e.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/JDF9Lqbb0ECKSy4do1Dviw" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+                  <uix:TargetAnchorable.Anchors>
+                    <scg:List x:TypeArguments="uix:ITarget" Capacity="4">
+                      <uix:Target DesignTimeRectangle="329, 806, 229, 32" FuzzySelectorArgument="&lt;webctrl aaname='Status' tag='DT' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Status' /&gt;" Guid="90336e0a-2273-4c73-a678-6394e253b7e9" SearchSteps="FuzzySelector" />
+                    </scg:List>
+                  </uix:TargetAnchorable.Anchors>
+                </uix:TargetAnchorable>
+              </uix:NGetText.Target>
+            </uix:NGetText>
+            <Assign x:TypeArguments="x:String" DisplayName="Trim Status" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[currentStatus]" Value="[currentStatus.Trim()]" />
+            <If Condition="[currentStatus = in_Config(&quot;RequiredStatus&quot;)]" DisplayName="Is the Case Still Inkommen?" sap2010:WorkflowViewState.IdRef="If_3">
+              <If.Then>
+                <Sequence DisplayName="Save New Status" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                  <If Condition="[in_TestFault = &quot;BeforeClick&quot;]" DisplayName="Test Fault Before the Click?" sap2010:WorkflowViewState.IdRef="If_1">
+                    <If.Then>
+                      <Throw DisplayName="Throw Test Fault Before Click" Exception="[New Exception(&quot;Test fault: the connection was lost before the save click.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+                    </If.Then>
+                  </If>
+                  <uix:NSelectItem DisplayName="Select New Status" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NSelectItem_1" Item="[in_Config(&quot;NewStatus&quot;)]" ScopeIdentifier="77b89bd7-e100-4b2f-b3e6-e28ed71ef037" Version="V5">
+                    <uix:NSelectItem.Target>
+                      <uix:TargetAnchorable ContentHash="6b9kp9pwWkCdoTH4UoKIBA" DesignTimeRectangle="317, 1281, 256, 53" ElementType="DropDown" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl action='/arenden/*/status' method='post' tag='FORM' matching:action='fuzzy' fuzzylevel:action='0.0' matching:method='fuzzy' fuzzylevel:method='0.0' /&gt;&lt;webctrl id='new_status' tag='SELECT' type='' class='' aaname='Ny status' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="a087ae91-9804-40bc-8ce0-894939833f44" InformativeScreenshot="d6f76d58cd559d34982d2cb2b1ea8878.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/iNPNlOyV3EStU8B3YzLjVA" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+                        <uix:TargetAnchorable.Anchors>
+                          <scg:List x:TypeArguments="uix:ITarget" Capacity="1">
+                            <uix:Target DesignTimeRectangle="317, 1249, 256, 26" ElementType="Text" FuzzySelectorArgument="&lt;webctrl tag='LABEL' type='' class='' aaname='Ny status' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' check:text='Ny status' /&gt;" Guid="3ffd55a5-b836-4a5e-ba59-b4a0a0adef55" SearchSteps="FuzzySelector" />
+                          </scg:List>
+                        </uix:TargetAnchorable.Anchors>
+                      </uix:TargetAnchorable>
+                    </uix:NSelectItem.Target>
+                  </uix:NSelectItem>
+                  <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click Save Status" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_1" InteractionMode="Simulate" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="77b89bd7-e100-4b2f-b3e6-e28ed71ef037" Version="V5">
+                    <uix:NClick.Target>
+                      <uix:TargetAnchorable ContentHash="voZSnh16OEy8Or6LX2R7EQ" DesignTimeRectangle="1418, 1474, 149, 53" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl class='*inline-form*' tag='FORM' visibleinnertext='*Anteckning (krävs vid avvisning*' /&gt;&lt;webctrl id='change-status' tag='BUTTON' /&gt;" Guid="9274e7e2-d199-474a-801a-2de334d76b24" InformativeScreenshot="b0323fb12798253d3b1bc181dabb777d.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/dimjGwlMMEyQoRH_cAoyMA" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NClick.Target>
+                  </uix:NClick>
+                  <If Condition="[in_TestFault = &quot;AfterClick&quot;]" DisplayName="Test Fault After the Click?" sap2010:WorkflowViewState.IdRef="If_2">
+                    <If.Then>
+                      <Throw DisplayName="Throw Test Fault After Click" Exception="[New Exception(&quot;Test fault: the connection was lost after the save click.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_2" />
+                    </If.Then>
+                  </If>
+                  <Assign x:TypeArguments="x:String" DisplayName="Set Saved" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[out_Result]" Value="[&quot;Saved&quot;]" />
+                  <Assign x:TypeArguments="x:String" DisplayName="Set No Message" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[out_Message]" Value="[&quot;&quot;]" />
+                </Sequence>
+              </If.Then>
+              <If.Else>
+                <Sequence DisplayName="Case Was Changed" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                  <Assign x:TypeArguments="x:String" DisplayName="Set Blocked" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[out_Result]" Value="[&quot;Blocked&quot;]" />
+                  <Assign x:TypeArguments="x:String" DisplayName="Set Blocked Message" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[out_Message]" Value="[&quot;the case was changed before the save, the status is now &quot; &amp; currentStatus]" />
+                </Sequence>
+              </If.Else>
+            </If>
+          </Sequence>
+        </ActivityAction>
+      </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
+      <uix:NApplicationCard.TargetApp>
+        <uix:TargetApp Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="4q3VC1gtBEeKnlNowqZOaA" InformativeScreenshot="2917ec3a41b372b0aa566cd11230d3bf.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3" />
+      </uix:NApplicationCard.TargetApp>
+    </uix:NApplicationCard>
+    <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Register &quot; &amp; in_CaseId &amp; &quot;: &quot; &amp; out_Result &amp; &quot; &quot; &amp; out_Message]" />
+  </Sequence>
+</Activity>

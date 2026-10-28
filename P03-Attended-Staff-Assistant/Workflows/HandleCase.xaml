@@ -1,0 +1,224 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_HandleCase" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_CaseId" Type="InArgument(x:String)" />
+    <x:Property Name="in_UserRole" Type="InArgument(x:String)" />
+    <x:Property Name="out_Proposal" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Result" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Reason" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Handle Case" sap2010:WorkflowViewState.IdRef="Sequence_19">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:Boolean" Name="found" />
+      <Variable x:TypeArguments="x:String" Name="status" />
+      <Variable x:TypeArguments="x:String" Name="summary" />
+      <Variable x:TypeArguments="x:Boolean" Default="False" Name="confirmed" />
+      <Variable x:TypeArguments="x:Boolean" Default="False" Name="retried" />
+      <Variable x:TypeArguments="x:String" Default="&quot;&quot;" Name="saveResult" />
+      <Variable x:TypeArguments="x:String" Default="&quot;&quot;" Name="saveMessage" />
+      <Variable x:TypeArguments="x:String" Default="&quot;&quot;" Name="firstError" />
+      <Variable x:TypeArguments="x:String" Default="&quot;&quot;" Name="realStatus" />
+      <Variable x:TypeArguments="x:String" Name="resultText" />
+    </Sequence.Variables>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Look Up Case" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\LookupCase.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[in_Config]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[in_CaseId]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_UserRole">[in_UserRole]</InArgument>
+        <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Found">[found]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Proposal">[out_Proposal]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[out_Reason]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Summary">[summary]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Result" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[out_Result]" Value="[&quot;&quot;]" />
+    <If Condition="[out_Proposal &lt;&gt; &quot;Register case&quot;]" DisplayName="Step 1: No Action Proposed?" sap2010:WorkflowViewState.IdRef="If_5">
+      <If.Then>
+        <Sequence DisplayName="No Action" sap2010:WorkflowViewState.IdRef="Sequence_9">
+          <Assign x:TypeArguments="x:String" DisplayName="Set No Action Result" sap2010:WorkflowViewState.IdRef="Assign`1_11" To="[out_Result]" Value="[If(found, &quot;No action&quot;, &quot;Not found&quot;)]" />
+          <ui:MessageBox AutoCloseAfter="00:00:00" Buttons="Ok" Caption="[&quot;Staff Assistant&quot;]" ChosenButton="{x:Null}" DisplayName="Show Summary" Text="[summary &amp; If(found, vbCrLf &amp; vbCrLf &amp; &quot;Nothing was changed.&quot;, &quot;&quot;)]" TopMost="True" sap2010:WorkflowViewState.IdRef="MessageBox_2" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Result = &quot;&quot;]" DisplayName="Step 2: Ask For Confirmation" sap2010:WorkflowViewState.IdRef="If_7">
+      <If.Then>
+        <Sequence DisplayName="Confirm" sap2010:WorkflowViewState.IdRef="Sequence_11">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Confirm Action" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\ConfirmAction.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[in_CaseId]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Summary">[summary]</InArgument>
+              <OutArgument x:TypeArguments="x:Boolean" x:Key="out_Confirmed">[confirmed]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <If Condition="[Not confirmed]" DisplayName="Did the User Cancel?" sap2010:WorkflowViewState.IdRef="If_6">
+            <If.Then>
+              <Sequence DisplayName="Cancelled" sap2010:WorkflowViewState.IdRef="Sequence_10">
+                <Assign x:TypeArguments="x:String" DisplayName="Set Cancelled" sap2010:WorkflowViewState.IdRef="Assign`1_12" To="[out_Result]" Value="[&quot;Cancelled&quot;]" />
+                <Assign x:TypeArguments="x:String" DisplayName="Set Cancelled Reason" sap2010:WorkflowViewState.IdRef="Assign`1_13" To="[out_Reason]" Value="[&quot;cancelled by the user&quot;]" />
+              </Sequence>
+            </If.Then>
+          </If>
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Result = &quot;&quot;]" DisplayName="Step 3: Register the Case" sap2010:WorkflowViewState.IdRef="If_8">
+      <If.Then>
+        <TryCatch DisplayName="Try Register Case" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+          <TryCatch.Try>
+            <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Register Case" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\RegisterCase.xaml">
+              <ui:InvokeWorkflowFile.Arguments>
+                <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[in_Config]</InArgument>
+                <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[in_CaseId]</InArgument>
+                <InArgument x:TypeArguments="x:String" x:Key="in_TestFault">[in_Config(&quot;TestFault&quot;)]</InArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_Result">[saveResult]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_Message">[saveMessage]</OutArgument>
+              </ui:InvokeWorkflowFile.Arguments>
+            </ui:InvokeWorkflowFile>
+          </TryCatch.Try>
+          <TryCatch.Catches>
+            <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+              <ActivityAction x:TypeArguments="s:Exception">
+                <ActivityAction.Argument>
+                  <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                </ActivityAction.Argument>
+                <Sequence DisplayName="Save Failed 1" sap2010:WorkflowViewState.IdRef="Sequence_12">
+                  <Assign x:TypeArguments="x:String" DisplayName="Set Error 1" sap2010:WorkflowViewState.IdRef="Assign`1_14" To="[saveResult]" Value="[&quot;Error&quot;]" />
+                  <Assign x:TypeArguments="x:String" DisplayName="Keep Error Message 1" sap2010:WorkflowViewState.IdRef="Assign`1_15" To="[saveMessage]" Value="[exception.Message]" />
+                  <ui:LogMessage DisplayName="Log Save Error 1" sap2010:WorkflowViewState.IdRef="LogMessage_6" Level="Warn" Message="[&quot;Saving &quot; &amp; in_CaseId &amp; &quot; failed: &quot; &amp; exception.Message]" />
+                </Sequence>
+              </ActivityAction>
+            </Catch>
+          </TryCatch.Catches>
+        </TryCatch>
+      </If.Then>
+    </If>
+    <If Condition="[out_Result = &quot;&quot; AndAlso saveResult = &quot;Blocked&quot;]" DisplayName="Step 4: Was the Save Blocked?" sap2010:WorkflowViewState.IdRef="If_9">
+      <If.Then>
+        <Sequence DisplayName="Blocked" sap2010:WorkflowViewState.IdRef="Sequence_13">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Blocked" sap2010:WorkflowViewState.IdRef="Assign`1_16" To="[out_Result]" Value="[&quot;Blocked&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Blocked Reason" sap2010:WorkflowViewState.IdRef="Assign`1_17" To="[out_Reason]" Value="[saveMessage]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Result = &quot;&quot;]" DisplayName="Step 5: Read the Real Status" sap2010:WorkflowViewState.IdRef="If_10">
+      <If.Then>
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Verify Result" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4" UnSafe="False" WorkflowFileName="Workflows\VerifyResult.xaml">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[in_Config]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[in_CaseId]</InArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[realStatus]</OutArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+      </If.Then>
+    </If>
+    <If Condition="[out_Result = &quot;&quot; AndAlso saveResult = &quot;Error&quot; AndAlso realStatus = in_Config(&quot;RequiredStatus&quot;)]" DisplayName="Step 6: Error And Still Inkommen?" sap2010:WorkflowViewState.IdRef="If_11">
+      <If.Then>
+        <Sequence DisplayName="Retry Once" sap2010:WorkflowViewState.IdRef="Sequence_15">
+          <ui:LogMessage DisplayName="Log Retry" sap2010:WorkflowViewState.IdRef="LogMessage_7" Level="Warn" Message="[&quot;Still &quot; &amp; realStatus &amp; &quot; after the error, the save is tried once more&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Keep First Error" sap2010:WorkflowViewState.IdRef="Assign`1_18" To="[firstError]" Value="[saveMessage]" />
+          <Assign x:TypeArguments="x:Boolean" DisplayName="Set Retried" sap2010:WorkflowViewState.IdRef="Assign`1_19" To="[retried]" Value="[True]" />
+          <TryCatch DisplayName="Try Register Case Again" sap2010:WorkflowViewState.IdRef="TryCatch_2">
+            <TryCatch.Try>
+              <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Register Case Again" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_5" UnSafe="False" WorkflowFileName="Workflows\RegisterCase.xaml">
+                <ui:InvokeWorkflowFile.Arguments>
+                  <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[in_Config]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[in_CaseId]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_TestFault">[&quot;None&quot;]</InArgument>
+                  <OutArgument x:TypeArguments="x:String" x:Key="out_Result">[saveResult]</OutArgument>
+                  <OutArgument x:TypeArguments="x:String" x:Key="out_Message">[saveMessage]</OutArgument>
+                </ui:InvokeWorkflowFile.Arguments>
+              </ui:InvokeWorkflowFile>
+            </TryCatch.Try>
+            <TryCatch.Catches>
+              <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_2">
+                <ActivityAction x:TypeArguments="s:Exception">
+                  <ActivityAction.Argument>
+                    <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                  </ActivityAction.Argument>
+                  <Sequence DisplayName="Save Failed 2" sap2010:WorkflowViewState.IdRef="Sequence_14">
+                    <Assign x:TypeArguments="x:String" DisplayName="Set Error 2" sap2010:WorkflowViewState.IdRef="Assign`1_20" To="[saveResult]" Value="[&quot;Error&quot;]" />
+                    <Assign x:TypeArguments="x:String" DisplayName="Keep Error Message 2" sap2010:WorkflowViewState.IdRef="Assign`1_21" To="[saveMessage]" Value="[exception.Message]" />
+                    <ui:LogMessage DisplayName="Log Save Error 2" sap2010:WorkflowViewState.IdRef="LogMessage_8" Level="Warn" Message="[&quot;Saving &quot; &amp; in_CaseId &amp; &quot; failed: &quot; &amp; exception.Message]" />
+                  </Sequence>
+                </ActivityAction>
+              </Catch>
+            </TryCatch.Catches>
+          </TryCatch>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Verify Result Again" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_6" UnSafe="False" WorkflowFileName="Workflows\VerifyResult.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[in_Config]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_CaseId">[in_CaseId]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[realStatus]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Result = &quot;&quot; AndAlso realStatus = in_Config(&quot;NewStatus&quot;)]" DisplayName="Step 7: Is the Case Registrerad?" sap2010:WorkflowViewState.IdRef="If_12">
+      <If.Then>
+        <Sequence DisplayName="Registered" sap2010:WorkflowViewState.IdRef="Sequence_16">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Registered" sap2010:WorkflowViewState.IdRef="Assign`1_22" To="[out_Result]" Value="[&quot;Registered&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Registered Reason" sap2010:WorkflowViewState.IdRef="Assign`1_23" To="[out_Reason]" Value="[If(retried, &quot;registered on the second try after: &quot; &amp; firstError, If(saveResult = &quot;Error&quot;, &quot;status read after the error: &quot; &amp; saveMessage, &quot;&quot;))]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Result = &quot;&quot;]" DisplayName="Step 8: Still Not Registered?" sap2010:WorkflowViewState.IdRef="If_13">
+      <If.Then>
+        <Sequence DisplayName="Failed" sap2010:WorkflowViewState.IdRef="Sequence_17">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Failed" sap2010:WorkflowViewState.IdRef="Assign`1_24" To="[out_Result]" Value="[&quot;Failed&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Failed Reason" sap2010:WorkflowViewState.IdRef="Assign`1_25" To="[out_Reason]" Value="[&quot;status is &quot; &amp; realStatus &amp; If(saveMessage = &quot;&quot;, &quot;&quot;, &quot;: &quot; &amp; saveMessage)]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[confirmed AndAlso out_Result &lt;&gt; &quot;Cancelled&quot;]" DisplayName="Step 9: Show the Result" sap2010:WorkflowViewState.IdRef="If_14">
+      <If.Then>
+        <Sequence DisplayName="Show Result" sap2010:WorkflowViewState.IdRef="Sequence_18">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Result Text" sap2010:WorkflowViewState.IdRef="Assign`1_26" To="[resultText]" Value="[If(out_Result = &quot;Registered&quot;, &quot;Case &quot; &amp; in_CaseId &amp; &quot; was registered. The status &quot; &amp; realStatus &amp; &quot; was read back from Journalsamordning.&quot;, &quot;Case &quot; &amp; in_CaseId &amp; &quot; was not registered: &quot; &amp; out_Reason &amp; &quot;.&quot; &amp; vbCrLf &amp; &quot;Please check the case by hand.&quot;)]" />
+          <ui:MessageBox AutoCloseAfter="00:00:00" Buttons="Ok" Caption="[&quot;Staff Assistant&quot;]" ChosenButton="{x:Null}" DisplayName="Show Result Message" Text="[resultText]" TopMost="True" sap2010:WorkflowViewState.IdRef="MessageBox_3" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Case Handled" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Info" Message="[&quot;Case &quot; &amp; in_CaseId &amp; &quot; handled: &quot; &amp; out_Result &amp; &quot; &quot; &amp; out_Reason]" />
+  </Sequence>
+</Activity>

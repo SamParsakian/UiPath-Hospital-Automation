@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Login Button",
+  "Description": "Logga in button under the Personalportalen login form",
+  "Type": "Element",
+  "TaxonomyType": "Button",
+  "Id": "9Wiqhp5d0km1MXV2uiPmeA",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/9Wiqhp5d0km1MXV2uiPmeA",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/11Qv92p8u0m2n_IPTXIulA",
+  "Created": "2026-10-27T10:23:19.7016439Z",
+  "Updated": "2026-10-27T10:23:19.7016439Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
