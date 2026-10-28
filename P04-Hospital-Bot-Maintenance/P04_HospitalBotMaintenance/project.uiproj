@@ -1,0 +1,6 @@
+{
+  "Name": "P04_HospitalBotMaintenance",
+  "ProjectType": "Process",
+  "Description": "Support process for the Stockholm Demo Hospital robots. Built on REFramework, it reads a short list of referrals and runs the P01 reconciliation check for each one. It shows how business exceptions, system exceptions and retries are handled during maintenance work.",
+  "MainFile": "Main.xaml"
+}
