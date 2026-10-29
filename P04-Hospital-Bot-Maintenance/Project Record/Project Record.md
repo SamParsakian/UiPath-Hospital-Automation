@@ -470,3 +470,102 @@ The emails that failed before did not need any manual work. The robot only skips
 After this run, the mailbox had 6 emails in Inbox, 11 in Processed, 22 in Review and 5 in Error. This is the same result as in Section 2.3, so the robot works as before when the config is correct.
 
 The wrong folder name was found in the config file, and the value was corrected. P02 now checks its mail folders at the start, and a wrong folder name stops the run before any email is touched, with a message that names the setting.
+
+## 5. INC-05 - A Supplier Changes Its Invoice Layout
+
+### 5.1 The Ticket
+
+| | |
+|---|---|
+| Reported by | Frida Sjöberg, controller in Finance |
+| Symptom | A correct invoice from Norrlands Livsmedelsgrossist AB is not handled. It is not in Processed, and no review notification arrives. |
+| Robot | P02 Invoice Intake |
+| Impact | The invoice is not registered, so it can be paid late. |
+| Priority | Medium |
+
+### 5.2 Reproducing the Problem
+
+The supplier's email says that its invoices now use a new layout. To create the problem again, the mailbox was reset to the normal test state, and three extra test emails for maintenance were added. One of them is invoice 51290 from Norrlands Livsmedelsgrossist AB, for the purchase order PO-2026-0001. Then `Main.xaml` was run in UiPath Studio.
+
+After the run, the invoice was still in the Inbox (Figure 32):
+
+1. Invoice 51290 with the category **Robot: Ignored**, the same category as a newsletter.
+
+![Invoice 51290 is left in the Inbox](Screenshots/inc05-repro-inbox.png)
+
+*Figure 32. The Inbox after the run, opened as Andreas.*
+
+The Output panel shows what the robot decided (Figure 33):
+
+1. The invoice was classified as **Not an invoice** and stayed in the Inbox.
+2. The summary: 43 emails, 43 handled, 0 failed. The run looks normal, so nobody is warned.
+
+![The Output panel after the run with the new layout](Screenshots/inc05-repro-output.png)
+
+*Figure 33. The Output panel in Studio after the run.*
+
+### 5.3 Finding the Cause
+
+The attached PDF was compared with the invoices that P02 reads without problems (Figure 34):
+
+1. The title is **Faktura / Invoice**. P02 only accepts a PDF whose first line is `Faktura` or `Kreditfaktura`. Every other PDF is treated as "not an invoice".
+2. The field names are new. For example, the invoice number is now called `Fakturanr` instead of `Fakturanummer`, and the purchase order is called `Ordernummer` instead of `Er referens`.
+
+![The new invoice layout](Screenshots/inc05-new-layout.png)
+
+*Figure 34. Invoice 51290 in the new layout.*
+
+The invoice content itself is correct. The amounts now end with `SEK` instead of `kr`, but this is not a problem, because P02 only reads the number in front of the currency. So the cause is that the reading rules in `Workflows/ReadInvoice.xaml` only know the old layout.
+
+### 5.4 The Fix
+
+The fix was made in `Workflows/ReadInvoice.xaml`. Each field is read with a regular expression, a text pattern that finds the label and the value after it. The new labels were added next to the old ones (Figure 35):
+
+| Box | Field | Old label | New label, also accepted |
+|---|---|---|---|
+| 1 | Supplier name | Från | Leverantör |
+| 2 | Organisation number | Organisationsnummer | Org.nr |
+| 3 | Invoice number | Fakturanummer | Fakturanr |
+| 4 | Due date | Förfallodatum | Betalas senast |
+| 5 | Purchase order | Er referens | Ordernummer |
+| 6 | Net amount | Belopp exkl. moms | Summa exkl. moms |
+| 7 | VAT amount | Moms 25 % | Moms (25%) |
+| 8 | Total amount | Att betala | Totalt att betala |
+
+![The changed fields in ReadInvoice.xaml](Screenshots/inc05-read-fields.png)
+
+*Figure 35. The fields in `ReadInvoice.xaml` that also accept the new labels.*
+
+The check of the title was also changed, so that `Faktura / Invoice` is accepted as an invoice (Figure 36):
+
+1. The condition of **Check 5 - Invoice Or Credit Note?**.
+
+![The title check in ReadInvoice.xaml](Screenshots/inc05-check-title.png)
+
+*Figure 36. The title check in `ReadInvoice.xaml`.*
+
+The old labels were kept, so invoices in the old layout are read in the same way as before. Before the robot was run, all 93 PDF files that P02 had saved in earlier runs were read with the old and the new rules. Only invoice 51290 gave a different result. The fix was saved in Git as one commit with nine changed lines, so it can be rolled back by reverting that single commit.
+
+### 5.5 Testing the Fix
+
+The mailbox was reset to the same state as in Section 5.2, and `Main.xaml` was run again (Figure 37):
+
+1. Invoice 51290 was routed as an **Invoice** to Processed.
+2. The summary: 43 emails, 43 handled, 0 failed.
+
+![The Output panel after the run with the fix](Screenshots/inc05-fix-output.png)
+
+*Figure 37. The Output panel in Studio after the run with the fix.*
+
+The invoice passed all checks: the supplier is known, the purchase order PO-2026-0001 exists, the net amount 14 281,34 SEK equals the order, and the VAT is 25 %. It is now in the Processed folder (Figure 38):
+
+1. Invoice 51290 with the category **Robot: Processed**.
+2. Invoice 51377, another maintenance test email. Its subject starts with `[EXTERN]`, a tag that some mail systems add to external mail. P02 handled it correctly already before the fix.
+
+![The Processed folder after the fix](Screenshots/inc05-fix-processed.png)
+
+*Figure 38. The Processed folder after the run with the fix, opened as Andreas.*
+
+The 40 normal test emails gave the same result as in Section 3.2: 9 Processed, 21 Review, 4 Error and 6 left in the Inbox. The third maintenance email, invoice 41208, came from a new sender address and went to Review as a sender mismatch. This is the correct result, because only Finance can decide whether a new sender address should be trusted.
+
+The robot did not report an error for the new layout. It treated a real invoice as an unknown document and left it in the Inbox without a warning. The reading rules now accept both the old and the new layout, and the invoices that worked before still give the same result.
