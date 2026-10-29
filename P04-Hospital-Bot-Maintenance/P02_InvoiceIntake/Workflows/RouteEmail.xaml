@@ -119,6 +119,16 @@
         </umam:MoveEmailConnections>
       </If.Then>
     </If>
+    <If Condition="[in_Config.ContainsKey(&quot;TestFault&quot;) AndAlso in_Config(&quot;TestFault&quot;) = &quot;StopAfterMove&quot; AndAlso in_Folder = in_Config(&quot;Folder_Review&quot;)]" DisplayName="Test Fault: Stop After Move?" sap2010:WorkflowViewState.IdRef="If_6">
+      <If.Then>
+        <Sequence DisplayName="Stop The Run (Test Fault)" sap2010:WorkflowViewState.IdRef="Sequence_4">
+          <ui:LogMessage DisplayName="Log Test Fault" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Error" Message="[$&quot;TestFault StopAfterMove: the robot process is stopped on purpose after '{in_Email.Subject}' was moved to {in_Folder}.&quot;]" />
+          <InvokeMethod DisplayName="End The Robot Process" MethodName="Exit" TargetType="s:Environment" sap2010:WorkflowViewState.IdRef="InvokeMethod_1">
+            <InArgument x:TypeArguments="x:Int32">1</InArgument>
+          </InvokeMethod>
+        </Sequence>
+      </If.Then>
+    </If>
     <Assign x:TypeArguments="x:String" DisplayName="Get Supplier Name" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[supplier]" Value="[If(in_SupplierName = &quot;&quot;, &quot;-&quot;, in_SupplierName)]" />
     <If Condition="[in_Folder = in_Config(&quot;Folder_Review&quot;)]" DisplayName="Is It a Review?" sap2010:WorkflowViewState.IdRef="If_3">
       <If.Then>
