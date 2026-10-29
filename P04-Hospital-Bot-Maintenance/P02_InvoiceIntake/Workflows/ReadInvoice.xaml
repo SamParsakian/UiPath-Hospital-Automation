@@ -230,7 +230,7 @@
               <OutArgument x:TypeArguments="x:String">[out_SupplierName]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Från[ \t]+([^\r\n]+)").Groups(1).Value.Trim()]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Från|Leverantör)[ \t]+([^\r\n]+)").Groups(1).Value.Trim()]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="Organisation Number" sap2010:WorkflowViewState.IdRef="Assign_15">
@@ -238,7 +238,7 @@
               <OutArgument x:TypeArguments="x:String">[out_OrgNumber]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Organisationsnummer[ \t]+(\d{6}-\d{4})").Groups(1).Value]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Organisationsnummer|Org\.nr)[ \t]+(\d{6}-\d{4})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="Invoice Number" sap2010:WorkflowViewState.IdRef="Assign_16">
@@ -246,7 +246,7 @@
               <OutArgument x:TypeArguments="x:String">[out_InvoiceNumber]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Fakturanummer|Kreditfakturanummer)[ \t]+(\S+)").Groups(1).Value]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Fakturanummer|Kreditfakturanummer|Fakturanr)[ \t]+(\S+)").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="Invoice Date" sap2010:WorkflowViewState.IdRef="Assign_17">
@@ -262,7 +262,7 @@
               <OutArgument x:TypeArguments="x:String">[out_DueDate]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Förfallodatum[ \t]+(\d{4}-\d{2}-\d{2})").Groups(1).Value]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Förfallodatum|Betalas senast)[ \t]+(\d{4}-\d{2}-\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="Purchase Order" sap2010:WorkflowViewState.IdRef="Assign_19">
@@ -270,7 +270,7 @@
               <OutArgument x:TypeArguments="x:String">[out_PurchaseOrder]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Er referens[ \t]+(\S+)").Groups(1).Value]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Er referens|Ordernummer)[ \t]+(\S+)").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="Cost Centre" sap2010:WorkflowViewState.IdRef="Assign_20">
@@ -294,7 +294,7 @@
               <OutArgument x:TypeArguments="x:String">[netText]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Belopp exkl\. moms[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Belopp|Summa) exkl\. moms[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="VAT Amount Text" sap2010:WorkflowViewState.IdRef="Assign_23">
@@ -302,7 +302,7 @@
               <OutArgument x:TypeArguments="x:String">[vatText]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Moms[^\r\n%]*%[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^Moms[^\r\n%]*%\)?[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="Total Amount Text" sap2010:WorkflowViewState.IdRef="Assign_24">
@@ -310,7 +310,7 @@
               <OutArgument x:TypeArguments="x:String">[totalText]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Att betala|Att erhålla)[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Regex.Match(pdfText, "(?m)^(?:Att betala|Att erhålla|Totalt att betala)[ \t]+(-?[\d  ]+,\d{2})").Groups(1).Value]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="Net Amount" sap2010:WorkflowViewState.IdRef="Assign_25">
@@ -340,7 +340,7 @@
         </Sequence>
       </If.Then>
     </If>
-    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso out_DocumentType &lt;&gt; &quot;FAKTURA&quot; AndAlso out_DocumentType &lt;&gt; &quot;KREDITFAKTURA&quot;]" DisplayName="Check 5 - Invoice Or Credit Note?" sap2010:WorkflowViewState.IdRef="If_6">
+    <If Condition="[out_Result = &quot;Invoice&quot; AndAlso out_DocumentType &lt;&gt; &quot;FAKTURA&quot; AndAlso out_DocumentType &lt;&gt; &quot;KREDITFAKTURA&quot; AndAlso out_DocumentType &lt;&gt; &quot;FAKTURA / INVOICE&quot;]" DisplayName="Check 5 - Invoice Or Credit Note?" sap2010:WorkflowViewState.IdRef="If_6">
       <If.Then>
         <Sequence DisplayName="Not An Invoice" sap2010:WorkflowViewState.IdRef="Sequence_7">
           <Assign DisplayName="Set Not Invoice" sap2010:WorkflowViewState.IdRef="Assign_28">
