@@ -145,6 +145,15 @@
       </umam:GetEmailListConnections.MailboxArg>
     </umam:GetEmailListConnections>
     <Assign x:TypeArguments="scg:List(umm:Office365Message)" DisplayName="Sort Oldest First" sap2010:WorkflowViewState.IdRef="Assign`1_11" To="[inboxEmails]" Value="[inboxEmails.OrderBy(Function(m) m.ReceivedDateTime).ToList()]" />
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Check Interrupted Run" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_8" UnSafe="False" WorkflowFileName="Workflows\CheckInterruptedRun.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+        <InArgument x:TypeArguments="scg:List(umm:Office365Message)" x:Key="in_InboxEmails">[inboxEmails]</InArgument>
+        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_ProcessedLog">[processedLog]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_LogPath">[logPath]</InArgument>
+        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Report">[report]</InArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
     <ui:ForEach x:TypeArguments="umm:Office365Message" CurrentIndex="{x:Null}" DisplayName="For Each Inbox Email" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[inboxEmails]">
       <ui:ForEach.Body>
         <ActivityAction x:TypeArguments="umm:Office365Message">
@@ -155,7 +164,7 @@
             <Sequence.Variables>
               <Variable x:TypeArguments="x:Boolean" Name="alreadyLogged" />
             </Sequence.Variables>
-            <Assign x:TypeArguments="x:Boolean" DisplayName="Is the Email in the Processed Log?" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[alreadyLogged]" Value="[processedLog.Select(&quot;InternetMessageId = '&quot; &amp; email.InternetMessageId.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;'&quot;).Length &gt; 0]" />
+            <Assign x:TypeArguments="x:Boolean" DisplayName="Is the Email in the Processed Log?" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[alreadyLogged]" Value="[processedLog.Select(&quot;InternetMessageId = '&quot; &amp; email.InternetMessageId.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;' AND Folder NOT LIKE 'Started%'&quot;).Length &gt; 0]" />
             <If Condition="[alreadyLogged]" DisplayName="Already Processed?" sap2010:WorkflowViewState.IdRef="If_1">
               <If.Then>
                 <Sequence DisplayName="Skip Email" sap2010:WorkflowViewState.IdRef="Sequence_2">
@@ -192,6 +201,8 @@
                           <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceNumbers">[invoiceNumbers]</OutArgument>
                         </ui:InvokeWorkflowFile.Arguments>
                       </ui:InvokeWorkflowFile>
+                      <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{email.InternetMessageId, email.Subject, emailClass, &quot;Started: &quot; &amp; folder, Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)}]" DataTable="[processedLog]" DisplayName="Add Started Row" sap2010:WorkflowViewState.IdRef="AddDataRow_4" />
+                      <ui:WriteCsvFile AddHeaders="True" DataTable="[processedLog]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" DisplayName="Save Started Row" FilePath="[logPath]" sap2010:WorkflowViewState.IdRef="WriteCsvFile_2" ShouldQuote="True" />
                       <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Route Email" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\RouteEmail.xaml">
                         <ui:InvokeWorkflowFile.Arguments>
                           <InArgument x:TypeArguments="umm:Office365Message" x:Key="in_Email">[email]</InArgument>

@@ -569,3 +569,163 @@ The invoice passed all checks: the supplier is known, the purchase order PO-2026
 The 40 normal test emails gave the same result as in Section 3.2: 9 Processed, 21 Review, 4 Error and 6 left in the Inbox. The third maintenance email, invoice 41208, came from a new sender address and went to Review as a sender mismatch. This is the correct result, because only Finance can decide whether a new sender address should be trusted.
 
 The robot did not report an error for the new layout. It treated a real invoice as an unknown document and left it in the Inbox without a warning. The reading rules now accept both the old and the new layout, and the invoices that worked before still give the same result.
+
+## 6. INC-04 - A Run That Stops Halfway
+
+### 6.1 The Ticket
+
+| | |
+|---|---|
+| Reported by | Hospital Automation Operations |
+| Symptom | The invoice robot stopped in the middle of a run. Nobody can tell which emails were already handled. |
+| Robot | P02 Invoice Intake |
+| Impact | An invoice can be left without a review, and Finance is not told about it. |
+| Priority | High |
+
+### 6.2 Reproducing the Problem
+
+A robot run can stop at any moment, for example when a job is killed or the computer goes to sleep. To make this happen at a known place, a test setting `TestFault` was added to `Data/Config.xlsx` (Figure 39):
+
+1. `TestFault` is `None` in normal use. With the value `StopAfterMove`, the robot stops on purpose.
+
+![The TestFault setting in the config file](Screenshots/inc04-config-testfault.png)
+
+*Figure 39. The test setting `TestFault` in `Data/Config.xlsx`.*
+
+The test stop was placed in `RouteEmail.xaml`, right after an email is moved (Figure 40):
+
+1. The condition: the setting is `StopAfterMove` and the email was moved to Review.
+2. A log line says that the stop is on purpose.
+3. **End The Robot Process** ends the whole robot process, in the same way as a killed job. The error handling of the robot cannot catch it.
+
+![The test stop in RouteEmail.xaml](Screenshots/inc04-route-test-fault.png)
+
+*Figure 40. The test stop in `RouteEmail.xaml`.*
+
+The mailbox was reset to the normal test state, `TestFault` was set to `StopAfterMove`, and `Main.xaml` was run (Figure 41):
+
+1. The first three emails were handled in the normal way.
+2. The run stopped right after `Faktura 70870 - delleverans` was moved to Review.
+
+![The Output panel when the run stops](Screenshots/inc04-repro-output.png)
+
+*Figure 41. The Output panel in Studio when the run stops.*
+
+The invoice was already in the Review folder (Figure 42):
+
+1. Invoice 70870 with the category **Robot: Review**.
+
+![Invoice 70870 in the Review folder](Screenshots/inc04-repro-review.png)
+
+*Figure 42. The Review folder after the stop, opened as Andreas.*
+
+Then `TestFault` was set back to `None`, and the robot was run again on the same mailbox, as a support person would do after a stop (Figure 43):
+
+1. The summary: 37 emails, 36 handled, 0 failed, 1 skipped. The run looks normal.
+
+![The Output panel after the second run](Screenshots/inc04-rerun-output.png)
+
+*Figure 43. The Output panel after the second run.*
+
+Invoice 70870 is not in the list at all, because it is no longer in the Inbox. Frida's mailbox was searched for the invoice number (Figure 44):
+
+1. The search for `70870`.
+2. No message was found. Frida was never told that this invoice needs a review.
+
+![No notification for invoice 70870](Screenshots/inc04-rerun-frida-search.png)
+
+*Figure 44. The search for 70870 in Frida's mailbox.*
+
+### 6.3 Finding the Cause
+
+The processed log, `Output/processed_log.csv`, had rows for the three emails before the stop, but no row for invoice 70870. The order of the steps in `ProcessInbox.xaml` explains this (Figure 45):
+
+1. **Invoke Classify Email** decides the folder of the email.
+2. **Invoke Route Email** sets the category, moves the email and sends the notification.
+3. **Add Log Row** adds the email to the processed log.
+4. **Save Processed Log** writes the log to the file.
+
+![The original order of the steps in ProcessInbox.xaml](Screenshots/inc04-process-inbox-before.png)
+
+*Figure 45. The original steps for one email in `ProcessInbox.xaml`.*
+
+The log is only written after the email has been moved and the notification has been sent. When the run stops between the move and the notification, the email is in Review, but nothing shows that it was not finished. The next run only reads the Inbox, so it never sees the email again.
+
+### 6.4 The Fix
+
+The robot now writes a "Started" row in the processed log before it routes an email (Figure 46):
+
+1. **Add Started Row** adds a row with the folder, for example `Started: Review`.
+2. **Save Started Row** writes it to the file at once.
+3. **Add Log Row** adds the normal row when the email is finished, as before.
+
+![The Started row in ProcessInbox.xaml](Screenshots/inc04-process-inbox-started.png)
+
+*Figure 46. The new Started row in `ProcessInbox.xaml`.*
+
+So an email that was finished has two rows, and an email that was stopped in the middle has only the Started row. A new step looks for these emails at the start of every run, right after the Inbox is read (Figure 47):
+
+1. **Invoke Check Interrupted Run** is the new step.
+
+![The new step in ProcessInbox.xaml](Screenshots/inc04-process-inbox-check.png)
+
+*Figure 47. The new step after Sort Oldest First in `ProcessInbox.xaml`.*
+
+The new workflow `Workflows/CheckInterruptedRun.xaml` does the check (Figure 48):
+
+1. **Find Interrupted Emails** finds the emails that have only a Started row and are no longer in the Inbox.
+2. **Send Interrupted Run Notice** sends one message to Finance with the list of these emails and their folders.
+3. **Add Log Row** marks each email as `Interrupted` in the log, so the same email is never reported twice.
+4. **Save Processed Log** writes the log to the file.
+
+![CheckInterruptedRun.xaml in UiPath Studio](Screenshots/inc04-check-interrupted-run.png)
+
+*Figure 48. The new workflow `CheckInterruptedRun.xaml`.*
+
+An email that is stopped before it is moved is still in the Inbox. The robot does not skip it, because a Started row alone does not count as handled, so it is handled again in the normal way. The robot does not try to send the missing notification by itself, because it cannot know whether the notification was sent just before the stop. A person checks the email instead.
+
+The fix was saved in Git as one commit, and the test setting as a separate commit. The fix can be rolled back by reverting its commit, and `TestFault` stays `None` in normal use.
+
+### 6.5 Testing the Fix
+
+The mailbox was reset again, and the same three runs were made.
+
+In the first run, with `TestFault` set to `StopAfterMove`, the robot stopped after invoice 70870 again. This time the processed log had the row `Started: Review` for the invoice.
+
+In the second run, with `TestFault` set back to `None`, the robot found the unfinished email at the start (Figure 49):
+
+1. The warning: invoice 70870 was interrupted in an earlier run, and Finance was asked to check it.
+
+![The warning about the interrupted email](Screenshots/inc04-fix-warning.png)
+
+*Figure 49. The Output panel at the start of the second run.*
+
+Frida received one notice (Figure 50):
+
+1. The subject: one email needs to be checked after an interrupted run.
+2. The email to check: `Faktura 70870 - delleverans`, in the Review folder.
+
+![The notice in Frida's mailbox](Screenshots/inc04-fix-notice.png)
+
+*Figure 50. The notice about the interrupted run, opened as Frida.*
+
+The rest of the run was normal, with 37 emails, 36 handled and 0 failed. A third run was made to check that the notice is not sent again (Figure 51):
+
+1. The robot found no unfinished emails from an earlier run.
+2. The summary: 6 emails, 0 handled, 6 skipped. These are the emails that stay in the Inbox.
+
+![The Output panel after the third run](Screenshots/inc04-fix-run3-output.png)
+
+*Figure 51. The Output panel after the third run.*
+
+Frida's mailbox still has only one notice (Figure 52):
+
+1. One result for the search `Avbruten körning`.
+
+![Only one notice in Frida's mailbox](Screenshots/inc04-fix-run3-search.png)
+
+*Figure 52. The search for the notice after the third run.*
+
+At the end, the mailbox was reset again with all 43 test emails, and P02 was run once more. All emails got the same folders as in `TestData/expected_results.csv` and Section 5, so the fixes did not change the result for any other email.
+
+Before the fix, a stop in the middle of a run could leave an invoice in Review without a notification, and nobody would know. Now the robot remembers which email it started, finds the unfinished one in the next run, and tells Finance once which email to check.
