@@ -198,7 +198,7 @@ In this project, each manual step that caused a ticket is moved into the robot. 
 | Going through the mailbox to find which invoices were handled before a stop | P02 checks the mailbox and its processed log before it goes on, so a second run never moves, registers or answers the same email twice | INC-04 |
 | Finance staff handling correct invoices that ended in Review after a supplier changed its invoice layout | P02 reads the new layout as well as the old one, and the invoice reaches Processed | INC-05 |
 | Running about 20 transfers one by one in Journalsamordning, trying the failed ones again by hand, and keeping no list of the result | A new REFramework robot runs each transfer as an item in an Orchestrator queue. A technical error is tried again up to two times, a data error goes straight to a person, and a report shows the outcome of every transfer | INC-02 |
-| Searching the hospital systems by hand to tell a broken page element from a missing record | Every failed row gets its own status and a screenshot, and the broken element is captured again with a stable selector | INC-01 |
+| Finding out why the transfer robot stops after an update of Journalsamordning, although the page looks the same | The transfer robot finds its table and rows by what a person sees, the column headers and the transfer IDs, so a renamed technical id does not stop it | INC-01 |
 | Comparing the new report with the expected results by hand | The expected results are kept in files, and every fix is tested against them before it is released | All |
 
 For the two examples above, this means:
@@ -231,7 +231,7 @@ The tickets in this project are simulated. They are not real hospital incidents,
 
 | Ticket | Robot | Reported problem |
 |---|---|---|
-| INC-01 | P01 | A web element is not found any more, although the check worked before. |
+| INC-01 | Transfer robot | After an update of the transfer page, the robot cannot find the transfer table any more, although the page looks the same. |
 | INC-02 | New transfer robot | Record transfers in Journalsamordning are started by hand, and some fail again and again because the target system does not answer reliably. |
 | INC-03 | P02 | Invoice routing fails although the email and the invoice are valid. |
 | INC-04 | P02 | The robot stopped halfway, and nobody knows which invoices were already handled. |
@@ -364,40 +364,40 @@ In this step, the expected results of P01 and P02 were collected. After every fi
 | Impact | Invoices with a problem are not checked by a person, so payments can be late. |
 | Priority | High |
 
-### 4.2 Reproducing the Problem
+### 4.2 Invoices Left in the Inbox
 
-The problem was created again in the support copy of P02. In `Data/Config.xlsx`, the setting `Folder_Review` was changed from `Review` to `Granskning`, the Swedish word for review (Figure 23). This is an easy mistake to make, because the real folder in the mailbox is called `Review`.
-
-1. The setting `Folder_Review`.
-2. The wrong value `Granskning`.
-
-![The wrong folder name in the config file](Screenshots/inc03-config-wrong-folder.png)
-
-*Figure 23. The setting `Folder_Review` with the wrong value.*
-
-The mailbox was first reset to the normal test state, with 40 emails in the Inbox. Then `Main.xaml` was run in UiPath Studio (Figure 24):
+After a small change in the config file of P02, the next run looked normal at first. But Frida received no review notifications, and many invoices were still in the Inbox. The run was repeated in UiPath Studio on the 40 emails in the Inbox, to see what the robot does (Figure 23):
 
 1. Each failed email gives an error from **Move Email To Folder**: the folder "Granskning" could not be found.
 2. The run did not stop. 19 emails were handled, and 21 emails failed.
 
 ![The Output panel after the run with the wrong folder name](Screenshots/inc03-repro-output.png)
 
-*Figure 24. The Output panel in Studio after the run with the wrong folder name.*
+*Figure 23. The Output panel in Studio after the run with the wrong folder name.*
 
-The 9 correct invoices still reached Processed, and the 4 broken ones reached Error, because their folder names were right. Only the 21 emails for Review failed. They stayed in the Inbox, but they already had the category **Robot: Review** (Figure 25):
+The 9 correct invoices still reached Processed, and the 4 broken ones reached Error, because their folder names were right. Only the 21 emails for Review failed. They stayed in the Inbox, but they already had the category **Robot: Review** (Figure 24):
 
 1. The Inbox of the shared mailbox.
 2. The emails that should have been moved to Review, with the category Robot: Review.
 
 ![The Inbox after the run with the wrong folder name](Screenshots/inc03-repro-inbox.png)
 
-*Figure 25. The Inbox after the run, opened as Andreas.*
+*Figure 24. The Inbox after the run, opened as Andreas.*
 
-No review notification was sent to Frida. Only the 4 test replies for the Error emails were sent.
+No review notification was sent to Frida. For Finance, this means that 21 emails that need a person are stuck in the Inbox, and nobody is told. The support person has to find out which emails are affected, and why.
 
 ### 4.3 Finding the Cause
 
-The error message names the folder, but not the setting it comes from. The value "Granskning" was searched in the config file and found in `Folder_Review`, and the mailbox has no folder with that name.
+The error message names the folder, but not the setting it comes from. The value "Granskning" was searched in the config file and found in `Folder_Review` (Figure 25). This is an easy mistake to make: `Granskning` is the Swedish word for review, but the real folder in the mailbox is called `Review`.
+
+1. The setting `Folder_Review`.
+2. The wrong value `Granskning`.
+
+![The wrong folder name in the config file](Screenshots/inc03-config-wrong-folder.png)
+
+*Figure 25. The setting `Folder_Review` with the wrong value.*
+
+The mailbox has no folder with that name.
 
 The workflow `RouteEmail.xaml` explains why the emails ended in this state. It does three things in this order (Figure 26):
 
@@ -509,11 +509,9 @@ The wrong folder name was found in the config file, and the value was corrected.
 | Impact | The invoice is not registered, so it can be paid late. |
 | Priority | Medium |
 
-### 5.2 Reproducing the Problem
+### 5.2 A Correct Invoice Left Behind
 
-The supplier's email says that its invoices now use a new layout. To create the problem again, the mailbox was reset to the normal test state, and three extra test emails for maintenance were added. One of them is invoice 51290 from Norrlands Livsmedelsgrossist AB, for the purchase order PO-2026-0001. Then `Main.xaml` was run in UiPath Studio.
-
-After the run, the invoice was still in the Inbox (Figure 32):
+Norrlands Livsmedelsgrossist AB told Finance that its invoices now use a new layout. Its next invoice, 51290 for the purchase order PO-2026-0001, arrived in the shared mailbox as usual, together with two other new emails. After the next run of P02, the invoice was still in the Inbox (Figure 32):
 
 1. Invoice 51290 with the category **Robot: Ignored**, the same category as a newsletter.
 
@@ -525,6 +523,8 @@ The Output panel shows what the robot decided (Figure 33):
 
 1. The invoice was classified as **Not an invoice** and stayed in the Inbox.
 2. The summary: 43 emails, 43 handled, 0 failed. The run looks normal, so nobody is warned.
+
+For Finance, the invoice simply never arrives. It is not registered, nobody is asked to review it, and it can be paid late.
 
 ![The Output panel after the run with the new layout](Screenshots/inc05-repro-output.png)
 
@@ -595,7 +595,7 @@ Each problem found in Section 5.3 is solved by one change in `Workflows/ReadInvo
 
 ### 5.6 Testing the Fix
 
-The mailbox was reset to the same state as in Section 5.2, and `Main.xaml` was run again (Figure 37):
+The fixed robot was run on the same emails as in Section 5.2 (Figure 37):
 
 1. Invoice 51290 was routed as an **Invoice** to Processed.
 2. The summary: 43 emails, 43 handled, 0 failed.
@@ -607,13 +607,13 @@ The mailbox was reset to the same state as in Section 5.2, and `Main.xaml` was r
 The invoice passed all checks: the supplier is known, the purchase order PO-2026-0001 exists, the net amount 14 281,34 SEK equals the order, and the VAT is 25 %. It is now in the Processed folder (Figure 38):
 
 1. Invoice 51290 with the category **Robot: Processed**.
-2. Invoice 51377, another maintenance test email. Its subject starts with `[EXTERN]`, a tag that some mail systems add to external mail. P02 handled it correctly already before the fix.
+2. Invoice 51377, one of the two other new emails. Its subject starts with `[EXTERN]`, a tag that some mail systems add to external mail. P02 handled it correctly already before the fix.
 
 ![The Processed folder after the fix](Screenshots/inc05-fix-processed.png)
 
 *Figure 38. The Processed folder after the run with the fix, opened as Andreas.*
 
-The 40 normal test emails gave the same result as in Section 3.2: 9 Processed, 21 Review, 4 Error and 6 left in the Inbox. The third maintenance email, invoice 41208, came from a new sender address and went to Review as a sender mismatch. This is the correct result, because only Finance can decide whether a new sender address should be trusted.
+The other 40 emails gave the same result as in Section 3.2: 9 Processed, 21 Review, 4 Error and 6 left in the Inbox. The last new email, invoice 41208, came from a new sender address and went to Review as a sender mismatch. This is the correct result, because only Finance can decide whether a new sender address should be trusted.
 
 The robot did not report an error for the new layout. It treated a real invoice as an unknown document and left it in the Inbox without a warning. The reading rules now accept both the old and the new layout, and the invoices that worked before still give the same result.
 
@@ -629,63 +629,45 @@ The robot did not report an error for the new layout. It treated a real invoice 
 | Impact | An invoice can be left without a review, and Finance is not told about it. |
 | Priority | High |
 
-### 6.2 Reproducing the Problem
+### 6.2 An Invoice Lost After a Stop
 
-A robot run can stop at any moment, for example when a job is killed or the computer goes to sleep. To make this happen at a known place, a test setting `TestFault` was added to `Data/Config.xlsx` (Figure 39):
-
-1. `TestFault` is `None` in normal use. With the value `StopAfterMove`, the robot stops on purpose.
-
-![The TestFault setting in the config file](Screenshots/inc04-config-testfault.png)
-
-*Figure 39. The test setting `TestFault` in `Data/Config.xlsx`.*
-
-The test stop was placed in `RouteEmail.xaml`, right after an email is moved (Figure 40):
-
-1. The condition: the setting is `StopAfterMove` and the email was moved to Review.
-2. A log line says that the stop is on purpose.
-3. **End The Robot Process** ends the whole robot process, in the same way as a killed job. The error handling of the robot cannot catch it.
-
-![The test stop in RouteEmail.xaml](Screenshots/inc04-route-test-fault.png)
-
-*Figure 40. The test stop in `RouteEmail.xaml`.*
-
-The mailbox was reset to the normal test state, `TestFault` was set to `StopAfterMove`, and `Main.xaml` was run (Figure 41):
+A robot run can stop at any moment, for example when a job is killed or the computer restarts. In this run, P02 stopped in the middle of the Inbox (Figure 39):
 
 1. The first three emails were handled in the normal way.
-2. The run stopped right after `Faktura 70870 - delleverans` was moved to Review.
+2. The run stopped right after `Faktura 70870 - delleverans` was moved to Review. Here the stop was made on purpose with a test setting, so that it happens at a known place.
 
 ![The Output panel when the run stops](Screenshots/inc04-repro-output.png)
 
-*Figure 41. The Output panel in Studio when the run stops.*
+*Figure 39. The Output panel in Studio when the run stops.*
 
-The invoice was already in the Review folder (Figure 42):
+The invoice was already in the Review folder (Figure 40):
 
 1. Invoice 70870 with the category **Robot: Review**.
 
 ![Invoice 70870 in the Review folder](Screenshots/inc04-repro-review.png)
 
-*Figure 42. The Review folder after the stop, opened as Andreas.*
+*Figure 40. The Review folder after the stop, opened as Andreas.*
 
-Then `TestFault` was set back to `None`, and the robot was run again on the same mailbox, as a support person would do after a stop (Figure 43):
+Then the robot was simply started again on the same mailbox, as a support person would do after a stop (Figure 41):
 
 1. The summary: 37 emails, 36 handled, 0 failed, 1 skipped. The run looks normal.
 
 ![The Output panel after the second run](Screenshots/inc04-rerun-output.png)
 
-*Figure 43. The Output panel after the second run.*
+*Figure 41. The Output panel after the second run.*
 
-Invoice 70870 is not in the list at all, because it is no longer in the Inbox. Frida's mailbox was searched for the invoice number (Figure 44):
+Invoice 70870 is not in the list at all, because it is no longer in the Inbox. Frida's mailbox was searched for the invoice number (Figure 42):
 
 1. The search for `70870`.
 2. No message was found. Frida was never told that this invoice needs a review.
 
 ![No notification for invoice 70870](Screenshots/inc04-rerun-frida-search.png)
 
-*Figure 44. The search for 70870 in Frida's mailbox.*
+*Figure 42. The search for 70870 in Frida's mailbox.*
 
 ### 6.3 Finding the Cause
 
-The processed log, `Output/processed_log.csv`, had rows for the three emails before the stop, but no row for invoice 70870. The order of the steps in `ProcessInbox.xaml` explains this (Figure 45):
+The processed log, `Output/processed_log.csv`, had rows for the three emails before the stop, but no row for invoice 70870. The order of the steps in `ProcessInbox.xaml` explains this (Figure 43):
 
 1. **Invoke Classify Email** decides the folder of the email.
 2. **Invoke Route Email** sets the category, moves the email and sends the notification.
@@ -694,7 +676,7 @@ The processed log, `Output/processed_log.csv`, had rows for the three emails bef
 
 ![The original order of the steps in ProcessInbox.xaml](Screenshots/inc04-process-inbox-before.png)
 
-*Figure 45. The original steps for one email in `ProcessInbox.xaml`.*
+*Figure 43. The original steps for one email in `ProcessInbox.xaml`.*
 
 The log is only written after the email has been moved and the notification has been sent. When the run stops between the move and the notification, the email is in Review, but nothing shows that it was not finished. The next run only reads the Inbox, so it never sees the email again.
 
@@ -717,7 +699,7 @@ Each problem found in Sections 6.2 and 6.3 is solved by one part of the fix.
 
 **Problem 1: nothing shows that an email was started.** The row in the processed log is only written after the email is moved and the notification is sent.
 
-*Solution: write a Started row first.* The robot now writes a "Started" row in the processed log before it routes an email (Figure 46):
+*Solution: write a Started row first.* The robot now writes a "Started" row in the processed log before it routes an email (Figure 44):
 
 1. **Add Started Row** adds a row with the folder, for example `Started: Review`.
 2. **Save Started Row** writes it to the file at once.
@@ -725,21 +707,21 @@ Each problem found in Sections 6.2 and 6.3 is solved by one part of the fix.
 
 ![The Started row in ProcessInbox.xaml](Screenshots/inc04-process-inbox-started.png)
 
-*Figure 46. The new Started row in `ProcessInbox.xaml`.*
+*Figure 44. The new Started row in `ProcessInbox.xaml`.*
 
 **Problem 2: the next run never sees the email again.** The robot only reads the Inbox, and the unfinished email is already in another folder.
 
-*Solution: look for unfinished emails at the start.* An email that was finished has two rows in the log, and an email that was stopped in the middle has only the Started row. A new step looks for these emails at the start of every run, right after the Inbox is read (Figure 47):
+*Solution: look for unfinished emails at the start.* An email that was finished has two rows in the log, and an email that was stopped in the middle has only the Started row. A new step looks for these emails at the start of every run, right after the Inbox is read (Figure 45):
 
 1. **Invoke Check Interrupted Run** is the new step.
 
 ![The new step in ProcessInbox.xaml](Screenshots/inc04-process-inbox-check.png)
 
-*Figure 47. The new step after Sort Oldest First in `ProcessInbox.xaml`.*
+*Figure 45. The new step after Sort Oldest First in `ProcessInbox.xaml`.*
 
 **Problem 3: Finance is never told.** The invoice waits in Review, but no notification was sent.
 
-*Solution: one notice for each unfinished email.* The new workflow `Workflows/CheckInterruptedRun.xaml` does the check and tells Finance (Figure 48):
+*Solution: one notice for each unfinished email.* The new workflow `Workflows/CheckInterruptedRun.xaml` does the check and tells Finance (Figure 46):
 
 1. **Find Interrupted Emails** finds the emails that have only a Started row and are no longer in the Inbox.
 2. **Send Interrupted Run Notice** sends one message to Finance with the list of these emails and their folders.
@@ -748,53 +730,55 @@ Each problem found in Sections 6.2 and 6.3 is solved by one part of the fix.
 
 ![CheckInterruptedRun.xaml in UiPath Studio](Screenshots/inc04-check-interrupted-run.png)
 
-*Figure 48. The new workflow `CheckInterruptedRun.xaml`.*
+*Figure 46. The new workflow `CheckInterruptedRun.xaml`.*
 
 An email that is stopped before it is moved is still in the Inbox. The robot does not skip it, because a Started row alone does not count as handled, so it is handled again in the normal way. The robot does not try to send the missing notification by itself, because it cannot know whether the notification was sent just before the stop. A person checks the email instead.
 
-The fix was saved in Git as one commit, and the test setting as a separate commit. The fix can be rolled back by reverting its commit, and `TestFault` stays `None` in normal use.
+The fix was saved in Git as one commit, so it can be rolled back by reverting that commit.
 
 ### 6.6 Testing the Fix
 
-The mailbox was reset again, and the same three runs were made.
+The same situation was tested again: one run that stops right after invoice 70870 is moved, and then two normal runs.
 
-In the first run, with `TestFault` set to `StopAfterMove`, the robot stopped after invoice 70870 again. This time the processed log had the row `Started: Review` for the invoice.
+In the first run, the robot stopped after invoice 70870 again. This time the processed log had the row `Started: Review` for the invoice.
 
-In the second run, with `TestFault` set back to `None`, the robot found the unfinished email at the start (Figure 49):
+In the second run, the robot found the unfinished email at the start (Figure 47):
 
 1. The warning: invoice 70870 was interrupted in an earlier run, and Finance was asked to check it.
 
 ![The warning about the interrupted email](Screenshots/inc04-fix-warning.png)
 
-*Figure 49. The Output panel at the start of the second run.*
+*Figure 47. The Output panel at the start of the second run.*
 
-Frida received one notice (Figure 50):
+Frida received one notice (Figure 48):
 
 1. The subject: one email needs to be checked after an interrupted run.
 2. The email to check: `Faktura 70870 - delleverans`, in the Review folder.
 
 ![The notice in Frida's mailbox](Screenshots/inc04-fix-notice.png)
 
-*Figure 50. The notice about the interrupted run, opened as Frida.*
+*Figure 48. The notice about the interrupted run, opened as Frida.*
 
-The rest of the run was normal, with 37 emails, 36 handled and 0 failed. A third run was made to check that the notice is not sent again (Figure 51):
+The rest of the run was normal, with 37 emails, 36 handled and 0 failed. A third run was made to check that the notice is not sent again (Figure 49):
 
 1. The robot found no unfinished emails from an earlier run.
 2. The summary: 6 emails, 0 handled, 6 skipped. These are the emails that stay in the Inbox.
 
 ![The Output panel after the third run](Screenshots/inc04-fix-run3-output.png)
 
-*Figure 51. The Output panel after the third run.*
+*Figure 49. The Output panel after the third run.*
 
-Frida's mailbox still has only one notice (Figure 52):
+Frida's mailbox still has only one notice (Figure 50):
 
 1. One result for the search `Avbruten körning`.
 
 ![Only one notice in Frida's mailbox](Screenshots/inc04-fix-run3-search.png)
 
-*Figure 52. The search for the notice after the third run.*
+*Figure 50. The search for the notice after the third run.*
 
-At the end, the mailbox was reset again with all 43 test emails, and P02 was run once more. All emails got the same folders as in `TestData/expected_results.csv` and Section 5, so the fixes did not change the result for any other email.
+P02 was also run once more on all 43 test emails. All emails got the same folders as in `TestData/expected_results.csv` and Section 5, so the fixes did not change the result for any other email.
+
+For these tests, the stop was made with a test setting, `TestFault` in `Data/Config.xlsx`, which is `None` in normal use, and the mailbox was reset before each test.
 
 Before the fix, a stop in the middle of a run could leave an invoice in Review without a notification, and nobody would know. Now the robot remembers which email it started, finds the unfinished one in the next run, and tells Finance once which email to check.
 
@@ -812,36 +796,36 @@ Before the fix, a stop in the middle of a run could leave an invoice in Review w
 
 ### 7.2 The Manual Work Today
 
-In Journalsamordning, a record transfer sends the journal data of a case to another system, for example Journalsystem Syd or an external care provider. The coordinator signs in as Daniel Lindström and opens the page **Överföringar** (Figure 53):
+In Journalsamordning, a record transfer sends the journal data of a case to another system, for example Journalsystem Syd or an external care provider. The coordinator signs in as Daniel Lindström and opens the page **Överföringar** (Figure 51):
 
 1. The four counters: 10 transfers are ready to send, 1 waits for an answer, 35 are done and 9 have failed.
 2. Each open transfer has its own button, **Utför** (run) or **Försök igen** (try again). One click starts one transfer. There is no button for several transfers at once.
 
 ![The Överföringar page before the robot](Screenshots/transfers-before-list.png)
 
-*Figure 53. The transfers in Journalsamordning before the robot, signed in as the coordinator.*
+*Figure 51. The transfers in Journalsamordning before the robot, signed in as the coordinator.*
 
 A transfer can fail for two very different reasons. A **data error**, for example `Valideringsfel: personnummer saknas` (the personal identity number is missing), fails again on every try, because the case data must first be corrected by a person. A **technical error**, for example `Timeout vid anslutning` (connection timeout), comes from the target system and often goes away by itself.
 
-During the week of the ticket, the target systems answered unreliably. To create this problem in the lab, a temporary test switch was added to Journalsamordning: some transfers time out once and work on the next try, and the external care provider does not answer at all. The data errors stay as they are.
+During the week of the ticket, the target systems answered unreliably: some transfers timed out once and worked on the next try, and the external care provider did not answer at all.
 
-The coordinator pressed **Försök igen** on transfer T-0021 (Figure 54):
+The coordinator pressed **Försök igen** on transfer T-0021 (Figure 52):
 
 1. The counters still show 9 failed transfers.
 2. T-0021 failed again with `Timeout vid anslutning`. The page looks exactly as before, so it is easy to miss that the try was made at all.
 
 ![T-0021 after the first try](Screenshots/transfers-before-t0021-retry1.png)
 
-*Figure 54. The failed transfers after the first new try of T-0021.*
+*Figure 52. The failed transfers after the first new try of T-0021.*
 
-A second click on the same transfer worked (Figure 55):
+A second click on the same transfer worked (Figure 53):
 
 1. The counters changed to 36 done and 8 failed.
 2. T-0021 is no longer in the list of failed transfers.
 
 ![T-0021 after the second try](Screenshots/transfers-before-t0021-retry2.png)
 
-*Figure 55. The failed transfers after the second try of T-0021.*
+*Figure 53. The failed transfers after the second try of T-0021.*
 
 Transfer T-0040 to the external care provider failed again with `Målsystemet svarade inte` (the target system did not answer). The coordinator has to decide alone how often to try again, and at the end of the day there is no list of which transfers were finished, which ones need a data correction, and which target could not be reached.
 
@@ -900,7 +884,7 @@ When the four parts are combined, every transfer ends in one of four clear outco
 
 The robot was built in the REFramework project `P04_HospitalBotMaintenance`. The login workflow and the Object Repository for Journalsamordning were taken from the P03 project, and the password is read from Windows Credential Manager, as in P03. New elements were captured for the transfer table: the status, the error text and the button of one row, found by the transfer ID.
 
-The new workflow `Dispatcher.xaml` fills the queue (Figure 56):
+The new workflow `Dispatcher.xaml` fills the queue (Figure 54):
 
 1. **Log In to Journalsamordning** signs in as the coordinator.
 2. **For Each Open Status** goes through the three open statuses: Misslyckad (failed), Klar för överföring (ready) and Väntar på svar (waiting).
@@ -909,11 +893,11 @@ The new workflow `Dispatcher.xaml` fills the queue (Figure 56):
 
 ![Dispatcher.xaml in UiPath Studio](Screenshots/transfer-dispatcher.png)
 
-*Figure 56. The dispatcher `Dispatcher.xaml`.*
+*Figure 54. The dispatcher `Dispatcher.xaml`.*
 
 The queue name and its Orchestrator folder are kept in `Data/Config.json`, together with the address of Journalsamordning and the name of the saved login.
 
-The work for one transfer is done in `Framework/Process.xaml` (Figure 57):
+The work for one transfer is done in `Framework/Process.xaml` (Figure 55):
 
 1. **Read the Transfer** opens the transfer by its ID and reads its status and error text.
 2. **Is the Transfer Already Done?** A transfer with the status Överförd is not touched again.
@@ -925,15 +909,15 @@ The work for one transfer is done in `Framework/Process.xaml` (Figure 57):
 
 ![Process.xaml in UiPath Studio](Screenshots/transfer-process.png)
 
-*Figure 57. The handling of one transfer in `Process.xaml`.*
+*Figure 55. The handling of one transfer in `Process.xaml`.*
 
 The report is the file `Data/Output/transfer_report_<date>.csv`. It has one line for every try, with the transfer, the try number, the status before, the result and the outcome.
 
 ### 7.6 Testing the Robot
 
-The test switch was turned on again, so the target systems behaved in the same unreliable way as in Section 7.2. The dispatcher added the 20 open transfers to the queue (9 failed, 10 ready and 1 waiting), and then `Main.xaml` was run from Studio. All 20 transfers were handled in about five minutes, without any click by a person.
+The robot was tested with the same open transfers and the same unreliable target systems as in Section 7.2. The dispatcher added the 20 open transfers to the queue (9 failed, 10 ready and 1 waiting), and then `Main.xaml` was run from Studio. All 20 transfers were handled in about five minutes, without any click by a person.
 
-The queue in Orchestrator shows the result (Figure 58):
+The queue in Orchestrator shows the result (Figure 56):
 
 1. **Successful 12**: 8 transfers worked at once, and 4 worked on the second try.
 2. **App Exceptions 13**: every try that ended in a system exception, including the tries that were followed by a successful one.
@@ -941,9 +925,9 @@ The queue in Orchestrator shows the result (Figure 58):
 
 ![The queue P04_Transfers in Orchestrator](Screenshots/transfer-queue-overview.png)
 
-*Figure 58. The queue `P04_Transfers` after the run.*
+*Figure 56. The queue `P04_Transfers` after the run.*
 
-Each try is its own row in the list of transactions (Figure 59):
+Each try is its own row in the list of transactions (Figure 57):
 
 1. T-0005, T-0023 and T-0040 failed on their last try. All three go to the external care provider, which never answered.
 2. T-0051 worked on its second try.
@@ -951,9 +935,9 @@ Each try is its own row in the list of transactions (Figure 59):
 
 ![The transactions of the queue](Screenshots/transfer-queue-transactions.png)
 
-*Figure 59. The transactions of the queue in Orchestrator.*
+*Figure 57. The transactions of the queue in Orchestrator.*
 
-The details of T-0040 show the whole history of one transfer (Figure 60):
+The details of T-0040 show the whole history of one transfer (Figure 58):
 
 1. The data that the dispatcher saved with the item.
 2. The reason of the last system exception: `Målsystemet svarade inte`.
@@ -961,18 +945,18 @@ The details of T-0040 show the whole history of one transfer (Figure 60):
 
 ![The details of transaction T-0040](Screenshots/transfer-t0040-details.png)
 
-*Figure 60. Transaction T-0040 after three tries.*
+*Figure 58. Transaction T-0040 after three tries.*
 
-A transfer with a data error looks different (Figure 61):
+A transfer with a data error looks different (Figure 59):
 
 1. The reason: `Needs manual data correction: Mappningsfel: okänd procedurkod` (unknown procedure code).
 2. Only one try, with the exception type Business. The transfer was never tried again.
 
 ![The details of transaction T-0047](Screenshots/transfer-t0047-details.png)
 
-*Figure 61. Transaction T-0047 with a data error.*
+*Figure 59. Transaction T-0047 with a data error.*
 
-The report gives the same picture in one file (Figure 62):
+The report gives the same picture in one file (Figure 60):
 
 1. T-0047 needs a manual data correction.
 2. The first try of T-0015 ended in a timeout and was marked to be tried again.
@@ -981,16 +965,16 @@ The report gives the same picture in one file (Figure 62):
 
 ![The transfer report in Excel](Screenshots/transfer-report.png)
 
-*Figure 62. The report `transfer_report_2026-10-31.csv`, opened in Excel.*
+*Figure 60. The report `transfer_report_2026-10-31.csv`, opened in Excel.*
 
-In Journalsamordning, only the transfers that need a person are left (Figure 63):
+In Journalsamordning, only the transfers that need a person are left (Figure 61):
 
 1. No transfer is ready or waiting any more, 47 are done and 8 have failed.
 2. The 8 failed transfers are the 5 with data errors and the 3 for the external care provider that did not answer.
 
 ![The failed transfers after the robot](Screenshots/transfers-after-failed.png)
 
-*Figure 63. The failed transfers after the robot run, signed in as the coordinator.*
+*Figure 61. The failed transfers after the robot run, signed in as the coordinator.*
 
 The result was exactly as expected for every transfer:
 
@@ -1001,6 +985,134 @@ The result was exactly as expected for every transfer:
 | Needs manual data correction | T-0003, T-0006, T-0018, T-0038, T-0047 |
 | Still unavailable - escalate | T-0005, T-0023, T-0040 |
 
-After the test, the test switch was turned off and the transfer data in the lab was restored from a backup taken before the test.
+The unreliable target systems and the transfer data for this test were prepared in the test environment and reset afterwards.
 
 Before the robot, the coordinator clicked each transfer by hand, tried the failed ones again without a rule, and had no list of the result. The test showed every row of the table in Section 7.3: 8 transfers were done at once, 4 recovered after a new try, 5 were sent to a person for a data correction, and 3 were listed to escalate. No click was needed, and the coordinator now only has to look at those 8 transfers.
+
+## 8. INC-01 - A Page Update Breaks the Transfer Robot
+
+### 8.1 The Ticket
+
+| | |
+|---|---|
+| Reported by | The coordination team in Journalsamordning |
+| Symptom | The transfer robot stops right after the login. No transfers are queued or handled, although the Överföringar page looks exactly as before. |
+| Robot | Transfer robot (Section 7) |
+| Impact | All transfers must be started by hand again until the robot is fixed. |
+| Priority | High |
+
+### 8.2 The Robot Stops After the Update
+
+The ticket came the day after a new version of Journalsamordning was installed. For the coordinators, the Överföringar page looks exactly as before: the same columns, the same buttons and the same data. But the robot no longer handles any transfer, so they are back to the manual work from Section 7.2: about 20 clicks a day, new tries without a rule, and no list of the result. For the support team, the problem is hard to see, because nothing on the page looks broken.
+
+The dispatcher was run in UiPath Studio to see what the robot sees on the new page (Figure 62):
+
+1. The robot could not find the transfer table with its selector `<webctrl id='transfer-table' tag='TABLE' />`.
+2. UiPath shows the closest element it found: a table with the id `transfers-grid`, an 82 % match.
+3. The run stopped with the error "Could not find the user-interface (UI) element for this action".
+
+![The Output panel after the page update](Screenshots/page-update-repro-output.png)
+
+*Figure 62. The Output panel in Studio when the dispatcher runs against the new page.*
+
+The robot stopped before any transfer was added to the queue. The performer uses the same table, so it would fail in the same way on every transfer.
+
+### 8.3 Finding the Cause
+
+The target of the table was opened in the Selection Helper in Studio, with the new page open in Chrome (Figure 63):
+
+1. The Selection Helper says that the element was not found.
+2. The selector looks for a table with the id `transfer-table`.
+
+![The selector does not find the table](Screenshots/page-update-cause-helper.png)
+
+*Figure 63. The old selector of the transfer table in the Selection Helper.*
+
+The page itself was then inspected with the developer tools in Chrome (Figure 64):
+
+1. The table now has the id `transfers-grid` and the class `grid-table`. Before the update, it was `id="transfer-table"` and `class="data"`.
+
+![The new table tag in Chrome](Screenshots/page-update-cause-devtools.png)
+
+*Figure 64. The transfer table of the new page in the developer tools of Chrome.*
+
+An id like this is a technical name that the developers of the page choose. A person never sees it, and it can change in any release. Four elements of the robot depended on it: the table itself, and the status, the error text and the button of a transfer row, which all used the table id as their parent (`parentid='transfer-table'`). So one renamed id stopped the whole robot.
+
+### 8.4 What the Fix Should Change
+
+Re-indicating the elements on the new page would fix the robot today, but it would break again at the next release that renames something. The fix is only worth the work if the robot depends on what the page shows, not on how it is built inside. After the fix, the following goals are expected to be met:
+
+| Goal | Today | Expected after the fix |
+|---|---|---|
+| **Stable selectors** | All four transfer elements depend on the technical id of the table | The elements are found by what a person sees: the column header and the transfer ID |
+| **Both versions** | The robot only works on the old page | The same robot works on the old and the new page, so a release of Journalsamordning and a release of the robot do not have to happen on the same day |
+| **One place to change** | - | The selectors are kept in the Object Repository, so one change reaches every workflow that uses them |
+| **No side effects** | - | Every transfer gets the same result as before the page update |
+
+In short, a change that a person cannot see on the page should not stop the robot.
+
+### 8.5 The Fix
+
+Each problem found in Sections 8.2 and 8.3 is solved by one part of the fix.
+
+**Problem 1: the table is found by its id.** The selector `<webctrl id='transfer-table' tag='TABLE' />` only works as long as the developers keep the same id.
+
+*Solution: find the table by its tag.* The Överföringar page has only one table, so `<webctrl tag='TABLE' />` is enough to find it, with any id or class. In the Object Repository, the new selector of **Transfer Table** was checked with **Validate** against the new page (Figure 65):
+
+1. Validation successful.
+2. The new selector, without the id.
+3. The whole transfer table is found.
+
+![The new selector of the transfer table](Screenshots/page-update-fix-table.png)
+
+*Figure 65. The new selector of the transfer table in the Selection Helper.*
+
+**Problem 2: the cells of a row are found through the table id.** The status, the error text and the button were found with `parentid='transfer-table'`, together with the column and the row.
+
+*Solution: find a cell by its column header and its transfer ID.* `colName` is the header of the column, for example `Åtgärder`, and `rowName` is the transfer ID in the first column of the row. A person uses exactly the same two things to find a button on the page. The parent id was removed, and the new selectors were validated on the new page (Figure 66):
+
+1. Validation successful.
+2. The new selector of the button: `<webctrl colName='Åtgärder' rowName='{transferId}' tag='BUTTON' />`, where the transfer ID comes from the queue item.
+3. The button of transfer T-0047 is found.
+
+![The new selector of the transfer button](Screenshots/page-update-fix-button.png)
+
+*Figure 66. The new selector of the transfer button in the Selection Helper.*
+
+| Element | Old selector | New selector |
+|---|---|---|
+| Transfer Table | `<webctrl id='transfer-table' tag='TABLE' />` | `<webctrl tag='TABLE' />` |
+| Transfer Row Status | `colName='Status' parentid='transfer-table' rowName='{id}'` | `colName='Status' rowName='{id}'` |
+| Transfer Row Error Message | `colName='Felmeddelande' parentid='transfer-table' rowName='{id}'` | `colName='Felmeddelande' rowName='{id}'` |
+| Transfer Row Action Button | `colName='Åtgärder' parentid='transfer-table' rowName='{id}'` | `colName='Åtgärder' rowName='{id}'` |
+
+**Problem 3: the same elements are used in three workflows.** `ReadTransferList.xaml`, `ReadTransfer.xaml` and `RunTransfer.xaml` all use them.
+
+*Solution: change them once in the Object Repository.* The four elements were updated in the Object Repository, and the activities in the three workflows are linked to them, so they all use the new selectors. No other part of the robot was changed. The fix was saved in Git as one commit, so it can be rolled back by reverting that single commit.
+
+### 8.6 Testing the Fix
+
+The fixed robot was run against the new page, with the same 20 open transfers as in Section 7. This time the target systems answered normally, so the test only shows the effect of the new selectors. The dispatcher found all 20 open transfers, and the performer handled them (Figure 67):
+
+1. **Successful 15**: every transfer without a data error was done on the first try.
+2. **App Exceptions 0**: no element was missing, and no other technical error happened.
+3. **Biz Exceptions 5**: the same 5 transfers with data errors as in Section 7.
+
+![The queue after the run on the new page](Screenshots/page-update-queue-overview.png)
+
+*Figure 67. The queue `P04_Transfers` after the run on the new page.*
+
+In Journalsamordning, only the transfers with data errors were left (Figure 68):
+
+1. No transfer is ready or waiting any more, 50 are done and 5 have failed.
+2. The 5 failed transfers all have a data error, so they need a person.
+
+![The failed transfers after the run on the new page](Screenshots/page-update-failed-after.png)
+
+*Figure 68. The failed transfers after the run on the new page, signed in as the coordinator.*
+
+The same robot was also run against the old version of the page, with the same open transfers. The result was exactly the same: 20 transfers queued, 15 done and the same 5 data errors. The fixed robot works on both versions of the page.
+
+Both page versions and the transfer data for these tests were prepared in the test environment and reset after each test.
+
+Before the fix, a small technical change that nobody could see on the page stopped the whole robot. Now the robot finds the transfer table and its rows by the column headers and the transfer IDs, the same way a person does, and it works on both the old and the new version of the page.
