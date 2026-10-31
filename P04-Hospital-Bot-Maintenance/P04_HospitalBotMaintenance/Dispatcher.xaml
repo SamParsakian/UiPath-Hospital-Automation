@@ -1,0 +1,114 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Dispatcher" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Dispatcher: reads the open transfers on the Överföringar page of Journalsamordning and adds one queue item to P04_Transfers for every transfer that is not Överförd yet. Run it once a day, before Main.xaml (the performer)." DisplayName="Dispatcher" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:Dictionary(x:String, x:Object)" Name="config" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="added" />
+      <Variable x:TypeArguments="x:String" Name="userRole" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Read the Config" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Framework\InitAllSettings.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_ConfigFile">Data\Config.json</InArgument>
+        <InArgument x:TypeArguments="s:String[]" x:Key="in_ConfigSections">[{"Settings", "Constants"}]</InArgument>
+        <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="out_Config">[config]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Log In to Journalsamordning" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\Login_Coordination.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_CredentialTarget">[config("CredentialTarget").ToString]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_UserRole">[userRole]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:LogMessage DisplayName="Log User Role" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Info" Message="[&quot;Logged in to Journalsamordning as: &quot; &amp; userRole]" />
+    <ForEach x:TypeArguments="x:String" DisplayName="For Each Open Status" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[{&quot;Misslyckad&quot;, &quot;Klar för överföring&quot;, &quot;Väntar på svar&quot;}]">
+      <ActivityAction x:TypeArguments="x:String">
+        <ActivityAction.Argument>
+          <DelegateInArgument x:TypeArguments="x:String" Name="status" />
+        </ActivityAction.Argument>
+        <Sequence DisplayName="Read One Status" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <Sequence.Variables>
+            <Variable x:TypeArguments="scg:List(s:String[])" Name="rows" />
+          </Sequence.Variables>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Read the Transfer List" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\ReadTransferList.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_BaseUrl">[config("CoordinationUrl").ToString]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Status">[status]</InArgument>
+              <OutArgument x:TypeArguments="scg:List(s:String[])" x:Key="out_Rows">[rows]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:LogMessage DisplayName="Log Rows Found" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[status &amp; &quot;: &quot; &amp; rows.Count.ToString &amp; &quot; transfer(s)&quot;]" />
+          <ForEach x:TypeArguments="s:String[]" DisplayName="For Each Transfer" sap2010:WorkflowViewState.IdRef="ForEach`1_2" Values="[rows]">
+            <ActivityAction x:TypeArguments="s:String[]">
+              <ActivityAction.Argument>
+                <DelegateInArgument x:TypeArguments="s:String[]" Name="cells" />
+              </ActivityAction.Argument>
+              <Sequence DisplayName="Add It to the Queue" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                <ui:AddQueueItem TimeoutMS="{x:Null}" DisplayName="Add Transfer to the Queue" FolderPath="[config(&quot;OrchestratorQueueFolder&quot;).ToString]" sap2010:WorkflowViewState.IdRef="AddQueueItem_1" Priority="Normal" QueueType="[config(&quot;OrchestratorQueueName&quot;).ToString]" Reference="[cells(0)]">
+                  <ui:AddQueueItem.ItemInformation>
+                    <InArgument x:TypeArguments="x:String" x:Key="TransferId">[cells(0)]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="CaseId">[cells(1)]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="Target">[cells(4)]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="Status">[cells(5)]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="ErrorMessage">[cells(7)]</InArgument>
+                  </ui:AddQueueItem.ItemInformation>
+                </ui:AddQueueItem>
+                <Assign DisplayName="Count the Item" sap2010:WorkflowViewState.IdRef="Assign_1">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="x:Int32">[added]</OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="x:Int32">[added + 1]</InArgument>
+                  </Assign.Value>
+                </Assign>
+              </Sequence>
+            </ActivityAction>
+          </ForEach>
+        </Sequence>
+      </ActivityAction>
+    </ForEach>
+    <ui:LogMessage DisplayName="Log Summary" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Open transfers added to the queue: &quot; &amp; added.ToString]" />
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Close Journalsamordning" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4" UnSafe="False" WorkflowFileName="Workflows\CloseCoordination.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <scg:Dictionary x:TypeArguments="x:String, Argument" />
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+  </Sequence>
+</Activity>

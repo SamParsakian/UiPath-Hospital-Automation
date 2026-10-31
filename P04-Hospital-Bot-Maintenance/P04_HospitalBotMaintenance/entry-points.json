@@ -2,6 +2,11 @@
   "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
   "entryPoints": [
     {
+      "filePath": "Dispatcher.xaml",
+      "uniqueId": "cda01dc0-db9e-4992-97cb-9b14235010ad",
+      "type": "process"
+    },
+    {
       "filePath": "Main.xaml",
       "uniqueId": "1b95cb00-6bfa-4ad9-bd92-ec45547ec203",
       "type": "process"

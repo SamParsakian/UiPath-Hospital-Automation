@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Login Button",
+  "Description": "Logga in button under the login form",
+  "Type": "Element",
+  "TaxonomyType": "Button",
+  "Id": "vJH2jCJfRUu3ouBbzXqF3g",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/vJH2jCJfRUu3ouBbzXqF3g",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-26T14:45:18.361031Z",
+  "Updated": "2026-10-26T14:45:18.361031Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
