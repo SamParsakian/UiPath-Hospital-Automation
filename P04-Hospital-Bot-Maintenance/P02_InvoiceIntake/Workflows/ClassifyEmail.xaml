@@ -1,0 +1,414 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ClassifyEmail" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sc="clr-namespace:System.Collections;assembly=System.Private.CoreLib" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Email" Type="InArgument(umm:Office365Message)" />
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_Suppliers" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_Invoices" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_PurchaseOrders" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_History" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_AttachmentFolder" Type="InArgument(x:String)" />
+    <x:Property Name="out_Class" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Reason" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Folder" Type="OutArgument(x:String)" />
+    <x:Property Name="out_SupplierName" Type="OutArgument(x:String)" />
+    <x:Property Name="out_InvoiceNumbers" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Activities.Mail</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>UiPath.PDF.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Classify Email" sap2010:WorkflowViewState.IdRef="Sequence_22">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="subjectLower" />
+      <Variable x:TypeArguments="x:String" Name="senderAddress" />
+      <Variable x:TypeArguments="x:String" Name="senderDomain" />
+      <Variable x:TypeArguments="x:String" Name="internalDomain" />
+      <Variable x:TypeArguments="x:Boolean" Name="isInternal" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="attachmentNames" />
+      <Variable x:TypeArguments="x:Boolean" Default="False" Name="hasHtml" />
+      <Variable x:TypeArguments="sd:DataRow[]" Name="nameRows" />
+      <Variable x:TypeArguments="x:String" Name="emailFolder" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="pdfFiles" />
+      <Variable x:TypeArguments="x:String" Name="errorReason" />
+      <Variable x:TypeArguments="x:String" Name="reviewClass" />
+      <Variable x:TypeArguments="x:String" Name="reviewReason" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="notInvoiceCount" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="okInvoices" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="invoiceNumbers" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Class" sap2010:WorkflowViewState.IdRef="Assign`1_26" To="[out_Class]" Value="[&quot;&quot;]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Reason" sap2010:WorkflowViewState.IdRef="Assign`1_27" To="[out_Reason]" Value="[&quot;&quot;]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Supplier" sap2010:WorkflowViewState.IdRef="Assign`1_28" To="[out_SupplierName]" Value="[&quot;&quot;]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Invoice Numbers" sap2010:WorkflowViewState.IdRef="Assign`1_29" To="[out_InvoiceNumbers]" Value="[&quot;&quot;]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Subject" sap2010:WorkflowViewState.IdRef="Assign`1_30" To="[subjectLower]" Value="[If(in_Email.Subject, &quot;&quot;).ToLower()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Sender Address" sap2010:WorkflowViewState.IdRef="Assign`1_31" To="[senderAddress]" Value="[If(in_Email.FromAddress, &quot;&quot;).ToLower()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Sender Domain" sap2010:WorkflowViewState.IdRef="Assign`1_32" To="[senderDomain]" Value="[senderAddress.Substring(senderAddress.IndexOf(&quot;@&quot;) + 1)]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Hospital Domain" sap2010:WorkflowViewState.IdRef="Assign`1_33" To="[internalDomain]" Value="[in_Config(&quot;InvoiceMailbox&quot;).Split(&quot;@&quot;c)(1).ToLower()]" />
+    <Assign x:TypeArguments="x:Boolean" DisplayName="Is the Sender Internal?" sap2010:WorkflowViewState.IdRef="Assign`1_34" To="[isInternal]" Value="[senderDomain = internalDomain]" />
+    <Assign x:TypeArguments="scg:List(x:String)" DisplayName="Get Attachment Names" sap2010:WorkflowViewState.IdRef="Assign`1_35" To="[attachmentNames]" Value="[If(in_Email.StandardAttachmentNames Is Nothing, New List(Of String), in_Email.StandardAttachmentNames.ToList())]" />
+    <If Condition="[out_Class = &quot;&quot; AndAlso (in_Email.Categories IsNot Nothing AndAlso in_Email.Categories.Contains(in_Config(&quot;Category_Processed&quot;)))]" DisplayName="Rule 1: Already Handled?" sap2010:WorkflowViewState.IdRef="If_15">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_12">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_36" To="[out_Class]" Value="[&quot;Already handled&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_37" To="[out_Reason]" Value="[$&quot;The email already has the category {in_Config(&quot;Category_Processed&quot;)}. It is only moved to Processed&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (subjectLower.StartsWith(&quot;automatiskt svar&quot;) OrElse subjectLower.StartsWith(&quot;autosvar&quot;) OrElse subjectLower.StartsWith(&quot;out of office&quot;))]" DisplayName="Rule 2: Automatic Reply?" sap2010:WorkflowViewState.IdRef="If_16">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_13">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_38" To="[out_Class]" Value="[&quot;Not an invoice&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_39" To="[out_Reason]" Value="[&quot;Automatic reply. It is never answered&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (senderAddress.StartsWith(&quot;nyhetsbrev@&quot;) OrElse subjectLower.StartsWith(&quot;nyhetsbrev&quot;))]" DisplayName="Rule 3: Newsletter?" sap2010:WorkflowViewState.IdRef="If_17">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_14">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_40" To="[out_Class]" Value="[&quot;Not an invoice&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_41" To="[out_Reason]" Value="[&quot;Newsletter&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (subjectLower.Contains(&quot;orderbekräftelse&quot;))]" DisplayName="Rule 4: Order Confirmation?" sap2010:WorkflowViewState.IdRef="If_18">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_15">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_42" To="[out_Class]" Value="[&quot;Not an invoice&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_43" To="[out_Reason]" Value="[&quot;Order confirmation&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (isInternal AndAlso attachmentNames.Count = 0)]" DisplayName="Rule 5: Internal Message?" sap2010:WorkflowViewState.IdRef="If_19">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_16">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_44" To="[out_Class]" Value="[&quot;Not an invoice&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_45" To="[out_Reason]" Value="[&quot;Internal message without attachment&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="Look For HTML Files" sap2010:WorkflowViewState.IdRef="ForEach`1_4" Values="[attachmentNames]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:String">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:String" Name="attachmentName" />
+          </ActivityAction.Argument>
+          <If Condition="[attachmentName.ToLower().EndsWith(&quot;.htm&quot;) OrElse attachmentName.ToLower().EndsWith(&quot;.html&quot;)]" DisplayName="Is It HTML?" sap2010:WorkflowViewState.IdRef="If_20">
+            <If.Then>
+              <Assign x:TypeArguments="x:Boolean" DisplayName="Remember HTML" sap2010:WorkflowViewState.IdRef="Assign`1_46" To="[hasHtml]" Value="[True]" />
+            </If.Then>
+          </If>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (hasHtml)]" DisplayName="Rule 6a: HTML Attachment?" sap2010:WorkflowViewState.IdRef="If_21">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_17">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_47" To="[out_Class]" Value="[&quot;Suspicious&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_48" To="[out_Reason]" Value="[&quot;HTML attachment. It is never opened. The controller is alerted&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (subjectLower.Contains(&quot;betalningsuppgifter&quot;) OrElse subjectLower.Contains(&quot;bankgiro&quot;) OrElse subjectLower.Contains(&quot;bankuppgifter&quot;))]" DisplayName="Rule 6b: New Bank Details?" sap2010:WorkflowViewState.IdRef="If_22">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_18">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_49" To="[out_Class]" Value="[&quot;Suspicious&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_50" To="[out_Reason]" Value="[&quot;The email asks to change payment details. No bank details are changed&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Supplier By Sender Name" sap2010:WorkflowViewState.IdRef="Assign`1_51" To="[nameRows]" Value="[in_Suppliers.Select(&quot;Name = '&quot; &amp; If(in_Email.FromDisplayName, &quot;&quot;).Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;'&quot;)]" />
+    <If Condition="[out_Class = &quot;&quot; AndAlso (nameRows.Length &gt; 0 AndAlso Not nameRows(0)(&quot;Email&quot;).ToString().ToLower().EndsWith(&quot;@&quot; &amp; senderDomain))]" DisplayName="Rule 6c: Look-alike Sender?" sap2010:WorkflowViewState.IdRef="If_23">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_19">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_52" To="[out_Class]" Value="[&quot;Suspicious&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_53" To="[out_Reason]" Value="[$&quot;The sender uses the name {nameRows(0)(&quot;Name&quot;)}, but the domain {senderDomain} is not the registered one&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (attachmentNames.Count = 0 AndAlso (subjectLower.Contains(&quot;fråga&quot;) OrElse subjectLower.Contains(&quot;?&quot;)))]" DisplayName="Rule 7a: Question?" sap2010:WorkflowViewState.IdRef="If_24">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_20">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_54" To="[out_Class]" Value="[&quot;Question&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_55" To="[out_Reason]" Value="[&quot;A question without an invoice. A person answers it&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (attachmentNames.Count = 0)]" DisplayName="Rule 7b: No Attachment?" sap2010:WorkflowViewState.IdRef="If_25">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_21">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_56" To="[out_Class]" Value="[&quot;No attachment&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_57" To="[out_Reason]" Value="[&quot;No attachment. A PDF invoice is required&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot;]" DisplayName="Has Attachments?" sap2010:WorkflowViewState.IdRef="If_26">
+      <If.Then>
+        <Sequence DisplayName="Read Attachments" sap2010:WorkflowViewState.IdRef="Sequence_11">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Email Folder" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[emailFolder]" Value="[Path.Combine(in_AttachmentFolder, String.Join(&quot;&quot;, in_Email.InternetMessageId.Where(Function(c) Char.IsLetterOrDigit(c))))]" />
+          <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Email Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[emailFolder]" />
+          <umam:DownloadEmailAttachments ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" ConflictResolution="Replace" DestinationPath="[emailFolder]" DisplayName="Download Attachments" Email="[in_Email]" ExcludeInlineAttachments="True" SearchMode="UseSimple" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="DownloadEmailAttachments_1" />
+          <Assign x:TypeArguments="scg:List(x:String)" DisplayName="Start PDF List" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[pdfFiles]" Value="[New List(Of String)]" />
+          <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Attachment" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[attachmentNames]">
+            <ui:ForEach.Body>
+              <ActivityAction x:TypeArguments="x:String">
+                <ActivityAction.Argument>
+                  <DelegateInArgument x:TypeArguments="x:String" Name="attachmentName" />
+                </ActivityAction.Argument>
+                <If Condition="[Path.GetExtension(attachmentName).ToLower() = &quot;.pdf&quot; AndAlso File.Exists(Path.Combine(emailFolder, attachmentName))]" DisplayName="Is It a PDF File?" sap2010:WorkflowViewState.IdRef="If_8">
+                  <If.Then>
+                    <AddToCollection x:TypeArguments="x:String" Collection="[pdfFiles]" DisplayName="Add To PDF List" Item="[Path.Combine(emailFolder, attachmentName)]" sap2010:WorkflowViewState.IdRef="AddToCollection`1_3" />
+                  </If.Then>
+                </If>
+              </ActivityAction>
+            </ui:ForEach.Body>
+          </ui:ForEach>
+          <If Condition="[out_Class = &quot;&quot; AndAlso (pdfFiles.Count = 0)]" DisplayName="Rule 8: Any PDF Attached?" sap2010:WorkflowViewState.IdRef="If_9">
+            <If.Then>
+              <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_11" To="[out_Class]" Value="[&quot;Unsupported attachment&quot;]" />
+                <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_12" To="[out_Reason]" Value="[$&quot;No PDF attachment ({String.Join(&quot;, &quot;, attachmentNames)}). The file is not opened, a person checks it&quot;]" />
+              </Sequence>
+            </If.Then>
+          </If>
+          <If Condition="[out_Class = &quot;&quot;]" DisplayName="Are There PDFs?" sap2010:WorkflowViewState.IdRef="If_14">
+            <If.Then>
+              <Sequence DisplayName="Read PDFs" sap2010:WorkflowViewState.IdRef="Sequence_10">
+                <Assign x:TypeArguments="scg:List(x:String)" DisplayName="Start Correct Invoice List" sap2010:WorkflowViewState.IdRef="Assign`1_13" To="[okInvoices]" Value="[New List(Of String)]" />
+                <Assign x:TypeArguments="scg:List(x:String)" DisplayName="Start Invoice Number List" sap2010:WorkflowViewState.IdRef="Assign`1_14" To="[invoiceNumbers]" Value="[New List(Of String)]" />
+                <Assign x:TypeArguments="x:String" DisplayName="No Error Yet" sap2010:WorkflowViewState.IdRef="Assign`1_15" To="[errorReason]" Value="[&quot;&quot;]" />
+                <Assign x:TypeArguments="x:String" DisplayName="No Problem Yet" sap2010:WorkflowViewState.IdRef="Assign`1_16" To="[reviewClass]" Value="[&quot;&quot;]" />
+                <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each PDF" sap2010:WorkflowViewState.IdRef="ForEach`1_2" Values="[pdfFiles]">
+                  <ui:ForEach.Body>
+                    <ActivityAction x:TypeArguments="x:String">
+                      <ActivityAction.Argument>
+                        <DelegateInArgument x:TypeArguments="x:String" Name="pdfFile" />
+                      </ActivityAction.Argument>
+                      <Sequence DisplayName="Read One PDF" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                        <Sequence.Variables>
+                          <Variable x:TypeArguments="x:String" Name="readResult" />
+                          <Variable x:TypeArguments="x:String" Name="readReason" />
+                          <Variable x:TypeArguments="x:String" Name="documentType" />
+                          <Variable x:TypeArguments="x:String" Name="pdfSupplierName" />
+                          <Variable x:TypeArguments="x:String" Name="orgNumber" />
+                          <Variable x:TypeArguments="x:String" Name="invoiceNumber" />
+                          <Variable x:TypeArguments="x:String" Name="invoiceDate" />
+                          <Variable x:TypeArguments="x:String" Name="dueDate" />
+                          <Variable x:TypeArguments="x:String" Name="purchaseOrder" />
+                          <Variable x:TypeArguments="x:String" Name="costCentre" />
+                          <Variable x:TypeArguments="x:Decimal" Name="netAmount" />
+                          <Variable x:TypeArguments="x:Decimal" Name="vatAmount" />
+                          <Variable x:TypeArguments="x:Decimal" Name="totalAmount" />
+                          <Variable x:TypeArguments="x:String" Name="bankgiro" />
+                        </Sequence.Variables>
+                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Read Invoice" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\ReadInvoice.xaml">
+                          <ui:InvokeWorkflowFile.Arguments>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[pdfFile]</InArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_Result">[readResult]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[readReason]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_DocumentType">[documentType]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_SupplierName">[pdfSupplierName]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_OrgNumber">[orgNumber]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceNumber">[invoiceNumber]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceDate">[invoiceDate]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_DueDate">[dueDate]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_PurchaseOrder">[purchaseOrder]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_CostCentre">[costCentre]</OutArgument>
+                            <OutArgument x:TypeArguments="x:Decimal" x:Key="out_NetAmount">[netAmount]</OutArgument>
+                            <OutArgument x:TypeArguments="x:Decimal" x:Key="out_VatAmount">[vatAmount]</OutArgument>
+                            <OutArgument x:TypeArguments="x:Decimal" x:Key="out_TotalAmount">[totalAmount]</OutArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_Bankgiro">[bankgiro]</OutArgument>
+                          </ui:InvokeWorkflowFile.Arguments>
+                        </ui:InvokeWorkflowFile>
+                        <If Condition="[invoiceNumber &lt;&gt; &quot;&quot;]" DisplayName="Invoice Number Found?" sap2010:WorkflowViewState.IdRef="If_4">
+                          <If.Then>
+                            <AddToCollection x:TypeArguments="x:String" Collection="[invoiceNumbers]" DisplayName="Remember Invoice Number" Item="[invoiceNumber]" sap2010:WorkflowViewState.IdRef="AddToCollection`1_2" />
+                          </If.Then>
+                        </If>
+                        <If Condition="[out_SupplierName = &quot;&quot; AndAlso pdfSupplierName &lt;&gt; &quot;&quot;]" DisplayName="No Supplier Yet?" sap2010:WorkflowViewState.IdRef="If_5">
+                          <If.Then>
+                            <Assign x:TypeArguments="x:String" DisplayName="Use Supplier From PDF" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[out_SupplierName]" Value="[pdfSupplierName]" />
+                          </If.Then>
+                        </If>
+                        <Switch x:TypeArguments="x:String" DisplayName="What Did Read Invoice Find?" Expression="[readResult]" sap2010:WorkflowViewState.IdRef="Switch`1_1">
+                          <Switch.Default>
+                            <Sequence DisplayName="Check Business Rules" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                              <Sequence.Variables>
+                                <Variable x:TypeArguments="x:String" Name="checkClass" />
+                                <Variable x:TypeArguments="x:String" Name="checkReason" />
+                                <Variable x:TypeArguments="x:String" Name="checkSupplier" />
+                              </Sequence.Variables>
+                              <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Check Invoice" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\CheckInvoice.xaml">
+                                <ui:InvokeWorkflowFile.Arguments>
+                                  <InArgument x:TypeArguments="x:String" x:Key="in_SenderAddress">[senderAddress]</InArgument>
+                                  <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[in_Email.Subject]</InArgument>
+                                  <InArgument x:TypeArguments="x:String" x:Key="in_InternalDomain">[internalDomain]</InArgument>
+                                  <InArgument x:TypeArguments="x:String" x:Key="in_DocumentResult">[readResult]</InArgument>
+                                  <InArgument x:TypeArguments="x:String" x:Key="in_OrgNumber">[orgNumber]</InArgument>
+                                  <InArgument x:TypeArguments="x:String" x:Key="in_InvoiceNumber">[invoiceNumber]</InArgument>
+                                  <InArgument x:TypeArguments="x:String" x:Key="in_PurchaseOrder">[purchaseOrder]</InArgument>
+                                  <InArgument x:TypeArguments="x:Decimal" x:Key="in_NetAmount">[netAmount]</InArgument>
+                                  <InArgument x:TypeArguments="x:Decimal" x:Key="in_VatAmount">[vatAmount]</InArgument>
+                                  <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Suppliers">[in_Suppliers]</InArgument>
+                                  <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Invoices">[in_Invoices]</InArgument>
+                                  <InArgument x:TypeArguments="sd:DataTable" x:Key="in_PurchaseOrders">[in_PurchaseOrders]</InArgument>
+                                  <InArgument x:TypeArguments="sd:DataTable" x:Key="in_History">[in_History]</InArgument>
+                                  <OutArgument x:TypeArguments="x:String" x:Key="out_Class">[checkClass]</OutArgument>
+                                  <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[checkReason]</OutArgument>
+                                  <OutArgument x:TypeArguments="x:String" x:Key="out_SupplierName">[checkSupplier]</OutArgument>
+                                </ui:InvokeWorkflowFile.Arguments>
+                              </ui:InvokeWorkflowFile>
+                              <If Condition="[checkSupplier &lt;&gt; &quot;&quot;]" DisplayName="Supplier In Register?" sap2010:WorkflowViewState.IdRef="If_1">
+                                <If.Then>
+                                  <Assign x:TypeArguments="x:String" DisplayName="Use Registered Supplier Name" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[out_SupplierName]" Value="[checkSupplier]" />
+                                </If.Then>
+                              </If>
+                              <If Condition="[checkClass = &quot;Invoice&quot;]" DisplayName="Did All Checks Pass?" sap2010:WorkflowViewState.IdRef="If_3">
+                                <If.Then>
+                                  <AddToCollection x:TypeArguments="x:String" Collection="[okInvoices]" DisplayName="Remember Correct Invoice" Item="[orgNumber &amp; &quot;|&quot; &amp; invoiceNumber]" sap2010:WorkflowViewState.IdRef="AddToCollection`1_1" />
+                                </If.Then>
+                                <If.Else>
+                                  <If Condition="[reviewClass = &quot;&quot;]" DisplayName="First Problem?" sap2010:WorkflowViewState.IdRef="If_2">
+                                    <If.Then>
+                                      <Sequence DisplayName="Remember Problem" sap2010:WorkflowViewState.IdRef="Sequence_1">
+                                        <Assign x:TypeArguments="x:String" DisplayName="Set Review Class" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[reviewClass]" Value="[checkClass]" />
+                                        <Assign x:TypeArguments="x:String" DisplayName="Set Review Reason" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[reviewReason]" Value="[$&quot;{invoiceNumber}: {checkReason}&quot;]" />
+                                      </Sequence>
+                                    </If.Then>
+                                  </If>
+                                </If.Else>
+                              </If>
+                            </Sequence>
+                          </Switch.Default>
+                          <If Condition="[errorReason = &quot;&quot;]" x:Key="Error" DisplayName="First Technical Error?" sap2010:WorkflowViewState.IdRef="If_6">
+                            <If.Then>
+                              <Assign x:TypeArguments="x:String" DisplayName="Set Error Reason" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[errorReason]" Value="[$&quot;{Path.GetFileName(pdfFile)}: {readReason}&quot;]" />
+                            </If.Then>
+                          </If>
+                          <If Condition="[reviewClass = &quot;&quot;]" x:Key="Scanned" DisplayName="First Problem?" sap2010:WorkflowViewState.IdRef="If_7">
+                            <If.Then>
+                              <Sequence DisplayName="Remember Scanned PDF" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                                <Assign x:TypeArguments="x:String" DisplayName="Set Review Class" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[reviewClass]" Value="[&quot;Scanned invoice&quot;]" />
+                                <Assign x:TypeArguments="x:String" DisplayName="Set Review Reason" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[reviewReason]" Value="[$&quot;{Path.GetFileName(pdfFile)}: {readReason}&quot;]" />
+                              </Sequence>
+                            </If.Then>
+                          </If>
+                          <Assign x:TypeArguments="x:Int32" x:Key="NotInvoice" DisplayName="Count Other Document" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[notInvoiceCount]" Value="[notInvoiceCount + 1]" />
+                        </Switch>
+                      </Sequence>
+                    </ActivityAction>
+                  </ui:ForEach.Body>
+                </ui:ForEach>
+                <Assign x:TypeArguments="x:String" DisplayName="Set Invoice Numbers" sap2010:WorkflowViewState.IdRef="Assign`1_17" To="[out_InvoiceNumbers]" Value="[String.Join(&quot;, &quot;, invoiceNumbers)]" />
+                <If Condition="[out_Class = &quot;&quot; AndAlso (errorReason &lt;&gt; &quot;&quot;)]" DisplayName="Rule 9: Technical Error In a PDF?" sap2010:WorkflowViewState.IdRef="If_10">
+                  <If.Then>
+                    <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_6">
+                      <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_18" To="[out_Class]" Value="[&quot;Technical error&quot;]" />
+                      <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_19" To="[out_Reason]" Value="[errorReason]" />
+                    </Sequence>
+                  </If.Then>
+                </If>
+                <If Condition="[out_Class = &quot;&quot; AndAlso reviewClass &lt;&gt; &quot;&quot;]" DisplayName="Rule 10: Business Problem?" sap2010:WorkflowViewState.IdRef="If_11">
+                  <If.Then>
+                    <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_7">
+                      <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_20" To="[out_Class]" Value="[reviewClass]" />
+                      <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_21" To="[out_Reason]" Value="[reviewReason]" />
+                    </Sequence>
+                  </If.Then>
+                </If>
+                <If Condition="[out_Class = &quot;&quot; AndAlso okInvoices.Count &gt; 0]" DisplayName="Rule 11: Correct Invoices?" sap2010:WorkflowViewState.IdRef="If_12">
+                  <If.Then>
+                    <Sequence DisplayName="Accept Invoices" sap2010:WorkflowViewState.IdRef="Sequence_8">
+                      <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_22" To="[out_Class]" Value="[If(okInvoices.Count &gt; 1, $&quot;Invoice ({okInvoices.Count})&quot;, &quot;Invoice&quot;)]" />
+                      <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_23" To="[out_Reason]" Value="[&quot;All checks passed&quot;]" />
+                      <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Correct Invoice" sap2010:WorkflowViewState.IdRef="ForEach`1_3" Values="[okInvoices]">
+                        <ui:ForEach.Body>
+                          <ActivityAction x:TypeArguments="x:String">
+                            <ActivityAction.Argument>
+                              <DelegateInArgument x:TypeArguments="x:String" Name="invoiceKey" />
+                            </ActivityAction.Argument>
+                            <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{invoiceKey.Split(&quot;|&quot;c)(0), invoiceKey.Split(&quot;|&quot;c)(1), &quot;this run: &quot; &amp; in_Email.Subject}]" DataTable="[in_History]" DisplayName="Add To History" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
+                          </ActivityAction>
+                        </ui:ForEach.Body>
+                      </ui:ForEach>
+                    </Sequence>
+                  </If.Then>
+                </If>
+                <If Condition="[out_Class = &quot;&quot; AndAlso (True)]" DisplayName="Rule 12: Only Other Documents" sap2010:WorkflowViewState.IdRef="If_13">
+                  <If.Then>
+                    <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_9">
+                      <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_24" To="[out_Class]" Value="[&quot;Not an invoice&quot;]" />
+                      <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_25" To="[out_Reason]" Value="[&quot;The PDF is not an invoice, for example a delivery note&quot;]" />
+                    </Sequence>
+                  </If.Then>
+                </If>
+              </Sequence>
+            </If.Then>
+          </If>
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;Not an invoice&quot;]" DisplayName="Which Folder?" sap2010:WorkflowViewState.IdRef="If_29">
+      <If.Then>
+        <Assign x:TypeArguments="x:String" DisplayName="Stay In Inbox" sap2010:WorkflowViewState.IdRef="Assign`1_58" To="[out_Folder]" Value="[in_Config(&quot;Folder_Inbox&quot;)]" />
+      </If.Then>
+      <If.Else>
+        <If Condition="[out_Class = &quot;Technical error&quot;]" DisplayName="Error Folder?" sap2010:WorkflowViewState.IdRef="If_28">
+          <If.Then>
+            <Assign x:TypeArguments="x:String" DisplayName="Use Error Folder" sap2010:WorkflowViewState.IdRef="Assign`1_59" To="[out_Folder]" Value="[in_Config(&quot;Folder_Error&quot;)]" />
+          </If.Then>
+          <If.Else>
+            <If Condition="[out_Class.StartsWith(&quot;Invoice&quot;) OrElse out_Class = &quot;Already handled&quot;]" DisplayName="Processed Folder?" sap2010:WorkflowViewState.IdRef="If_27">
+              <If.Then>
+                <Assign x:TypeArguments="x:String" DisplayName="Use Processed Folder" sap2010:WorkflowViewState.IdRef="Assign`1_60" To="[out_Folder]" Value="[in_Config(&quot;Folder_Processed&quot;)]" />
+              </If.Then>
+              <If.Else>
+                <Assign x:TypeArguments="x:String" DisplayName="Use Review Folder" sap2010:WorkflowViewState.IdRef="Assign`1_61" To="[out_Folder]" Value="[in_Config(&quot;Folder_Review&quot;)]" />
+              </If.Else>
+            </If>
+          </If.Else>
+        </If>
+      </If.Else>
+    </If>
+  </Sequence>
+</Activity>

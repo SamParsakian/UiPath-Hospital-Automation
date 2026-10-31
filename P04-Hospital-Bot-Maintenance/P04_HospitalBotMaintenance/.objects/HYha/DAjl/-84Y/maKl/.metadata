@@ -1,0 +1,18 @@
+﻿{
+  "Name": "Transfer Row Status",
+  "Description": "Status chip in the Status column of one transfer row in the Överföringar table",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "maKlVSBjIk-x3R315NxsBg",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/maKlVSBjIk-x3R315NxsBg",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-30T14:25:32.3173799Z",
+  "Updated": "2026-10-31T10:14:19.0575774Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.6.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ],
+  "UpdatedBy": [
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

@@ -1,0 +1,212 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_CheckInvoice" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sg="clr-namespace:System.Globalization;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_SenderAddress" Type="InArgument(x:String)" />
+    <x:Property Name="in_Subject" Type="InArgument(x:String)" />
+    <x:Property Name="in_InternalDomain" Type="InArgument(x:String)" />
+    <x:Property Name="in_DocumentResult" Type="InArgument(x:String)" />
+    <x:Property Name="in_OrgNumber" Type="InArgument(x:String)" />
+    <x:Property Name="in_InvoiceNumber" Type="InArgument(x:String)" />
+    <x:Property Name="in_PurchaseOrder" Type="InArgument(x:String)" />
+    <x:Property Name="in_NetAmount" Type="InArgument(x:Decimal)" />
+    <x:Property Name="in_VatAmount" Type="InArgument(x:Decimal)" />
+    <x:Property Name="in_Suppliers" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_Invoices" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_PurchaseOrders" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_History" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="out_Class" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Reason" Type="OutArgument(x:String)" />
+    <x:Property Name="out_SupplierName" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Globalization</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Check Invoice" sap2010:WorkflowViewState.IdRef="Sequence_16">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sd:DataRow[]" Name="supplierRows" />
+      <Variable x:TypeArguments="x:String" Name="supplierRef" />
+      <Variable x:TypeArguments="x:String" Name="supplierEmail" />
+      <Variable x:TypeArguments="x:String" Name="supplierStatus" />
+      <Variable x:TypeArguments="x:Boolean" Name="senderIsInternal" />
+      <Variable x:TypeArguments="sd:DataRow[]" Name="poRows" />
+      <Variable x:TypeArguments="x:String" Name="poSupplierName" />
+      <Variable x:TypeArguments="x:Decimal" Name="poNetAmount" />
+      <Variable x:TypeArguments="x:Decimal" Name="expectedVat" />
+      <Variable x:TypeArguments="sd:DataRow[]" Name="historyRows" />
+      <Variable x:TypeArguments="sd:DataRow[]" Name="paidRows" />
+      <Variable x:TypeArguments="sg:CultureInfo" Default="[CultureInfo.GetCultureInfo(&quot;sv-SE&quot;)]" Name="swedish" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Result" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[out_Class]" Value="[&quot;&quot;]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Reason" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[out_Reason]" Value="[&quot;&quot;]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Start With No Supplier" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[out_SupplierName]" Value="[&quot;&quot;]" />
+    <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Supplier By Org Number" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[supplierRows]" Value="[in_Suppliers.Select(&quot;OrgNumber = '&quot; &amp; in_OrgNumber.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;'&quot;)]" />
+    <If Condition="[out_Class = &quot;&quot; AndAlso (supplierRows.Length = 0)]" DisplayName="Check 1: Known Supplier?" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_1">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[out_Class]" Value="[&quot;Unknown supplier&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[out_Reason]" Value="[$&quot;Org. number {in_OrgNumber} is not in the supplier register&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot;]" DisplayName="Supplier Found?" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <Sequence DisplayName="Read Supplier" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <Assign x:TypeArguments="x:String" DisplayName="Get Supplier Ref" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[supplierRef]" Value="[supplierRows(0)(&quot;SupplierRef&quot;).ToString()]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Get Supplier Name" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[out_SupplierName]" Value="[supplierRows(0)(&quot;Name&quot;).ToString()]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Get Supplier Email" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[supplierEmail]" Value="[supplierRows(0)(&quot;Email&quot;).ToString()]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Get Supplier Status" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[supplierStatus]" Value="[supplierRows(0)(&quot;Status&quot;).ToString()]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (supplierStatus &lt;&gt; &quot;Aktiv&quot;)]" DisplayName="Check 2: Active Supplier?" sap2010:WorkflowViewState.IdRef="If_3">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_3">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_11" To="[out_Class]" Value="[&quot;Inactive supplier&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_12" To="[out_Reason]" Value="[$&quot;{out_SupplierName} has the status {supplierStatus} in the supplier register&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <Assign x:TypeArguments="x:Boolean" DisplayName="Is the Sender Internal?" sap2010:WorkflowViewState.IdRef="Assign`1_13" To="[senderIsInternal]" Value="[in_SenderAddress.ToLower().EndsWith(&quot;@&quot; &amp; in_InternalDomain.ToLower())]" />
+    <If Condition="[out_Class = &quot;&quot; AndAlso (Not senderIsInternal AndAlso in_SenderAddress.ToLower() &lt;&gt; supplierEmail.ToLower())]" DisplayName="Check 3: Registered Sender?" sap2010:WorkflowViewState.IdRef="If_4">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_4">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_14" To="[out_Class]" Value="[&quot;Sender mismatch&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_15" To="[out_Reason]" Value="[$&quot;The sender {in_SenderAddress} is not the registered address {supplierEmail}&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (in_Subject.ToLower().Contains(&quot;påminnelse&quot;))]" DisplayName="Check 4: Reminder?" sap2010:WorkflowViewState.IdRef="If_5">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_5">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_16" To="[out_Class]" Value="[&quot;Reminder&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_17" To="[out_Reason]" Value="[$&quot;Reminder for invoice {in_InvoiceNumber}. A person must find out why it is not paid&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (in_DocumentResult = &quot;CreditNote&quot;)]" DisplayName="Check 5: Credit Note?" sap2010:WorkflowViewState.IdRef="If_6">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_6">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_18" To="[out_Class]" Value="[&quot;Correction&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_19" To="[out_Reason]" Value="[$&quot;Credit note {in_InvoiceNumber}. Credit notes are handled by a person&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (in_PurchaseOrder = &quot;&quot;)]" DisplayName="Check 6: Purchase Order Given?" sap2010:WorkflowViewState.IdRef="If_7">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_7">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_20" To="[out_Class]" Value="[&quot;Missing PO&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_21" To="[out_Reason]" Value="[$&quot;Invoice {in_InvoiceNumber} has no purchase order reference&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot;]" DisplayName="Still OK?" sap2010:WorkflowViewState.IdRef="If_8">
+      <If.Then>
+        <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Purchase Order" sap2010:WorkflowViewState.IdRef="Assign`1_22" To="[poRows]" Value="[in_PurchaseOrders.Select(&quot;PoRef = '&quot; &amp; in_PurchaseOrder.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;'&quot;)]" />
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (poRows.Length = 0)]" DisplayName="Check 7: Purchase Order Exists?" sap2010:WorkflowViewState.IdRef="If_9">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_8">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_23" To="[out_Class]" Value="[&quot;Wrong PO&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_24" To="[out_Reason]" Value="[$&quot;{in_PurchaseOrder} was not found in the purchase orders&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot;]" DisplayName="Purchase Order Found?" sap2010:WorkflowViewState.IdRef="If_10">
+      <If.Then>
+        <Sequence DisplayName="Read Purchase Order" sap2010:WorkflowViewState.IdRef="Sequence_9">
+          <Assign x:TypeArguments="x:String" DisplayName="Get Order Supplier" sap2010:WorkflowViewState.IdRef="Assign`1_25" To="[poSupplierName]" Value="[poRows(0)(&quot;SupplierName&quot;).ToString()]" />
+          <Assign x:TypeArguments="x:Decimal" DisplayName="Get Order Amount" sap2010:WorkflowViewState.IdRef="Assign`1_26" To="[poNetAmount]" Value="[CDec(poRows(0)(&quot;NetAmount&quot;))]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (poSupplierName &lt;&gt; out_SupplierName)]" DisplayName="Check 8: Order of the Same Supplier?" sap2010:WorkflowViewState.IdRef="If_11">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_10">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_27" To="[out_Class]" Value="[&quot;Wrong PO&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_28" To="[out_Reason]" Value="[$&quot;{in_PurchaseOrder} belongs to {poSupplierName}, not to {out_SupplierName}&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (in_NetAmount &lt;&gt; poNetAmount)]" DisplayName="Check 9: Amount Equals Order?" sap2010:WorkflowViewState.IdRef="If_12">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_11">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_29" To="[out_Class]" Value="[&quot;Amount mismatch&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_30" To="[out_Reason]" Value="[$&quot;Net amount {in_NetAmount.ToString(&quot;N2&quot;, swedish)} kr is not the amount of {in_PurchaseOrder} ({poNetAmount.ToString(&quot;N2&quot;, swedish)} kr)&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <Assign x:TypeArguments="x:Decimal" DisplayName="Calculate 25 % VAT" sap2010:WorkflowViewState.IdRef="Assign`1_31" To="[expectedVat]" Value="[Math.Round(in_NetAmount * 0.25D, 2)]" />
+    <If Condition="[out_Class = &quot;&quot; AndAlso (Math.Abs(in_VatAmount - expectedVat) &gt; 0.01D)]" DisplayName="Check 10: VAT 25 %?" sap2010:WorkflowViewState.IdRef="If_13">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_12">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_32" To="[out_Class]" Value="[&quot;VAT error&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_33" To="[out_Reason]" Value="[$&quot;VAT is {in_VatAmount.ToString(&quot;N2&quot;, swedish)} kr, but 25 % of the net amount is {expectedVat.ToString(&quot;N2&quot;, swedish)} kr&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Earlier Invoice" sap2010:WorkflowViewState.IdRef="Assign`1_34" To="[historyRows]" Value="[in_History.Select(&quot;OrgNumber = '&quot; &amp; in_OrgNumber.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;' AND InvoiceNumber = '&quot; &amp; in_InvoiceNumber.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;'&quot;)]" />
+    <If Condition="[out_Class = &quot;&quot; AndAlso (historyRows.Length &gt; 0)]" DisplayName="Check 11: Already Handled?" sap2010:WorkflowViewState.IdRef="If_14">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_13">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_35" To="[out_Class]" Value="[&quot;Duplicate&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_36" To="[out_Reason]" Value="[$&quot;Invoice {in_InvoiceNumber} from {out_SupplierName} was already handled ({historyRows(0)(&quot;Source&quot;)})&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <Assign x:TypeArguments="sd:DataRow[]" DisplayName="Find Paid Or Approved Invoice" sap2010:WorkflowViewState.IdRef="Assign`1_37" To="[paidRows]" Value="[in_Invoices.Select(&quot;SupplierRef = '&quot; &amp; supplierRef &amp; &quot;' AND InvoiceNumber = '&quot; &amp; in_InvoiceNumber.Replace(&quot;'&quot;, &quot;''&quot;) &amp; &quot;' AND (Status = 'Betald' OR Status = 'Godkänd')&quot;)]" />
+    <If Condition="[out_Class = &quot;&quot; AndAlso (paidRows.Length &gt; 0)]" DisplayName="Check 12: Already Paid Or Approved?" sap2010:WorkflowViewState.IdRef="If_15">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_14">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_38" To="[out_Class]" Value="[&quot;Duplicate&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_39" To="[out_Reason]" Value="[$&quot;Invoice {in_InvoiceNumber} is already in the portal as {paidRows(0)(&quot;InvoiceRef&quot;)} with status {paidRows(0)(&quot;Status&quot;)}&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[out_Class = &quot;&quot; AndAlso (True)]" DisplayName="All Checks Passed?" sap2010:WorkflowViewState.IdRef="If_16">
+      <If.Then>
+        <Sequence DisplayName="Set Result" sap2010:WorkflowViewState.IdRef="Sequence_15">
+          <Assign x:TypeArguments="x:String" DisplayName="Set Class" sap2010:WorkflowViewState.IdRef="Assign`1_40" To="[out_Class]" Value="[&quot;Invoice&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Set Reason" sap2010:WorkflowViewState.IdRef="Assign`1_41" To="[out_Reason]" Value="[&quot;All checks passed&quot;]" />
+        </Sequence>
+      </If.Then>
+    </If>
+  </Sequence>
+</Activity>

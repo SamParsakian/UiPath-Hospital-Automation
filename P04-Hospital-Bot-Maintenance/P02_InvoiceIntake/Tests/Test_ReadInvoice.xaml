@@ -1,0 +1,196 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Tests_Test_ReadInvoice" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sg="clr-namespace:System.Globalization;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:upap="clr-namespace:UiPath.PDF.Activities.PDF;assembly=UiPath.PDF.Activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Globalization</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.PDF.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Test Read Invoice" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sd:DataTable" Name="expectedFiles" />
+      <Variable x:TypeArguments="sd:DataTable" Name="testResults" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="passedCount" />
+      <Variable x:TypeArguments="sg:CultureInfo" Default="[CultureInfo.GetCultureInfo(&quot;sv-SE&quot;)]" Name="swedish" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:ReadCsvFile PathResource="{x:Null}" DataTable="[expectedFiles]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" DisplayName="Read Expected Files" FilePath="[Path.Combine(Environment.CurrentDirectory, &quot;TestData&quot;, &quot;read_invoice_expected.csv&quot;)]" sap2010:WorkflowViewState.IdRef="ReadCsvFile_1" />
+    <ui:BuildDataTable DataTable="[testResults]" DisplayName="Build Results Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;Results&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;Results&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;ScenarioId&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;FileName&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ExpectedResult&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Result&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;DocumentType&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Supplier&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;OrgNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;InvoiceNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;InvoiceDate&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;DueDate&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;PurchaseOrder&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;CostCentre&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;NetAmount&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;VatAmount&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;TotalAmount&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Bankgiro&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Reason&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Passed&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[expectedFiles]" DisplayName="For Each Test File" sap2010:WorkflowViewState.IdRef="ForEachRow_1">
+      <ui:ForEachRow.Body>
+        <ActivityAction x:TypeArguments="sd:DataRow">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="sd:DataRow" Name="CurrentRow" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_3">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:String" Name="result" />
+              <Variable x:TypeArguments="x:String" Name="reason" />
+              <Variable x:TypeArguments="x:String" Name="documentType" />
+              <Variable x:TypeArguments="x:String" Name="supplierName" />
+              <Variable x:TypeArguments="x:String" Name="orgNumber" />
+              <Variable x:TypeArguments="x:String" Name="invoiceNumber" />
+              <Variable x:TypeArguments="x:String" Name="invoiceDate" />
+              <Variable x:TypeArguments="x:String" Name="dueDate" />
+              <Variable x:TypeArguments="x:String" Name="purchaseOrder" />
+              <Variable x:TypeArguments="x:String" Name="costCentre" />
+              <Variable x:TypeArguments="x:Decimal" Name="netAmount" />
+              <Variable x:TypeArguments="x:Decimal" Name="vatAmount" />
+              <Variable x:TypeArguments="x:Decimal" Name="totalAmount" />
+              <Variable x:TypeArguments="x:String" Name="bankgiro" />
+              <Variable x:TypeArguments="x:Boolean" Name="passed" />
+            </Sequence.Variables>
+            <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Read Invoice" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\ReadInvoice.xaml">
+              <ui:InvokeWorkflowFile.Arguments>
+                <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[Path.Combine(Environment.CurrentDirectory, "TestData", "Attachments", CurrentRow("ScenarioId").ToString(), CurrentRow("FileName").ToString())]</InArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_Result">[result]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[reason]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_DocumentType">[documentType]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_SupplierName">[supplierName]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_OrgNumber">[orgNumber]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceNumber">[invoiceNumber]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceDate">[invoiceDate]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_DueDate">[dueDate]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_PurchaseOrder">[purchaseOrder]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_CostCentre">[costCentre]</OutArgument>
+                <OutArgument x:TypeArguments="x:Decimal" x:Key="out_NetAmount">[netAmount]</OutArgument>
+                <OutArgument x:TypeArguments="x:Decimal" x:Key="out_VatAmount">[vatAmount]</OutArgument>
+                <OutArgument x:TypeArguments="x:Decimal" x:Key="out_TotalAmount">[totalAmount]</OutArgument>
+                <OutArgument x:TypeArguments="x:String" x:Key="out_Bankgiro">[bankgiro]</OutArgument>
+              </ui:InvokeWorkflowFile.Arguments>
+            </ui:InvokeWorkflowFile>
+            <Assign DisplayName="Compare With Expected" sap2010:WorkflowViewState.IdRef="Assign_1">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:Boolean">[passed]</OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:Boolean">[result = CurrentRow("ExpectedResult").ToString() AndAlso (result &lt;&gt; "Invoice" OrElse (invoiceNumber = CurrentRow("InvoiceNumber").ToString() AndAlso purchaseOrder = CurrentRow("PurchaseOrder").ToString()))]</InArgument>
+              </Assign.Value>
+            </Assign>
+            <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{CurrentRow(&quot;ScenarioId&quot;).ToString(), CurrentRow(&quot;FileName&quot;).ToString(), CurrentRow(&quot;ExpectedResult&quot;).ToString(), result, documentType, supplierName, orgNumber, invoiceNumber, invoiceDate, dueDate, purchaseOrder, costCentre, netAmount.ToString(&quot;N2&quot;, swedish), vatAmount.ToString(&quot;N2&quot;, swedish), totalAmount.ToString(&quot;N2&quot;, swedish), bankgiro, reason, If(passed, &quot;Yes&quot;, &quot;No&quot;)}]" DataTable="[testResults]" DisplayName="Add Result Row" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
+            <If Condition="[passed]" DisplayName="Passed?" sap2010:WorkflowViewState.IdRef="If_1">
+              <If.Then>
+                <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                  <Assign DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Assign_2">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:Int32">[passedCount]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:Int32">[passedCount + 1]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <ui:LogMessage DisplayName="Log Passed" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;OK {CurrentRow(&quot;ScenarioId&quot;)} {CurrentRow(&quot;FileName&quot;)}: {result} | {invoiceNumber} | {purchaseOrder} | {netAmount.ToString(&quot;N2&quot;, swedish)} + {vatAmount.ToString(&quot;N2&quot;, swedish)} = {totalAmount.ToString(&quot;N2&quot;, swedish)} | {reason}&quot;]" />
+                </Sequence>
+              </If.Then>
+              <If.Else>
+                <ui:LogMessage DisplayName="Log Failed" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Error" Message="[$&quot;FAIL {CurrentRow(&quot;ScenarioId&quot;)} {CurrentRow(&quot;FileName&quot;)}: expected {CurrentRow(&quot;ExpectedResult&quot;)} {CurrentRow(&quot;InvoiceNumber&quot;)} {CurrentRow(&quot;PurchaseOrder&quot;)}, got {result} {invoiceNumber} {purchaseOrder} | {reason}&quot;]" />
+              </If.Else>
+            </If>
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEachRow.Body>
+    </ui:ForEachRow>
+    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Output Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[Path.Combine(Environment.CurrentDirectory, &quot;Output&quot;)]" />
+    <Sequence DisplayName="Test Password-Protected PDF" sap2010:WorkflowViewState.IdRef="Sequence_5">
+      <Sequence.Variables>
+        <Variable x:TypeArguments="x:String" Default="[Path.Combine(Environment.CurrentDirectory, &quot;Output&quot;, &quot;locked_49838.pdf&quot;)]" Name="lockedFile" />
+        <Variable x:TypeArguments="x:String" Name="lockedResult" />
+        <Variable x:TypeArguments="x:String" Name="lockedReason" />
+        <Variable x:TypeArguments="x:Boolean" Name="lockedPassed" />
+      </Sequence.Variables>
+      <upap:ManagePDFPassword OutputFile="{x:Null}" ResourceFile="{x:Null}" DisplayName="Lock A Copy Of Invoice 49838" FileName="[Path.Combine(Environment.CurrentDirectory, &quot;TestData&quot;, &quot;Attachments&quot;, &quot;P02-E09&quot;, &quot;norrlands-livsmedelsgrossist-ab_49838.pdf&quot;)]" sap2010:WorkflowViewState.IdRef="ManagePDFPassword_1" NewOwnerPassword="[Guid.NewGuid().ToString()]" NewUserPassword="[Guid.NewGuid().ToString()]" OutputFileName="[lockedFile]">
+        <upap:ManagePDFPassword.Item>
+          <upap:ItemArgument x:TypeArguments="upr:IResource" ResourceFile="{x:Null}" FileName="[Path.Combine(Environment.CurrentDirectory, &quot;TestData&quot;, &quot;Attachments&quot;, &quot;P02-E09&quot;, &quot;norrlands-livsmedelsgrossist-ab_49838.pdf&quot;)]" />
+        </upap:ManagePDFPassword.Item>
+      </upap:ManagePDFPassword>
+      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Read Invoice" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\ReadInvoice.xaml">
+        <ui:InvokeWorkflowFile.Arguments>
+          <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[lockedFile]</InArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Result">[lockedResult]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Reason">[lockedReason]</OutArgument>
+          <OutArgument x:TypeArguments="x:String" x:Key="out_DocumentType" />
+          <OutArgument x:TypeArguments="x:String" x:Key="out_SupplierName" />
+          <OutArgument x:TypeArguments="x:String" x:Key="out_OrgNumber" />
+          <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceNumber" />
+          <OutArgument x:TypeArguments="x:String" x:Key="out_InvoiceDate" />
+          <OutArgument x:TypeArguments="x:String" x:Key="out_DueDate" />
+          <OutArgument x:TypeArguments="x:String" x:Key="out_PurchaseOrder" />
+          <OutArgument x:TypeArguments="x:String" x:Key="out_CostCentre" />
+          <OutArgument x:TypeArguments="x:Decimal" x:Key="out_NetAmount" />
+          <OutArgument x:TypeArguments="x:Decimal" x:Key="out_VatAmount" />
+          <OutArgument x:TypeArguments="x:Decimal" x:Key="out_TotalAmount" />
+          <OutArgument x:TypeArguments="x:String" x:Key="out_Bankgiro" />
+        </ui:InvokeWorkflowFile.Arguments>
+      </ui:InvokeWorkflowFile>
+      <Assign DisplayName="Compare With Expected" sap2010:WorkflowViewState.IdRef="Assign_3">
+        <Assign.To>
+          <OutArgument x:TypeArguments="x:Boolean">[lockedPassed]</OutArgument>
+        </Assign.To>
+        <Assign.Value>
+          <InArgument x:TypeArguments="x:Boolean">[lockedResult = "Error" AndAlso lockedReason.Contains("password")]</InArgument>
+        </Assign.Value>
+      </Assign>
+      <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{&quot;Generated&quot;, Path.GetFileName(lockedFile), &quot;Error&quot;, lockedResult, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, lockedReason, If(lockedPassed, &quot;Yes&quot;, &quot;No&quot;)}]" DataTable="[testResults]" DisplayName="Add Result Row" sap2010:WorkflowViewState.IdRef="AddDataRow_2" />
+      <If Condition="[lockedPassed]" DisplayName="Passed?" sap2010:WorkflowViewState.IdRef="If_2">
+        <If.Then>
+          <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_4">
+            <Assign DisplayName="Count Passed" sap2010:WorkflowViewState.IdRef="Assign_4">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:Int32">[passedCount]</OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:Int32">[passedCount + 1]</InArgument>
+              </Assign.Value>
+            </Assign>
+            <ui:LogMessage DisplayName="Log Passed" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[$&quot;OK Generated {Path.GetFileName(lockedFile)}: {lockedResult} | {lockedReason}&quot;]" />
+          </Sequence>
+        </If.Then>
+        <If.Else>
+          <ui:LogMessage DisplayName="Log Failed" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Error" Message="[$&quot;FAIL Generated {Path.GetFileName(lockedFile)}: expected Error with password, got {lockedResult} | {lockedReason}&quot;]" />
+        </If.Else>
+      </If>
+    </Sequence>
+    <ui:WriteCsvFile AddHeaders="True" DataTable="[testResults]" Delimitator="Semicolon" DelimitatorForViewModel="Semicolon" DisplayName="Write Test Results" FilePath="[Path.Combine(Environment.CurrentDirectory, &quot;Output&quot;, &quot;read_invoice_results.csv&quot;)]" sap2010:WorkflowViewState.IdRef="WriteCsvFile_1" ShouldQuote="True" />
+    <ui:LogMessage DisplayName="Log Summary" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[$&quot;Test files: {testResults.Rows.Count}, passed: {passedCount}, failed: {testResults.Rows.Count - passedCount}&quot;]" />
+  </Sequence>
+</Activity>
