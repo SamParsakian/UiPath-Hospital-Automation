@@ -20,6 +20,8 @@
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
       <x:String>UiPath.UIAutomationNext.Enums</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
     </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -37,6 +39,7 @@
       <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
       <AssemblyReference>UiPath.UIAutomationNext</AssemblyReference>
       <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence sap2010:Annotation.AnnotationText="Opens the Överföringar page with one status filter (up to 50 rows) and reads the table. The visible text of the table (visibleinnertext) has one line per row with the cells separated by tabs." DisplayName="Read Transfer List" sap2010:WorkflowViewState.IdRef="Sequence_1">
@@ -45,6 +48,11 @@
       <Variable x:TypeArguments="x:Boolean" Default="False" Name="listReady" />
       <Variable x:TypeArguments="x:Int32" Default="0" Name="tries" />
     </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
     <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Journalsamordning" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="Never" ScopeGuid="5a9b7f66-69ea-4b88-99eb-4b06417c8bec" Version="V2">
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
@@ -53,31 +61,27 @@
           </ActivityAction.Argument>
           <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_2">
             <uix:NGoToUrl DisplayName="Open the Filtered Transfer List" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" Url="[in_BaseUrl.TrimEnd(&quot;/&quot;c) &amp; &quot;/overforingar?per_page=50&amp;status=&quot; &amp; in_Status]" Version="V5" />
-            <DoWhile sap2010:Annotation.AnnotationText="The page can still be loading right after Go To URL. The table is read again until every row has the requested status (at most 10 times)." Condition="[Not listReady AndAlso tries &lt; 10]" DisplayName="Read Until the Filtered List Is Shown" sap2010:WorkflowViewState.IdRef="DoWhile_1">
+            <DoWhile sap2010:Annotation.AnnotationText="The page can still be loading right after Go To URL. The table is read again until every row has the requested status (at most 10 times)." DisplayName="Read Until the Filtered List Is Shown" sap2010:WorkflowViewState.IdRef="DoWhile_1" Condition="[Not listReady AndAlso tries &lt; 10]">
               <Sequence DisplayName="Read the Table" sap2010:WorkflowViewState.IdRef="Sequence_3">
-            <uix:NGetAttributeGeneric x:TypeArguments="x:String" Attribute="visibleinnertext" DisplayName="Get the Table Text" HealingAgentBehavior="SameAsCard" Result="[tableText]" sap2010:WorkflowViewState.IdRef="NGetAttributeGeneric_1" DelayBefore="0.5" Version="V5">
-              <uix:NGetAttributeGeneric.Target>
-                <uix:TargetAnchorable ContentHash="a827qYj7yEGYuFHKdzBIWg" DesignTimeRectangle="498, 756, 1587, 565" DesignTimeScaleFactor="1.125" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='transfer-table' tag='TABLE' /&gt;" Guid="d43091ee-5c50-46c3-8a70-914420037945" InformativeScreenshot="48d50f36f3cd0b8437f55ecf1ed878cc.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/xy3k1bYZqUGXrOGl88T3bA" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
-        <uix:TargetAnchorable.Anchors>
-          <scg:List x:TypeArguments="uix:ITarget" Capacity="0" />
-        </uix:TargetAnchorable.Anchors>
-      </uix:TargetAnchorable>
-              </uix:NGetAttributeGeneric.Target>
-            </uix:NGetAttributeGeneric>
-            <Assign DisplayName="Split the Table Into Rows" sap2010:WorkflowViewState.IdRef="Assign_1">
-              <Assign.To>
-                <OutArgument x:TypeArguments="scg:List(s:String[])">[out_Rows]</OutArgument>
-              </Assign.To>
-              <Assign.Value>
-                <InArgument x:TypeArguments="scg:List(s:String[])">[If(tableText, &quot;&quot;).Split({vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries).Select(Function(line) line.TrimStart(" "c).Split(vbTab(0))).Where(Function(cells) cells.Length &gt;= 8 AndAlso cells(0).Trim().StartsWith(&quot;T-&quot;)).Select(Function(cells) cells.Select(Function(c) c.Trim()).ToArray()).ToList()]</InArgument>
-              </Assign.Value>
-            </Assign>
+                <uix:NGetAttributeGeneric x:TypeArguments="x:String" Attribute="visibleinnertext" DelayBefore="0.5" DisplayName="Get the Table Text" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetAttributeGeneric_1" Result="[tableText]" Version="V5">
+                  <uix:NGetAttributeGeneric.Target>
+                    <uix:TargetAnchorable ContentHash="C6KMa3TiLEKlj-b6YhKIkw" DesignTimeRectangle="498, 756, 1587, 565" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl tag='TABLE' /&gt;" Guid="d43091ee-5c50-46c3-8a70-914420037945" InformativeScreenshot="48d50f36f3cd0b8437f55ecf1ed878cc.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/xy3k1bYZqUGXrOGl88T3bA" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                  </uix:NGetAttributeGeneric.Target>
+                </uix:NGetAttributeGeneric>
+                <Assign DisplayName="Split the Table Into Rows" sap2010:WorkflowViewState.IdRef="Assign_1">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="scg:List(s:String[])">[out_Rows]</OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="scg:List(s:String[])">[If(tableText, "").Split({vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries).Select(Function(line) line.TrimStart(" "c).Split(vbTab(0))).Where(Function(cells) cells.Length &gt;= 8 AndAlso cells(0).Trim().StartsWith("T-")).Select(Function(cells) cells.Select(Function(c) c.Trim()).ToArray()).ToList()]</InArgument>
+                  </Assign.Value>
+                </Assign>
                 <Assign DisplayName="Check the Rows" sap2010:WorkflowViewState.IdRef="Assign_2">
                   <Assign.To>
                     <OutArgument x:TypeArguments="x:Boolean">[listReady]</OutArgument>
                   </Assign.To>
                   <Assign.Value>
-                    <InArgument x:TypeArguments="x:Boolean">[tableText IsNot Nothing AndAlso tableText.TrimStart().StartsWith(&quot;ID&quot;) AndAlso out_Rows.All(Function(cells) cells(5) = in_Status)]</InArgument>
+                    <InArgument x:TypeArguments="x:Boolean">[tableText IsNot Nothing AndAlso tableText.TrimStart().StartsWith("ID") AndAlso out_Rows.All(Function(cells) cells(5) = in_Status)]</InArgument>
                   </Assign.Value>
                 </Assign>
                 <Assign DisplayName="Count the Try" sap2010:WorkflowViewState.IdRef="Assign_3">
@@ -93,18 +97,24 @@
           </Sequence>
         </ActivityAction>
       </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
       <uix:NApplicationCard.TargetApp>
         <uix:TargetApp Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="4q3VC1gtBEeKnlNowqZOaA" InformativeScreenshot="2917ec3a41b372b0aa566cd11230d3bf.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3">
-        <uix:TargetApp.Arguments>
-          <InArgument x:TypeArguments="x:String" />
-        </uix:TargetApp.Arguments>
-        <uix:TargetApp.WorkingDirectory>
-          <InArgument x:TypeArguments="x:String" />
-        </uix:TargetApp.WorkingDirectory>
-      </uix:TargetApp>
+          <uix:TargetApp.Arguments>
+            <InArgument x:TypeArguments="x:String" />
+          </uix:TargetApp.Arguments>
+          <uix:TargetApp.WorkingDirectory>
+            <InArgument x:TypeArguments="x:String" />
+          </uix:TargetApp.WorkingDirectory>
+        </uix:TargetApp>
       </uix:NApplicationCard.TargetApp>
     </uix:NApplicationCard>
-
     <If Condition="[Not listReady]" DisplayName="Was the List Not Shown?" sap2010:WorkflowViewState.IdRef="If_2">
       <If.Then>
         <Throw DisplayName="Throw System Exception (List Not Shown)" Exception="[New Exception(&quot;The transfer list with status &quot; &amp; in_Status &amp; &quot; could not be read.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
@@ -112,7 +122,7 @@
     </If>
     <If Condition="[out_Rows.Count &gt;= 50]" DisplayName="Is the Page Full?" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
-        <ui:LogMessage DisplayName="Log Page Full" Level="Warn" Message="[&quot;50 or more transfers with status &quot; &amp; in_Status &amp; &quot;. Only the first page was read.&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+        <ui:LogMessage DisplayName="Log Page Full" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Warn" Message="[&quot;50 or more transfers with status &quot; &amp; in_Status &amp; &quot;. Only the first page was read.&quot;]" />
       </If.Then>
     </If>
   </Sequence>

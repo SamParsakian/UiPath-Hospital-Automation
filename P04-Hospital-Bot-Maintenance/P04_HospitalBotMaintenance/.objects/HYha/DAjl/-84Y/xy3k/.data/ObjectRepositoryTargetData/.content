@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-16"?>
-<ObjectRepositoryTargetData ContentHash="a827qYj7yEGYuFHKdzBIWg" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ObjectRepositoryTargetData ContentHash="C6KMa3TiLEKlj-b6YhKIkw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <ObjectRepositoryTargetData.Data>
-    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="498, 756, 1587, 565" DesignTimeScaleFactor="1.125" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='transfer-table' tag='TABLE' /&gt;" Guid="d43091ee-5c50-46c3-8a70-914420037945" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="498, 756, 1587, 565" DesignTimeScaleFactor="1.125" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl tag='TABLE' /&gt;" Guid="d43091ee-5c50-46c3-8a70-914420037945" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
       <TargetAnchorable.Anchors>
         <scg:List x:TypeArguments="ITarget" Capacity="0" />
       </TargetAnchorable.Anchors>
-      <imageRef attrName="InformativeScreenshot" originalValue="48d50f36f3cd0b8437f55ecf1ed878cc.jpg" xmlns="">0yl5nxJCTq0WLsdG3_XAIhw</imageRef>
+      <imageRef attrName="InformativeScreenshot" originalValue="48d50f36f3cd0b8437f55ecf1ed878cc.jpg" xmlns="">0850T-RsKBkeVaMD67B6D5A</imageRef>
     </TargetAnchorable>
   </ObjectRepositoryTargetData.Data>
 </ObjectRepositoryTargetData>
