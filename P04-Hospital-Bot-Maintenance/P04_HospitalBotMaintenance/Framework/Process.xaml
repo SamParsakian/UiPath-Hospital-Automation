@@ -112,7 +112,7 @@
         <OutArgument x:TypeArguments="x:String">[reportFolder]</OutArgument>
       </Assign.To>
       <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[in_Config("ReportFolder").ToString]</InArgument>
+        <InArgument x:TypeArguments="x:String">[Environment.ExpandEnvironmentVariables(in_Config("ReportFolder").ToString)]</InArgument>
       </Assign.Value>
     </Assign>
     <Assign DisplayName="Attempt Number" sap2010:WorkflowViewState.IdRef="Assign_4">

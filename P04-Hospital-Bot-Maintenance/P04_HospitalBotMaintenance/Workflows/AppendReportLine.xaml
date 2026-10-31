@@ -1,6 +1,6 @@
 <Activity mc:Ignorable="sap sap2010" x:Class="Workflows_AppendReportLine" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
-    <x:Property sap2010:Annotation.AnnotationText="Folder of the daily report, for example Data\Output" Name="in_ReportFolder" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Fixed folder of the daily report, outside the package folder of the robot" Name="in_ReportFolder" Type="InArgument(x:String)" />
     <x:Property Name="in_TransferId" Type="InArgument(x:String)" />
     <x:Property sap2010:Annotation.AnnotationText="1 for the first attempt, 2 and 3 for the retries of the queue item" Name="in_Attempt" Type="InArgument(x:Int32)" />
     <x:Property sap2010:Annotation.AnnotationText="Status of the transfer when the robot opened it" Name="in_StatusBefore" Type="InArgument(x:String)" />
@@ -34,7 +34,7 @@
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="Adds one line per attempt to the daily report Data\Output\transfer_report_&lt;date&gt;.csv. The last line of a transfer is its final outcome." DisplayName="Append Report Line" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Adds one line per attempt to the daily report transfer_report_&lt;date&gt;.csv in the report folder. The last line of a transfer is its final outcome." DisplayName="Append Report Line" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="reportPath" />
     </Sequence.Variables>
@@ -49,7 +49,10 @@
     <ui:CreateDirectory DisplayName="Create Report Folder" Path="[in_ReportFolder]" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" />
     <If Condition="[Not File.Exists(reportPath)]" DisplayName="Is It a New Report?" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
-        <ui:AppendLine DisplayName="Write the Header" Encoding="utf-8" FileName="[reportPath]" sap2010:WorkflowViewState.IdRef="AppendLine_1" Text="time;transfer_id;attempt;status_before;result;outcome;detail" />
+        <Sequence DisplayName="Start a New Report" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <ui:LogMessage DisplayName="Log the Report Path" Level="Info" Message="[&quot;New daily report: &quot; &amp; reportPath]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+          <ui:AppendLine DisplayName="Write the Header" Encoding="utf-8" FileName="[reportPath]" sap2010:WorkflowViewState.IdRef="AppendLine_1" Text="time;transfer_id;attempt;status_before;result;outcome;detail" />
+        </Sequence>
       </If.Then>
     </If>
     <ui:AppendLine DisplayName="Write the Line" Encoding="utf-8" FileName="[reportPath]" sap2010:WorkflowViewState.IdRef="AppendLine_2" Text="[String.Join(&quot;;&quot;, {Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;), in_TransferId, in_Attempt.ToString, in_StatusBefore, in_Result, in_Outcome, If(in_Detail, &quot;&quot;).Replace(&quot;;&quot;, &quot;,&quot;).Replace(vbCr, &quot; &quot;).Replace(vbLf, &quot; &quot;)})]" />
