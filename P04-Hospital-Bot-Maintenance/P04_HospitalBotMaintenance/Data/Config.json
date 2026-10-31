@@ -5,7 +5,7 @@
     "OrchestratorQueueFolder": "Shared",
     "CoordinationUrl": "http://100.99.72.90:8081",
     "CredentialTarget": "P03_Samordnare",
-    "ReportFolder": "Data\\Output"
+    "ReportFolder": "%PUBLIC%\\Documents\\P04 Transfer Reports"
   },
   "Constants": {
     "MaxRetryNumber": 0,
