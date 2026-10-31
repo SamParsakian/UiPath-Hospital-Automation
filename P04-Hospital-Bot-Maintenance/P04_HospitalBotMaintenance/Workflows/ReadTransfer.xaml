@@ -1,0 +1,104 @@
+<Activity mc:Ignorable="sap2010" x:Class="Workflows_ReadTransfer" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Base address of Journalsamordning, for example http://100.99.72.90:8081" Name="in_BaseUrl" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Transfer ID, for example T-0021" Name="in_TransferId" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Status shown in the transfer row, for example Misslyckad or Överförd" Name="out_Status" Type="OutArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Error text shown in the transfer row (empty when there is no error)" Name="out_ErrorMessage" Type="OutArgument(x:String)" />
+  </x:Members>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.UIAutomationNext.Enums</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Opens the Överföringar page filtered on one transfer and reads its status and error text." DisplayName="Read Transfer" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="transferId" />
+    </Sequence.Variables>
+    <Assign DisplayName="Transfer ID for the Row Selectors" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[transferId]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[in_TransferId.Trim()]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Never" DisplayName="Use Browser Journalsamordning" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="Never" ScopeGuid="dcd13450-445b-48da-b335-937de8bb29f0" Version="V2">
+      <uix:NApplicationCard.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <uix:NGoToUrl DisplayName="Open the Transfer in the List" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" Url="[in_BaseUrl.TrimEnd(&quot;/&quot;c) &amp; &quot;/overforingar?q=&quot; &amp; Uri.EscapeDataString(transferId)]" Version="V5" />
+            <uix:NGetText DisplayName="Get Transfer Status" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" TextString="[out_Status]" Version="V5">
+              <uix:NGetText.Target>
+                <uix:TargetAnchorable ContentHash="KyRlhw0de0Wsqmxr3YPVEQ" DesignTimeRectangle="1359, 808, 94, 27" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl colName='Status' parentid='transfer-table' rowName='{0}' tag='SPAN' /&gt;&quot;, transferId)]" Guid="25c1b888-2153-4dd2-a9dc-45e22808a159" InformativeScreenshot="ee4cc99b3161da70b066f1b2e60dad6e.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/maKlVSBjIk-x3R315NxsBg" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NGetText.Target>
+            </uix:NGetText>
+            <uix:NGetText DisplayName="Get Transfer Error Message" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_2" TextString="[out_ErrorMessage]" Version="V5">
+              <uix:NGetText.Target>
+                <uix:TargetAnchorable ContentHash="2O_neqEvfkuDzO1T2338VQ" DesignTimeRectangle="1635, 797, 308, 55" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl colName='Felmeddelande' parentid='transfer-table' rowName='{0}' tag='TD' /&gt;&quot;, transferId)]" Guid="dd1eca4d-5e9c-4613-8e11-3c9b4d5fe27f" InformativeScreenshot="03c807d0a192dfbb5e936765338bba30.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/fX0tuYTK10qS5Mi1yEiIvw" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NGetText.Target>
+            </uix:NGetText>
+          </Sequence>
+        </ActivityAction>
+      </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
+      <uix:NApplicationCard.TargetApp>
+        <uix:TargetApp Area="-12, -12, 2584, 1464" BrowserType="Chrome" ContentHash="4q3VC1gtBEeKnlNowqZOaA" InformativeScreenshot="2917ec3a41b372b0aa566cd11230d3bf.jpg" Reference="yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" Url="http://100.99.72.90:8081/login" Version="V3" />
+      </uix:NApplicationCard.TargetApp>
+    </uix:NApplicationCard>
+    <Assign DisplayName="Trim Status" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[out_Status]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(out_Status, "").Trim()]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Trim Error Message" sap2010:WorkflowViewState.IdRef="Assign_3">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[out_ErrorMessage]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(out_ErrorMessage, "").Trim()]</InArgument>
+      </Assign.Value>
+    </Assign>
+  </Sequence>
+</Activity>

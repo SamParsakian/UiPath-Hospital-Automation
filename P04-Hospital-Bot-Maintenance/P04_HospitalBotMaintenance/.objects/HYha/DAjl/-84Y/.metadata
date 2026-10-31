@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Journalsamordning",
+  "Description": "Any page of the Journalsamordning web application (case coordination) in Chrome",
+  "Type": "Screen",
+  "Id": "-84Ymno3qE-nDByjSFGnyw",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/DAjlitjGQkqcmIs_i9rjRw",
+  "Created": "2026-10-26T14:44:29.7667081Z",
+  "Updated": "2026-10-26T14:44:29.7667081Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

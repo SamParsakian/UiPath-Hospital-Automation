@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="X92ugm5gh0W1JSziWxFwhw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="2472, 215, 43, 43" DesignTimeScaleFactor="1.3499999046325684" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl action='/logout' tag='FORM' /&gt;&lt;webctrl aria-label='Logga ut' tag='BUTTON' /&gt;" Guid="e55cbd18-44bb-4fa2-9897-9aa9f9955c94" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="7b3f173449129fc7c55e8a793fc261ba.jpg" xmlns="">0mlrrr9awMEK1x62HScS4yA</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>
