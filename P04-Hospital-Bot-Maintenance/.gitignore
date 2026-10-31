@@ -55,3 +55,6 @@ Output/
 
 # Studio temporary copies of open workflows
 ~*.xaml
+
+# REFramework exception screenshots
+**/Exceptions_Screenshots/*.png
