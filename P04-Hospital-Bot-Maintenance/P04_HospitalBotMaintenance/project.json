@@ -95,6 +95,12 @@
       "uniqueId": "1b95cb00-6bfa-4ad9-bd92-ec45547ec203",
       "input": [],
       "output": []
+    },
+    {
+      "filePath": "Dispatcher.xaml",
+      "uniqueId": "cda01dc0-db9e-4992-97cb-9b14235010ad",
+      "input": [],
+      "output": []
     }
   ],
   "isTemplate": false,
