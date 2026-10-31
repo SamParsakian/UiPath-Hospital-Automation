@@ -1,0 +1,256 @@
+<Activity xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" mc:Ignorable="sap sap2010" x:Class="Process" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Transaction item to be processed." Name="in_TransactionItem" Type="InArgument(ui:QueueItem)" />
+    <x:Property sap2010:Annotation.AnnotationText="Dictionary structure to store configuration data of the process (settings, constants and assets)." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ProcessTransaction_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="50">
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Runtime.InteropServices</x:String>
+      <x:String>System.Runtime.Serialization</x:String>
+      <x:String>System.Windows.Forms</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="40">
+      <AssemblyReference>Microsoft.Bcl.AsyncInterfaces</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Composition</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Configuration.ConfigurationManager</AssemblyReference>
+      <AssemblyReference>System.Console</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Private.Uri</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization</AssemblyReference>
+      <AssemblyReference>System.Security.Permissions</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ValueTuple</AssemblyReference>
+      <AssemblyReference>System.Windows.Forms</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.OCR.Activities.Design</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities.Design</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationCore</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Handles one transfer from the queue P04_Transfers.&#xA;A data error (Valideringsfel, Mappningsfel, Formatfel) is a BusinessRuleException: it is never retried and needs a person.&#xA;A technical error from the target system is a normal exception: Orchestrator retries the queue item.&#xA;A transfer that is already Överförd is not touched again." DisplayName="Process" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="transferId" />
+      <Variable x:TypeArguments="x:String" Name="baseUrl" />
+      <Variable x:TypeArguments="x:String" Name="reportFolder" />
+      <Variable x:TypeArguments="x:Int32" Name="attempt" />
+      <Variable x:TypeArguments="x:String" Default="" Name="statusBefore" />
+      <Variable x:TypeArguments="x:String" Default="" Name="errorBefore" />
+      <Variable x:TypeArguments="x:String" Default="" Name="statusAfter" />
+      <Variable x:TypeArguments="x:String" Default="" Name="errorAfter" />
+      <Variable x:TypeArguments="x:String" Default="" Name="outcome" />
+    </Sequence.Variables>
+    <Assign DisplayName="Transfer ID From the Queue Item" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[transferId]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[in_TransactionItem.SpecificContent("TransferId").ToString.Trim]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Journalsamordning Address" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[baseUrl]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[in_Config("CoordinationUrl").ToString]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Report Folder" sap2010:WorkflowViewState.IdRef="Assign_3">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[reportFolder]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[Environment.ExpandEnvironmentVariables(in_Config("ReportFolder").ToString)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Attempt Number" sap2010:WorkflowViewState.IdRef="Assign_4">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[attempt]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[in_TransactionItem.RetryNo + 1]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:LogMessage DisplayName="Log Transfer Start" Level="Info" Message="[&quot;Handling transfer &quot; &amp; transferId &amp; &quot; (attempt &quot; &amp; attempt.ToString &amp; &quot;)&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <TryCatch DisplayName="Handle the Transfer and Report It" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+      <TryCatch.Try>
+        <Sequence DisplayName="Try" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <ui:InvokeWorkflowFile DisplayName="Read the Transfer" UnSafe="False" WorkflowFileName="Workflows\ReadTransfer.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_BaseUrl">[baseUrl]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_TransferId">[transferId]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[statusBefore]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_ErrorMessage">[errorBefore]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <If Condition="[statusBefore = &quot;Överförd&quot;]" DisplayName="Is the Transfer Already Done?" sap2010:WorkflowViewState.IdRef="If_1">
+            <If.Then>
+              <Assign DisplayName="Outcome Already Completed" sap2010:WorkflowViewState.IdRef="Assign_5">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[outcome]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">Already completed</InArgument>
+                </Assign.Value>
+              </Assign>
+            </If.Then>
+            <If.Else>
+              <Sequence DisplayName="Run the Transfer" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                <If Condition="[statusBefore = &quot;Misslyckad&quot; AndAlso {&quot;Valideringsfel&quot;, &quot;Mappningsfel&quot;, &quot;Formatfel&quot;}.Any(Function(p) errorBefore.StartsWith(p))]" DisplayName="Is It a Known Data Error?" sap2010:WorkflowViewState.IdRef="If_2">
+                  <If.Then>
+                    <Throw DisplayName="Throw Business Exception (Data Error)" Exception="[New BusinessRuleException(&quot;Needs manual data correction: &quot; &amp; errorBefore)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+                  </If.Then>
+                </If>
+                <ui:InvokeWorkflowFile DisplayName="Press the Transfer Button" UnSafe="False" WorkflowFileName="Workflows\RunTransfer.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2">
+                  <ui:InvokeWorkflowFile.Arguments>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_TransferId">[transferId]</InArgument>
+                  </ui:InvokeWorkflowFile.Arguments>
+                </ui:InvokeWorkflowFile>
+                <ui:InvokeWorkflowFile DisplayName="Read the Transfer Again" UnSafe="False" WorkflowFileName="Workflows\ReadTransfer.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3">
+                  <ui:InvokeWorkflowFile.Arguments>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_BaseUrl">[baseUrl]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_TransferId">[transferId]</InArgument>
+                    <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[statusAfter]</OutArgument>
+                    <OutArgument x:TypeArguments="x:String" x:Key="out_ErrorMessage">[errorAfter]</OutArgument>
+                  </ui:InvokeWorkflowFile.Arguments>
+                </ui:InvokeWorkflowFile>
+                <If Condition="[statusAfter = &quot;Överförd&quot;]" DisplayName="Was the Transfer Done?" sap2010:WorkflowViewState.IdRef="If_3">
+                  <If.Then>
+                    <Assign DisplayName="Outcome Completed" sap2010:WorkflowViewState.IdRef="Assign_6">
+                      <Assign.To>
+                        <OutArgument x:TypeArguments="x:String">[outcome]</OutArgument>
+                      </Assign.To>
+                      <Assign.Value>
+                        <InArgument x:TypeArguments="x:String">[If(attempt &gt; 1, "Recovered after technical retry", "Completed")]</InArgument>
+                      </Assign.Value>
+                    </Assign>
+                  </If.Then>
+                  <If.Else>
+                    <Sequence DisplayName="The Transfer Failed" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                      <If Condition="[{&quot;Valideringsfel&quot;, &quot;Mappningsfel&quot;, &quot;Formatfel&quot;}.Any(Function(p) errorAfter.StartsWith(p))]" DisplayName="Is It a Data Error?" sap2010:WorkflowViewState.IdRef="If_4">
+                        <If.Then>
+                          <Throw DisplayName="Throw Business Exception (Data Error After Run)" Exception="[New BusinessRuleException(&quot;Needs manual data correction: &quot; &amp; errorAfter)]" sap2010:WorkflowViewState.IdRef="Throw_2" />
+                        </If.Then>
+                        <If.Else>
+                          <Throw DisplayName="Throw System Exception (Target System Error)" Exception="[New Exception(&quot;Target system error: &quot; &amp; If(errorAfter = &quot;&quot;, &quot;status &quot; &amp; statusAfter, errorAfter))]" sap2010:WorkflowViewState.IdRef="Throw_3" />
+                        </If.Else>
+                      </If>
+                    </Sequence>
+                  </If.Else>
+                </If>
+              </Sequence>
+            </If.Else>
+          </If>
+          <ui:InvokeWorkflowFile DisplayName="Report Success" UnSafe="False" WorkflowFileName="Workflows\AppendReportLine.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_ReportFolder">[reportFolder]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_TransferId">[transferId]</InArgument>
+              <InArgument x:TypeArguments="x:Int32" x:Key="in_Attempt">[attempt]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_StatusBefore">[statusBefore]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Result">Success</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Outcome">[outcome]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Detail">[If(statusBefore = "Överförd", "Nothing was done", "Status after the run: " &amp; statusAfter)]</InArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:LogMessage DisplayName="Log Outcome" Level="Info" Message="[transferId &amp; &quot;: &quot; &amp; outcome]" sap2010:WorkflowViewState.IdRef="LogMessage_2" />
+        </Sequence>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="ui:BusinessRuleException" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+          <ActivityAction x:TypeArguments="ui:BusinessRuleException">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="ui:BusinessRuleException" Name="businessException" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Report the Data Error" sap2010:WorkflowViewState.IdRef="Sequence_5">
+              <ui:InvokeWorkflowFile DisplayName="Report Business Exception" UnSafe="False" WorkflowFileName="Workflows\AppendReportLine.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_5">
+                <ui:InvokeWorkflowFile.Arguments>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_ReportFolder">[reportFolder]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_TransferId">[transferId]</InArgument>
+                  <InArgument x:TypeArguments="x:Int32" x:Key="in_Attempt">[attempt]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_StatusBefore">[statusBefore]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Result">Business exception</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Outcome">Needs manual data correction</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Detail">[businessException.Message]</InArgument>
+                </ui:InvokeWorkflowFile.Arguments>
+              </ui:InvokeWorkflowFile>
+              <Rethrow DisplayName="Rethrow Business Exception" sap2010:WorkflowViewState.IdRef="Rethrow_1" />
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+        <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_2">
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="systemException" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Report the Technical Error" sap2010:WorkflowViewState.IdRef="Sequence_6">
+              <ui:InvokeWorkflowFile DisplayName="Report System Exception" UnSafe="False" WorkflowFileName="Workflows\AppendReportLine.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_6">
+                <ui:InvokeWorkflowFile.Arguments>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_ReportFolder">[reportFolder]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_TransferId">[transferId]</InArgument>
+                  <InArgument x:TypeArguments="x:Int32" x:Key="in_Attempt">[attempt]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_StatusBefore">[statusBefore]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Result">System exception</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Outcome">[If(in_TransactionItem.RetryNo &gt;= CInt(in_Config("QueueMaxRetries")), "Still unavailable - escalate", "Technical error - will be retried")]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Detail">[systemException.Message]</InArgument>
+                </ui:InvokeWorkflowFile.Arguments>
+              </ui:InvokeWorkflowFile>
+              <Rethrow DisplayName="Rethrow System Exception" sap2010:WorkflowViewState.IdRef="Rethrow_2" />
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+    </TryCatch>
+  </Sequence>
+</Activity>

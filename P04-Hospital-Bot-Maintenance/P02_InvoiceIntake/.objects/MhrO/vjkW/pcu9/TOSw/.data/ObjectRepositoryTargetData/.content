@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="-eYfdFEvFUGkflEkd2NWQg" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="1368, 814, 266, 60" DesignTimeScaleFactor="1.3499999046325684" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl aaname='Order Leverantör Kostnadsställe Datum Belopp exkl. moms Status Fakturor Fakturerat' tag='TABLE' /&gt;&lt;webctrl colName='Belopp exkl. moms' parentid='order-table' tableCol='5' tableRow='{0}' tag='TD' /&gt;&quot;, rowIndex)]" Guid="90cd08a6-1103-4eb2-80b9-ff9ecf5f60cd" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/ekonomi*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="e0d8a0622f1c1742df3e15f469664f25.jpg" xmlns="">0VvJYggtfyUibRMRGavijCw</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

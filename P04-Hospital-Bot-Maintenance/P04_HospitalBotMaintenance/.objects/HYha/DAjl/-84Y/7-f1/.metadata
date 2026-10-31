@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Password Field",
+  "Description": "Password box on the Journalsamordning login form",
+  "Type": "Element",
+  "TaxonomyType": "Password",
+  "Id": "7-f1Fwneo02nm8EMMR1CZg",
+  "Reference": "yb9ZbGjCXkShps6ECnrLFw/7-f1Fwneo02nm8EMMR1CZg",
+  "ParentRef": "yb9ZbGjCXkShps6ECnrLFw/-84Ymno3qE-nDByjSFGnyw",
+  "Created": "2026-10-26T14:45:18.280326Z",
+  "Updated": "2026-10-26T14:45:18.280326Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
