@@ -199,6 +199,7 @@ In this project, each manual step that caused a ticket is moved into the robot. 
 | Finance staff handling correct invoices that ended in Review after a supplier changed its invoice layout | P02 reads the new layout as well as the old one, and the invoice reaches Processed | INC-05 |
 | Running about 20 transfers one by one in Journalsamordning, trying the failed ones again by hand, and keeping no list of the result | A new REFramework robot runs each transfer as an item in an Orchestrator queue. A technical error is tried again up to two times, a data error goes straight to a person, and a report shows the outcome of every transfer | INC-02 |
 | Finding out why the transfer robot stops after an update of Journalsamordning, although the page looks the same | The transfer robot finds its table and rows by what a person sees, the column headers and the transfer IDs, so a renamed technical id does not stop it | INC-01 |
+| A developer starting the transfer robot in Studio every day, and undoing a wrong change by hand | The transfer robot is released to Orchestrator and starts by itself every weekday morning. Every run is a job with a log, the report is in one fixed folder, and the earlier version can be brought back in one step | INC-06 |
 | Comparing the new report with the expected results by hand | The expected results are kept in files, and every fix is tested against them before it is released | All |
 
 For the two examples above, this means:
@@ -236,10 +237,11 @@ The tickets in this project are simulated. They are not real hospital incidents,
 | INC-03 | P02 | Invoice routing fails although the email and the invoice are valid. |
 | INC-04 | P02 | The robot stopped halfway, and nobody knows which invoices were already handled. |
 | INC-05 | P02 | A correct invoice is rejected after the supplier changed its invoice layout. |
+| INC-06 | Transfer robot | The robot only runs when a developer starts it, and there is no version to go back to. |
 
 ### 1.7 Project Scope
 
-The hospital systems, the Microsoft 365 mailbox and the finished P01, P02 and P03 projects are not changed permanently. Problems are only created on the robot side, for example with a wrong value in a copied config file, or with test switches in the hospital lab that are turned off again after the test.
+The project covers the support work on the robots: understanding each ticket, finding its cause, fixing the robot, testing the fix and releasing the new version. The hospital systems and the shared mailbox belong to other teams, so every fix is made in the robots themselves. P01, P02 and P03 are finished projects and are not changed. The tickets for P02 are handled in a support copy of it in this repository.
 
 ## 2. Checking the Working Environment
 
@@ -271,8 +273,6 @@ All three answered. Personalportalen showed its normal login page (Figure 20).
 ![The login page of Personalportalen](Screenshots/staff-portal-login.png)
 
 *Figure 20. The login page of Personalportalen.*
-
-The lab also has three test switches. `slow_responses` makes Personalportalen and the API answer after 3 seconds, `maintenance` shows a maintenance page instead of Personalportalen, and `flaky_api` lets every third API call fail. All three switches were off, so the systems worked normally.
 
 ### 2.3 The Shared Invoice Mailbox
 
@@ -366,7 +366,19 @@ In this step, the expected results of P01 and P02 were collected. After every fi
 
 ### 4.2 Invoices Left in the Inbox
 
-After a small change in the config file of P02, the next run looked normal at first. But Frida received no review notifications, and many invoices were still in the Inbox. The run was repeated in UiPath Studio on the 40 emails in the Inbox, to see what the robot does (Figure 23):
+After a small change in the config file of P02, the next run looked normal at first: it finished as usual. But Frida received no review notifications, and many invoices were still in the Inbox.
+
+For Finance, this means:
+
+- **Invoices wait without anyone knowing.** The invoices that need a person stay in the Inbox, and nobody is told about them.
+- **Late payments.** An invoice that is never reviewed is not paid on time.
+
+For the support team, this means:
+
+- **No clear stop.** The run did not stop, so the problem is only seen in the mailbox or in the log.
+- **A half-done mailbox.** The support person has to find out by hand which emails are affected, and why.
+
+The run was repeated in UiPath Studio on the 40 emails in the Inbox, to see what the robot does (Figure 23):
 
 1. Each failed email gives an error from **Move Email To Folder**: the folder "Granskning" could not be found.
 2. The run did not stop. 19 emails were handled, and 21 emails failed.
@@ -384,7 +396,7 @@ The 9 correct invoices still reached Processed, and the 4 broken ones reached Er
 
 *Figure 24. The Inbox after the run, opened as Andreas.*
 
-No review notification was sent to Frida. For Finance, this means that 21 emails that need a person are stuck in the Inbox, and nobody is told. The support person has to find out which emails are affected, and why.
+No review notification was sent to Frida for any of these 21 emails.
 
 ### 4.3 Finding the Cause
 
@@ -511,7 +523,19 @@ The wrong folder name was found in the config file, and the value was corrected.
 
 ### 5.2 A Correct Invoice Left Behind
 
-Norrlands Livsmedelsgrossist AB told Finance that its invoices now use a new layout. Its next invoice, 51290 for the purchase order PO-2026-0001, arrived in the shared mailbox as usual, together with two other new emails. After the next run of P02, the invoice was still in the Inbox (Figure 32):
+Norrlands Livsmedelsgrossist AB told Finance that its invoices now use a new layout. Its next invoice, 51290 for the purchase order PO-2026-0001, arrived in the shared mailbox as usual, together with two other new emails. After the next run of P02, the invoice was not in Processed, and no review notification arrived.
+
+For Finance, this means:
+
+- **The invoice never arrives.** It is not registered, and nobody is asked to review it.
+- **A late payment.** The supplier may not be paid on time.
+
+For the support team, this means:
+
+- **No warning.** The run looks normal, with no failed email.
+- **A search by hand.** The support person has to find the invoice in the mailbox and work out why the robot did not handle it.
+
+The invoice was still in the Inbox (Figure 32):
 
 1. Invoice 51290 with the category **Robot: Ignored**, the same category as a newsletter.
 
@@ -523,8 +547,6 @@ The Output panel shows what the robot decided (Figure 33):
 
 1. The invoice was classified as **Not an invoice** and stayed in the Inbox.
 2. The summary: 43 emails, 43 handled, 0 failed. The run looks normal, so nobody is warned.
-
-For Finance, the invoice simply never arrives. It is not registered, nobody is asked to review it, and it can be paid late.
 
 ![The Output panel after the run with the new layout](Screenshots/inc05-repro-output.png)
 
@@ -631,10 +653,22 @@ The robot did not report an error for the new layout. It treated a real invoice 
 
 ### 6.2 An Invoice Lost After a Stop
 
-A robot run can stop at any moment, for example when a job is killed or the computer restarts. In this run, P02 stopped in the middle of the Inbox (Figure 39):
+A robot run can stop at any moment, for example when a job is killed or the computer restarts. After a stop, the robot is normally just started again. But this time an invoice was lost on the way.
+
+For Finance, this means:
+
+- **An invoice waits without a notification.** It is in the Review folder, but Frida is never told to check it.
+- **A late payment.** An invoice that nobody reviews is not paid on time.
+
+For the support team, this means:
+
+- **Nobody knows what was finished.** Nothing shows which emails were handled before the stop.
+- **A normal-looking second run.** The new run reports no error, so the lost invoice is not noticed.
+
+In this run, P02 stopped in the middle of the Inbox (Figure 39):
 
 1. The first three emails were handled in the normal way.
-2. The run stopped right after `Faktura 70870 - delleverans` was moved to Review. Here the stop was made on purpose with a test setting, so that it happens at a known place.
+2. The run stopped right after `Faktura 70870 - delleverans` was moved to Review.
 
 ![The Output panel when the run stops](Screenshots/inc04-repro-output.png)
 
@@ -827,7 +861,17 @@ A second click on the same transfer worked (Figure 53):
 
 *Figure 53. The failed transfers after the second try of T-0021.*
 
-Transfer T-0040 to the external care provider failed again with `Målsystemet svarade inte` (the target system did not answer). The coordinator has to decide alone how often to try again, and at the end of the day there is no list of which transfers were finished, which ones need a data correction, and which target could not be reached.
+Transfer T-0040 to the external care provider failed again with `Målsystemet svarade inte` (the target system did not answer).
+
+For the coordinators, this means:
+
+- **Many clicks.** About 20 transfers a day are started one by one, plus new clicks on the failed ones.
+- **Guessing.** The coordinator has to decide alone how often to try a failed transfer again.
+- **No overview.** At the end of the day, there is no list of which transfers were finished, which ones need a data correction, and which target could not be reached.
+
+For the support team, this means:
+
+- **Problems are noticed late.** A target system that does not answer is only reported when a coordinator happens to notice it.
 
 ### 7.3 What the Robot Should Change
 
@@ -1003,7 +1047,18 @@ Before the robot, the coordinator clicked each transfer by hand, tried the faile
 
 ### 8.2 The Robot Stops After the Update
 
-The ticket came the day after a new version of Journalsamordning was installed. For the coordinators, the Överföringar page looks exactly as before: the same columns, the same buttons and the same data. But the robot no longer handles any transfer, so they are back to the manual work from Section 7.2: about 20 clicks a day, new tries without a rule, and no list of the result. For the support team, the problem is hard to see, because nothing on the page looks broken.
+The ticket came the day after a new version of Journalsamordning was installed. For a person, the Överföringar page looks exactly as before: the same columns, the same buttons and the same data. But since the update, the robot has not handled a single transfer.
+
+For the coordinators, this means:
+
+- **Back to manual work.** About 20 transfers a day are clicked one by one again, as in Section 7.2.
+- **New tries without a rule.** A failed transfer is tried again by guess, because nobody sorts the data errors from the technical errors any more.
+- **No list of the result.** There is no report at the end of the day.
+
+For the support team, this means:
+
+- **Nothing looks broken.** The page is the same, so there is no visible reason why the robot stopped.
+- **The queue is empty.** The robot stops right after the login, before it adds any transfer to the queue, so the queue gives no hint either.
 
 The dispatcher was run in UiPath Studio to see what the robot sees on the new page (Figure 62):
 
@@ -1042,11 +1097,12 @@ An id like this is a technical name that the developers of the page choose. A pe
 
 Re-indicating the elements on the new page would fix the robot today, but it would break again at the next release that renames something. The fix is only worth the work if the robot depends on what the page shows, not on how it is built inside. After the fix, the following goals are expected to be met:
 
-| Goal | Today | Expected after the fix |
+| Goal | Today (manual) | Expected after the fix |
 |---|---|---|
+| **The robot works again** | The coordinators click about 20 transfers by hand | The robot handles the transfers again on the new page, with the same outcomes as in Section 7 |
 | **Stable selectors** | All four transfer elements depend on the technical id of the table | The elements are found by what a person sees: the column header and the transfer ID |
 | **Both versions** | The robot only works on the old page | The same robot works on the old and the new page, so a release of Journalsamordning and a release of the robot do not have to happen on the same day |
-| **One place to change** | - | The selectors are kept in the Object Repository, so one change reaches every workflow that uses them |
+| **One place to change** | The same four elements are used in three workflows | The selectors are kept in the Object Repository, so one change reaches every workflow that uses them |
 | **No side effects** | - | Every transfer gets the same result as before the page update |
 
 In short, a change that a person cannot see on the page should not stop the robot.
@@ -1116,3 +1172,203 @@ The same robot was also run against the old version of the page, with the same o
 Both page versions and the transfer data for these tests were prepared in the test environment and reset after each test.
 
 Before the fix, a small technical change that nobody could see on the page stopped the whole robot. Now the robot finds the transfer table and its rows by the column headers and the transfer IDs, the same way a person does, and it works on both the old and the new version of the page.
+
+## 9. INC-06 - The Transfer Robot Only Runs When a Developer Starts It
+
+### 9.1 The Ticket
+
+| | |
+|---|---|
+| Reported by | The coordination team in Journalsamordning |
+| Symptom | On days when the developer is away, the transfer robot does not run, and the transfers wait. Nobody can say which version of the robot is in use, or how to go back if a new version fails. |
+| Robot | Transfer robot (Sections 7 and 8) |
+| Impact | On these days, the coordinators are back to the manual work from Section 7.2. |
+| Priority | Medium |
+
+### 9.2 The Robot Depends on One Developer
+
+The transfer robot works, but only in one way: a developer opens the project in UiPath Studio on their own computer, runs `Dispatcher.xaml`, waits, and then runs `Main.xaml`. The result is only shown in the Output panel of Studio, and the daily report is written to the folder `Data\Output` inside the project.
+
+For the coordinators, this means:
+
+- **No fixed time.** The transfers are handled when the developer has time, not at a time the coordinators can plan for.
+- **No robot without the developer.** When the developer is ill or busy, the robot does not run at all, and the coordinators click about 20 transfers by hand again, as in Section 7.2.
+- **The report is on the developer's computer.** The coordinators have to ask for it.
+
+For the support team, this means:
+
+- **No job history.** The runs are not in Orchestrator, so there is no list of jobs, no job log and no way to see when the robot last ran.
+- **No version.** A change, like the fix in Section 8, goes straight into the project that the robot is started from. If a change is wrong, the only way back is to undo it in Git and start the robot again from Studio.
+
+### 9.3 Finding the Cause
+
+The robot was never released. It exists only as a project folder on one computer. In Orchestrator, the folder Shared already has the queue `P04_Transfers`, but no process of the transfer robot, and no robot that can run a job there: the folder had 0 unattended runtimes. So Orchestrator could not start the robot even if someone asked it to.
+
+Three things are missing:
+
+1. A **robot** that Orchestrator can send jobs to, without a person at the computer. This is an unattended robot.
+2. A **package** with a version number, and a **process** in Orchestrator that uses it.
+3. A **trigger** that starts the process at the right time.
+
+### 9.4 What the Release Should Change
+
+A shared computer where anyone can press Run in Studio would not solve the problem, because the robot would still need a person, and there would still be no version and no history. After the release, the following goals are expected to be met:
+
+| Goal | Today (manual) | Expected after the release |
+|---|---|---|
+| **Runs on its own** | A developer starts the dispatcher and the performer in Studio | The dispatcher starts every weekday morning, and the performer starts as soon as there are transfers in the queue |
+| **Not tied to one person** | No run when the developer is away | The robot runs from Orchestrator, on a computer that is set up for it |
+| **Job history** | The result is only in the Output panel of Studio | Every run is a job in Orchestrator, with its state and its log |
+| **A known version** | The robot is whatever is in the project folder | The robot runs a package with a version number, and Orchestrator shows which version each process uses |
+| **A way back** | Undo the change in Git and start again from Studio | The earlier version is brought back in Orchestrator in one step |
+| **The report where people look** | In `Data\Output` on the developer's computer | In one fixed folder that the coordinators know, and the job log names the file |
+| **No side effects** | - | Every transfer gets the same outcome as before |
+
+In short, the robot should run on its own, every run should be visible in Orchestrator, and a new version should be easy to take back.
+
+### 9.5 The Release
+
+Each problem found in Sections 9.2 and 9.3 is solved by one part of the release.
+
+**Problem 1: no robot that Orchestrator can use.**
+
+*Solution: an unattended robot.* In Orchestrator, a machine called `P04-Transfer-Robot` was added for the computer that runs the robot, and it was added to the folder Shared (Figure 69):
+
+1. The machine `P04-Transfer-Robot`.
+
+![The machine of the transfer robot in Orchestrator](Screenshots/release-machine-list.png)
+
+*Figure 69. The machines in Orchestrator. The machine of a personal account is hidden.*
+
+The machine was given one unattended runtime, which is the license that lets one unattended job run at a time (Figure 70):
+
+1. **Production (Unattended)** is 1.
+2. The client ID of the machine. It is hidden here, because the robot uses it, together with a secret, to sign in to Orchestrator.
+
+![One unattended runtime on the machine](Screenshots/release-machine-unattended.png)
+
+*Figure 70. The settings of the machine `P04-Transfer-Robot`.*
+
+On the computer, UiPath Assistant was then connected to Orchestrator with the client ID of the machine (Figure 71):
+
+1. The connection type is **Client ID**, the type that unattended robots use.
+2. The status is "Connected, Licensed", so Orchestrator can now send jobs to this computer.
+
+![UiPath Assistant connected with the client ID](Screenshots/release-assistant-connection.png)
+
+*Figure 71. The Orchestrator connection in UiPath Assistant.*
+
+**Problem 2: no version and no process.**
+
+*Solution: a package and two processes.* The robot was packed as version 1.0.0 and uploaded to Orchestrator. The package has two entry points, so two processes were created from it in the folder Shared (Figure 72):
+
+1. `P04_Transfer_Dispatcher` runs `Dispatcher.xaml`, and `P04_Transfer_Performer` runs `Main.xaml`.
+2. Both processes use the package version 1.0.0.
+
+![The two processes on version 1.0.0](Screenshots/release-processes-100.png)
+
+*Figure 72. The processes of the transfer robot in the folder Shared.*
+
+Automatic update is turned off for both processes, so a process only changes its version when a person chooses it. Both processes were started once from Orchestrator, and both jobs ended without an error (Figure 73):
+
+1. Both jobs are **Successful**.
+2. Both were started by hand (**Manual**).
+3. Both ran on the computer of the transfer robot.
+
+![The first jobs of version 1.0.0](Screenshots/release-jobs-100.png)
+
+*Figure 73. The first two jobs of the transfer robot in Orchestrator.*
+
+**Problem 3: the report disappears in a job from Orchestrator.** After these first jobs, the transfers were done, but the daily report was not in `Data\Output`. The report folder is a setting in `Data/Config.json`, and its value `Data\Output` is a relative path: it only says where the folder is compared with the current folder of the robot. In Studio, that is the project folder. In a job from Orchestrator, the robot installs the package in its own package folder, one folder for each version, and runs the job from there. The report was found in that folder (Figure 74):
+
+1. The path: the package folder of version 1.0.0, inside the user profile of the robot. The user name is hidden.
+2. The report of the day.
+
+![The report inside the package folder](Screenshots/release-report-hidden.png)
+
+*Figure 74. The daily report in the package folder of version 1.0.0.*
+
+Nobody looks for a report in this place, and the next version would write it to yet another folder.
+
+*Solution: a fixed report folder, and the path in the log.* The setting was changed to a full path, and the robot expands it with `Environment.ExpandEnvironmentVariables` before it uses it:
+
+| Setting | Before | After |
+|---|---|---|
+| `ReportFolder` | `Data\Output` | `%PUBLIC%\Documents\P04 Transfer Reports` |
+
+`%PUBLIC%` is the public user folder of Windows, `C:\Users\Public`, which every user of the computer can open. In a real hospital, this would be a shared network folder of the coordination team. When the robot starts a new report for the day, it also writes the full path of the file to the job log. The change was saved in Git as one commit, the robot was packed as version 1.0.1, and both processes were updated to it (Figure 75):
+
+1. Both processes use version 1.0.1. Version 1.0.0 is still kept in Orchestrator.
+
+![The two processes on version 1.0.1](Screenshots/release-processes-101.png)
+
+*Figure 75. The processes of the transfer robot after the update.*
+
+**Problem 4: the robot only runs when someone starts it.**
+
+*Solution: two triggers.* A trigger starts a process by itself. A time trigger starts the dispatcher at 07:00 every weekday, Stockholm time (Figure 76):
+
+1. The trigger "P04 Dispatcher - weekdays 07:00" for the process `P04_Transfer_Dispatcher`.
+
+![The time trigger of the dispatcher](Screenshots/release-time-trigger.png)
+
+*Figure 76. The time trigger of the dispatcher.*
+
+A queue trigger starts the performer as soon as there is at least one new transfer in the queue `P04_Transfers`. Only one performer job runs at a time, because the robot has one unattended runtime (Figure 77):
+
+1. The trigger "P04 Performer - new transfers in the queue" for the queue `P04_Transfers`.
+
+![The queue trigger of the performer](Screenshots/release-queue-trigger.png)
+
+*Figure 77. The queue trigger of the performer.*
+
+So the dispatcher fills the queue every morning, and the queue starts the performer. Nobody has to start the robot.
+
+**Problem 5: no way back.**
+
+*Solution: rollback in Orchestrator.* Every uploaded version stays in Orchestrator, and a process can be rolled back to its previous version in one step. This was tested in Section 9.6.
+
+### 9.6 Testing the Release
+
+Version 1.0.1 was tested with the same 20 open transfers as before. The dispatcher was started, and the queue trigger started the performer by itself, right after the dispatcher had added the transfers to the queue (Figure 78):
+
+1. The dispatcher and the performer, both **Successful**.
+2. The source of the performer job is the queue trigger, not a person.
+
+![The jobs of version 1.0.1](Screenshots/release-jobs-101.png)
+
+*Figure 78. The jobs of version 1.0.1. The performer was started by the queue trigger.*
+
+The job log of the performer shows where the report was written (Figure 79):
+
+1. "New daily report: C:\Users\Public\Documents\P04 Transfer Reports\transfer_report_2026-10-31.csv".
+
+![The report path in the job log](Screenshots/release-job-log-report.png)
+
+*Figure 79. The log of the performer job, filtered on "New daily report".*
+
+The report was in the fixed folder (Figure 80):
+
+1. The folder `C:\Users\Public\Documents\P04 Transfer Reports`.
+2. The report of the day.
+
+![The report in the fixed folder](Screenshots/release-report-fixed-folder.png)
+
+*Figure 80. The daily report in the fixed report folder.*
+
+The report had the same outcomes as before: 15 transfers Completed and 5 transfers Needs manual data correction, with the reason for each one.
+
+Then the way back was tested. Both processes were rolled back to version 1.0.0 in Orchestrator, and the robot was run again. Only the 5 transfers with data errors were still open, and the robot does not press the button of a transfer with a known data error, so the run changed nothing in Journalsamordning (Figure 81):
+
+1. The two newest jobs ran on version 1.0.0, and both were successful.
+2. The dispatcher was started by hand, and the performer by the queue trigger.
+
+![The jobs after the rollback](Screenshots/release-rollback-jobs.png)
+
+*Figure 81. All jobs of the transfer robot. The two newest jobs ran on version 1.0.0 after the rollback.*
+
+The 5 report lines of this run were written to the package folder of version 1.0.0 again, and the report in the fixed folder was not changed. This shows that the rollback really brought back the old version, with its old report folder. Both processes were then updated to version 1.0.1 again. The version history of the performer shows the four steps: 1.0.0, 1.0.1, 1.0.0 and 1.0.1.
+
+The transfer data was reset after the tests, and the two triggers were turned off until the robot is taken into daily use.
+
+Before the release, the transfer robot only ran when a developer started it in Studio, and its result stayed on the developer's computer. Now it runs from Orchestrator on its own robot, starts by itself every weekday morning, and writes its report to one fixed folder. Every run is a job with a log, every version is kept, and the earlier version can be brought back in one step.
