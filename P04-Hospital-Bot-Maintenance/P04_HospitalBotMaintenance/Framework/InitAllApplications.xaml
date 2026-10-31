@@ -65,6 +65,9 @@
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence sap2010:Annotation.AnnotationText="Open applications used in the process and do necessary initialization procedures (e.g., login)." DisplayName="Initialize All Applications" sap:VirtualizedContainerService.HintSize="376,232" sap2010:WorkflowViewState.IdRef="Sequence_9">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="userRole" />
+    </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -72,5 +75,12 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     <ui:LogMessage DisplayName="Log message (Initialize applications)" sap:VirtualizedContainerService.HintSize="334,94.6666666666667" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Trace" Message="[&quot;Opening applications...&quot;]" />
+    <ui:InvokeWorkflowFile DisplayName="Log In to Journalsamordning" UnSafe="False" WorkflowFileName="Workflows\Login_Coordination.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_CredentialTarget">[in_Config("CredentialTarget").ToString]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_UserRole">[userRole]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:LogMessage DisplayName="Log User Role" Level="Info" Message="[&quot;Logged in to Journalsamordning as: &quot; &amp; userRole]" sap2010:WorkflowViewState.IdRef="LogMessage_9" />
   </Sequence>
 </Activity>

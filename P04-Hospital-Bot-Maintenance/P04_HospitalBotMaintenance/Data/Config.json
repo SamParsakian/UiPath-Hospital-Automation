@@ -1,10 +1,15 @@
 {
   "Settings": {
-    "logF_BusinessProcessName": "Framework"
+    "logF_BusinessProcessName": "P04_TransferRobot",
+    "OrchestratorQueueName": "P04_Transfers",
+    "OrchestratorQueueFolder": "Shared",
+    "CoordinationUrl": "http://100.99.72.90:8081",
+    "CredentialTarget": "P03_Samordnare",
+    "ReportFolder": "Data\\Output"
   },
   "Constants": {
     "MaxRetryNumber": 0,
-    "MaxConsecutiveSystemExceptions": 0,
+    "MaxConsecutiveSystemExceptions": 5,
     "ExScreenshotsFolderPath": "Exceptions_Screenshots",
     "LogMessage_GetTransactionData": "Processing Transaction Number: ",
     "LogMessage_GetTransactionDataError": "Error getting transaction data for Transaction Number: ",
@@ -14,6 +19,7 @@
     "ExceptionMessage_ConsecutiveErrors": "The maximum number of consecutive system exceptions was reached. ",
     "RetryNumberGetTransactionItem": 2,
     "RetryNumberSetTransactionStatus": 2,
-    "ShouldMarkJobAsFaulted": false
+    "ShouldMarkJobAsFaulted": false,
+    "QueueMaxRetries": 2
   }
 }

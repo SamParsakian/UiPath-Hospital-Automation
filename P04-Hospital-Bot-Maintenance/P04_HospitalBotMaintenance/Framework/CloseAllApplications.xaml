@@ -62,5 +62,6 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     <ui:LogMessage DisplayName="Log message (close applications)" sap:VirtualizedContainerService.HintSize="334,94.6666666666667" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Trace" Message="[&quot;Closing applications...&quot;]" />
+    <ui:InvokeWorkflowFile DisplayName="Close Journalsamordning" UnSafe="False" WorkflowFileName="Workflows\CloseCoordination.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" />
   </Sequence>
 </Activity>
