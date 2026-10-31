@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-16"?>
-<ObjectRepositoryTargetData ContentHash="Y9IkuRbTF0qafar3UOTfrw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ObjectRepositoryTargetData ContentHash="5MRM8ask3USKTPMlfMgewA" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <ObjectRepositoryTargetData.Data>
-    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="1954, 808, 107, 32" DesignTimeScaleFactor="1.125" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl colName='Åtgärder' parentid='transfer-table' rowName='{0}' tag='BUTTON' /&gt;&quot;, transferId)]" Guid="c0d13240-bbbd-44d7-be9b-0fa27e09ad86" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="1954, 808, 107, 32" DesignTimeScaleFactor="1.125" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl colName='Åtgärder' rowName='{0}' tag='BUTTON' /&gt;&quot;, transferId)]" Guid="c0d13240-bbbd-44d7-be9b-0fa27e09ad86" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8081/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
       <TargetAnchorable.Anchors>
         <scg:List x:TypeArguments="ITarget" Capacity="0" />
       </TargetAnchorable.Anchors>
-      <imageRef attrName="InformativeScreenshot" originalValue="fb6d376144a8280aebe062e0ec647bdc.jpg" xmlns="">05nUtnDVF8UCDR98d_ZFgIg</imageRef>
+      <imageRef attrName="InformativeScreenshot" originalValue="fb6d376144a8280aebe062e0ec647bdc.jpg" xmlns="">0ESEBgPkIl0GH-L2PM7LX7w</imageRef>
     </TargetAnchorable>
   </ObjectRepositoryTargetData.Data>
 </ObjectRepositoryTargetData>
