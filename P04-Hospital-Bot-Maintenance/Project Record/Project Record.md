@@ -2,7 +2,7 @@
 
 ## 1. Project Goal
 
-The goal of this project is to work as a junior UiPath developer in the support team of a fictional Swedish hospital. Two robots from earlier projects are already in use: P01 checks patient referrals across two hospital systems, and P02 handles supplier invoices that arrive in a shared Outlook mailbox. The robots are not rebuilt. Instead, a short series of simulated support tickets is handled: a broken selector, a slow hospital system, a wrong configuration value, a run that stopped halfway, and a supplier that changed its invoice layout. For each ticket, the problem is reproduced, the real cause is found, a small fix is made and tested, and the change is versioned so that it can be rolled back. A new support process is also built with the UiPath Robotic Enterprise Framework (REFramework) to show how a robot handles business exceptions and system errors, and how it retries safely. All data in this project is fictional.
+The goal of this project is to work as a junior UiPath developer in the support team of a fictional Swedish hospital. Two robots from earlier projects are already in use: P01 checks patient referrals across two hospital systems, and P02 handles supplier invoices that arrive in a shared Outlook mailbox. The robots are not rebuilt. Instead, a short series of simulated support tickets is handled: a broken selector, a hospital system that does not answer reliably, a wrong configuration value, a run that stopped halfway, and a supplier that changed its invoice layout. For each ticket, the problem is reproduced, the real cause is found, a small fix is made and tested, and the change is versioned so that it can be rolled back. A new robot is also built with the UiPath Robotic Enterprise Framework (REFramework) and an Orchestrator queue. It takes over a manual task in Journalsamordning and shows how a robot handles business exceptions and system errors, and how it retries safely. All data in this project is fictional.
 
 ### 1.1 Scenario
 
@@ -197,7 +197,7 @@ In this project, each manual step that caused a ticket is moved into the robot. 
 | Comparing every folder name in the config with the real mailbox | P02 checks its target folders once at the start and stops at once with a message that names the wrong setting | INC-03 |
 | Going through the mailbox to find which invoices were handled before a stop | P02 checks the mailbox and its processed log before it goes on, so a second run never moves, registers or answers the same email twice | INC-04 |
 | Finance staff handling correct invoices that ended in Review after a supplier changed its invoice layout | P02 reads the new layout as well as the old one, and the invoice reaches Processed | INC-05 |
-| Starting the job again after a slow or unavailable system, and checking which rows failed | The new REFramework process tries a row again by itself after a system error, a fixed number of times. A business error, like a missing referral, is never tried again | INC-02 |
+| Running about 20 transfers one by one in Journalsamordning, trying the failed ones again by hand, and keeping no list of the result | A new REFramework robot runs each transfer as an item in an Orchestrator queue. A technical error is tried again up to two times, a data error goes straight to a person, and a report shows the outcome of every transfer | INC-02 |
 | Searching the hospital systems by hand to tell a broken page element from a missing record | Every failed row gets its own status and a screenshot, and the broken element is captured again with a stable selector | INC-01 |
 | Comparing the new report with the expected results by hand | The expected results are kept in files, and every fix is tested against them before it is released | All |
 
@@ -219,10 +219,11 @@ The changes to the robots are made in the same order for every ticket:
 1. **Receive the ticket:** Who reported it, what was seen, which robot is affected, and how serious it is.
 2. **Reproduce:** The problem is made to happen again in a support copy of the robot, never in the published one.
 3. **Investigate:** The job log, the Output panel in Studio, the workflow, the config file and the selectors are read until the real cause is found.
-4. **Fix:** The smallest change that removes the cause. Git shows exactly which lines were changed.
-5. **Test:** The case that failed, and the cases that worked before.
-6. **Version and roll back:** The fix gets its own Git tag and package version, and the way back to the earlier version is shown.
-7. **Close the ticket:** A short note in plain language.
+4. **Set the goals:** What the fix is expected to change for the people who depend on the robot, compared with today.
+5. **Fix:** The smallest change that removes the cause. Git shows exactly which lines were changed.
+6. **Test:** The case that failed, and the cases that worked before.
+7. **Version and roll back:** The fix gets its own Git tag and package version, and the way back to the earlier version is shown.
+8. **Close the ticket:** A short note in plain language.
 
 ### 1.6 The Support Tickets
 
@@ -231,14 +232,14 @@ The tickets in this project are simulated. They are not real hospital incidents,
 | Ticket | Robot | Reported problem |
 |---|---|---|
 | INC-01 | P01 | A web element is not found any more, although the check worked before. |
-| INC-02 | P01 | Jobs fail or hang because a hospital system is slow or shows a maintenance page. |
+| INC-02 | New transfer robot | Record transfers in Journalsamordning are started by hand, and some fail again and again because the target system does not answer reliably. |
 | INC-03 | P02 | Invoice routing fails although the email and the invoice are valid. |
 | INC-04 | P02 | The robot stopped halfway, and nobody knows which invoices were already handled. |
 | INC-05 | P02 | A correct invoice is rejected after the supplier changed its invoice layout. |
 
 ### 1.7 Project Scope
 
-The hospital systems, the Microsoft 365 mailbox and the finished P01, P02 and P03 projects are not changed. Problems are only created on the robot side, for example with a wrong value in a copied config file, or with the test switches that the hospital lab already has.
+The hospital systems, the Microsoft 365 mailbox and the finished P01, P02 and P03 projects are not changed permanently. Problems are only created on the robot side, for example with a wrong value in a copied config file, or with test switches in the hospital lab that are turned off again after the test.
 
 ## 2. Checking the Working Environment
 
@@ -286,7 +287,7 @@ The support work uses two UiPath projects in one Git repository:
 | Folder | Content |
 |---|---|
 | `P02_InvoiceIntake` | A support copy of the finished P02 robot |
-| `P04_HospitalBotMaintenance` | The new support process built with REFramework |
+| `P04_HospitalBotMaintenance` | The new transfer robot, built with REFramework |
 | `Project Record` | This document and its screenshots |
 
 The P02 source was copied into `P02_InvoiceIntake` without any change: the workflows, the Object Repository, the config file, the tests and the test data, but not the old documentation. The copy was saved in Git as one commit of its own.
@@ -316,7 +317,7 @@ In this version of the template, the settings are kept in `Data/Config.json`, no
 
 *Figure 22. The constants in `Data/Config.json`.*
 
-The template reads its work items from an Orchestrator queue. No queues are used in this project, because the work items are a short list of referrals in a file.
+The template reads its work items from an Orchestrator queue. In this project, the queue holds the record transfers of Journalsamordning (Section 7).
 
 The new project was saved in Git exactly as the template created it. In this way, every change to the template can be seen later in the history.
 
@@ -410,11 +411,36 @@ The workflow `RouteEmail.xaml` explains why the emails ended in this state. It d
 
 So the real cause is a wrong value in the config file, but the robot only finds out when it tries to move the first email for Review. By then, many other emails are already handled, and every email for Review is left half done.
 
-### 4.4 The Fix
+### 4.4 What the Fix Should Change
 
-Two changes were made. First, the value of `Folder_Review` was set back to `Review`, as in Figure 7. Second, a small check was added, so that the same mistake stops the robot at once in the future.
+Correcting the value alone would solve this ticket, but the same mistake could happen again with the next change of the config file. The fix is only worth the work if it also protects Finance and the support team the next time. After the fix, the following goals are expected to be met:
 
-The new workflow `Workflows/CheckMailFolders.xaml` reads the list of folders in the shared mailbox once, and compares it with the four folder settings (Figure 27):
+| Goal | Today (manual) | Expected after the fix |
+|---|---|---|
+| **Early detection** | The wrong folder name is only found when the first email for Review is moved, and 21 emails fail | A wrong folder name is found at the start of the run, before any email is read or moved |
+| **Clear message** | The error names the folder "Granskning", but not the setting, so the config file is searched by hand | The message names the setting, the wrong value and the mailbox |
+| **Safe mailbox** | Emails are left half done in the Inbox, with a category but without a notification to Finance | No email is touched, so nothing has to be cleaned up in the mailbox |
+| **Easy recovery** | The support person checks the mailbox by hand before a new run | After the value is corrected, a normal new run handles the waiting emails |
+
+In short, a wrong folder name should stop the robot at once, with a message that the support person can act on directly.
+
+### 4.5 The Fix
+
+Each problem found in Sections 4.2 and 4.3 is solved by one part of the fix.
+
+**Problem 1: the wrong value in the config.** `Folder_Review` points to a folder that does not exist in the mailbox.
+
+*Solution: correct the value.* `Folder_Review` was set back to `Review`, as in Figure 7.
+
+**Problem 2: the mistake is found too late.** The robot only notices the wrong folder when it moves the first email for Review. By then, many other emails are already handled, and every email for Review is left half done.
+
+*Solution: check all folders at the start.* A new check compares the four folder settings with the real mailbox before any email is read or moved.
+
+**Problem 3: the error does not name the setting.** The message only says that the folder "Granskning" was not found, so the support person has to search the config file.
+
+*Solution: a clear stop message.* If a folder is missing, the check stops the run with a message that names the setting, the wrong value and the mailbox.
+
+The check for problems 2 and 3 is the new workflow `Workflows/CheckMailFolders.xaml`. It reads the list of folders in the shared mailbox once, and compares it with the four folder settings (Figure 27):
 
 1. **Get Mailbox Folders** reads all folders of the shared mailbox.
 2. **Get Folder Names** keeps only the names of the folders.
@@ -436,7 +462,7 @@ The check is called in `ProcessInbox.xaml` right after the config is read, befor
 
 The robot never creates a missing folder by itself, because that would hide the wrong setting. The fix was saved in Git as one commit. Compared with the original robot, it adds the new workflow and five lines in `ProcessInbox.xaml`.
 
-### 4.5 Testing the Fix
+### 4.6 Testing the Fix
 
 First, the fix was tested with the wrong value `Granskning` still in the config. The run stopped after 6 seconds with a clear message (Figure 29):
 
@@ -517,9 +543,26 @@ The attached PDF was compared with the invoices that P02 reads without problems 
 
 The invoice content itself is correct. The amounts now end with `SEK` instead of `kr`, but this is not a problem, because P02 only reads the number in front of the currency. So the cause is that the reading rules in `Workflows/ReadInvoice.xaml` only know the old layout.
 
-### 5.4 The Fix
+### 5.4 What the Fix Should Change
 
-The fix was made in `Workflows/ReadInvoice.xaml`. Each field is read with a regular expression, a text pattern that finds the label and the value after it. The new labels were added next to the old ones (Figure 35):
+Suppliers change their invoice layouts from time to time, and the robot must not hide this. The fix is only worth the work if it handles the new layout without changing the result for any other supplier. After the fix, the following goals are expected to be met:
+
+| Goal | Today (manual) | Expected after the fix |
+|---|---|---|
+| **Correct reading** | A correct invoice in the new layout is treated as "not an invoice" | Invoices in both the old and the new layout are read as invoices |
+| **No hidden invoices** | The invoice stays in the Inbox, and the run looks normal, so nobody is warned | The invoice goes through the same checks as every other invoice and reaches Processed or Review |
+| **No side effects** | - | All invoices in the old layout give exactly the same result as before |
+| **Easy rollback** | - | The change is small and saved as one commit, so it can be undone quickly |
+
+In short, Finance should get every correct invoice registered, whatever layout the supplier uses.
+
+### 5.5 The Fix
+
+Each problem found in Section 5.3 is solved by one change in `Workflows/ReadInvoice.xaml`, the workflow that reads the PDF.
+
+**Problem 1: the new field names are unknown.** The robot looks for labels such as `Fakturanummer`, but the new layout uses `Fakturanr`.
+
+*Solution: accept both labels.* Each field is read with a regular expression, a text pattern that finds the label and the value after it. The new labels were added next to the old ones, so both layouts can be read (Figure 35):
 
 | Box | Field | Old label | New label, also accepted |
 |---|---|---|---|
@@ -536,7 +579,9 @@ The fix was made in `Workflows/ReadInvoice.xaml`. Each field is read with a regu
 
 *Figure 35. The fields in `ReadInvoice.xaml` that also accept the new labels.*
 
-The check of the title was also changed, so that `Faktura / Invoice` is accepted as an invoice (Figure 36):
+**Problem 2: the new title is not accepted.** The robot only treats a PDF as an invoice when its first line is `Faktura` or `Kreditfaktura`.
+
+*Solution: accept the new title.* The check of the title was changed, so that `Faktura / Invoice` is also accepted as an invoice (Figure 36):
 
 1. The condition of **Check 5 - Invoice Or Credit Note?**.
 
@@ -544,9 +589,11 @@ The check of the title was also changed, so that `Faktura / Invoice` is accepted
 
 *Figure 36. The title check in `ReadInvoice.xaml`.*
 
-The old labels were kept, so invoices in the old layout are read in the same way as before. Before the robot was run, all 93 PDF files that P02 had saved in earlier runs were read with the old and the new rules. Only invoice 51290 gave a different result. The fix was saved in Git as one commit with nine changed lines, so it can be rolled back by reverting that single commit.
+**Problem 3: other suppliers must not be affected.** A change in the reading rules could break the invoices that worked before.
 
-### 5.5 Testing the Fix
+*Solution: keep the old rules and compare the results.* The old labels were kept, so invoices in the old layout are read in the same way as before. Before the robot was run, all 93 PDF files that P02 had saved in earlier runs were read with the old and the new rules. Only invoice 51290 gave a different result. The fix was saved in Git as one commit with nine changed lines, so it can be rolled back by reverting that single commit.
+
+### 5.6 Testing the Fix
 
 The mailbox was reset to the same state as in Section 5.2, and `Main.xaml` was run again (Figure 37):
 
@@ -651,9 +698,26 @@ The processed log, `Output/processed_log.csv`, had rows for the three emails bef
 
 The log is only written after the email has been moved and the notification has been sent. When the run stops between the move and the notification, the email is in Review, but nothing shows that it was not finished. The next run only reads the Inbox, so it never sees the email again.
 
-### 6.4 The Fix
+### 6.4 What the Fix Should Change
 
-The robot now writes a "Started" row in the processed log before it routes an email (Figure 46):
+A run can always stop because of something outside the robot, so the goal is not to prevent every stop. The fix is only worth the work if a stop no longer leaves Finance without information. After the fix, the following goals are expected to be met:
+
+| Goal | Today (manual) | Expected after the fix |
+|---|---|---|
+| **Known progress** | Nothing shows which email was moved but not finished | The robot writes down every email before it routes it |
+| **No lost invoices** | An invoice can stay in Review without a notification, and nobody knows | The next run finds the unfinished email and tells Finance which one to check |
+| **No manual search** | The support person compares every folder with the report and the log by hand | The robot is simply started again |
+| **No double messages** | A new run could answer or report the same email twice | Finance gets one notice for each unfinished email, and never the same notice twice |
+
+In short, after a stop the robot should be started again without any manual check, and Finance should know about every unfinished invoice.
+
+### 6.5 The Fix
+
+Each problem found in Sections 6.2 and 6.3 is solved by one part of the fix.
+
+**Problem 1: nothing shows that an email was started.** The row in the processed log is only written after the email is moved and the notification is sent.
+
+*Solution: write a Started row first.* The robot now writes a "Started" row in the processed log before it routes an email (Figure 46):
 
 1. **Add Started Row** adds a row with the folder, for example `Started: Review`.
 2. **Save Started Row** writes it to the file at once.
@@ -663,7 +727,9 @@ The robot now writes a "Started" row in the processed log before it routes an em
 
 *Figure 46. The new Started row in `ProcessInbox.xaml`.*
 
-So an email that was finished has two rows, and an email that was stopped in the middle has only the Started row. A new step looks for these emails at the start of every run, right after the Inbox is read (Figure 47):
+**Problem 2: the next run never sees the email again.** The robot only reads the Inbox, and the unfinished email is already in another folder.
+
+*Solution: look for unfinished emails at the start.* An email that was finished has two rows in the log, and an email that was stopped in the middle has only the Started row. A new step looks for these emails at the start of every run, right after the Inbox is read (Figure 47):
 
 1. **Invoke Check Interrupted Run** is the new step.
 
@@ -671,7 +737,9 @@ So an email that was finished has two rows, and an email that was stopped in the
 
 *Figure 47. The new step after Sort Oldest First in `ProcessInbox.xaml`.*
 
-The new workflow `Workflows/CheckInterruptedRun.xaml` does the check (Figure 48):
+**Problem 3: Finance is never told.** The invoice waits in Review, but no notification was sent.
+
+*Solution: one notice for each unfinished email.* The new workflow `Workflows/CheckInterruptedRun.xaml` does the check and tells Finance (Figure 48):
 
 1. **Find Interrupted Emails** finds the emails that have only a Started row and are no longer in the Inbox.
 2. **Send Interrupted Run Notice** sends one message to Finance with the list of these emails and their folders.
@@ -686,7 +754,7 @@ An email that is stopped before it is moved is still in the Inbox. The robot doe
 
 The fix was saved in Git as one commit, and the test setting as a separate commit. The fix can be rolled back by reverting its commit, and `TestFault` stays `None` in normal use.
 
-### 6.5 Testing the Fix
+### 6.6 Testing the Fix
 
 The mailbox was reset again, and the same three runs were made.
 
@@ -729,3 +797,210 @@ Frida's mailbox still has only one notice (Figure 52):
 At the end, the mailbox was reset again with all 43 test emails, and P02 was run once more. All emails got the same folders as in `TestData/expected_results.csv` and Section 5, so the fixes did not change the result for any other email.
 
 Before the fix, a stop in the middle of a run could leave an invoice in Review without a notification, and nobody would know. Now the robot remembers which email it started, finds the unfinished one in the next run, and tells Finance once which email to check.
+
+## 7. INC-02 - A Backlog of Transfers and an Unreliable Target System
+
+### 7.1 The Ticket
+
+| | |
+|---|---|
+| Reported by | The coordination team in Journalsamordning |
+| Symptom | Every day, about 20 record transfers must be started by hand, one at a time. Some fail again and again, and nobody knows which ones need a person and which ones only need a new try. |
+| Robot | None yet. A new transfer robot is built. |
+| Impact | Patient records reach the next care provider late, and failed transfers with wrong data stay unnoticed. |
+| Priority | Medium |
+
+### 7.2 The Manual Work Today
+
+In Journalsamordning, a record transfer sends the journal data of a case to another system, for example Journalsystem Syd or an external care provider. The coordinator signs in as Daniel Lindström and opens the page **Överföringar** (Figure 53):
+
+1. The four counters: 10 transfers are ready to send, 1 waits for an answer, 35 are done and 9 have failed.
+2. Each open transfer has its own button, **Utför** (run) or **Försök igen** (try again). One click starts one transfer. There is no button for several transfers at once.
+
+![The Överföringar page before the robot](Screenshots/transfers-before-list.png)
+
+*Figure 53. The transfers in Journalsamordning before the robot, signed in as the coordinator.*
+
+A transfer can fail for two very different reasons. A **data error**, for example `Valideringsfel: personnummer saknas` (the personal identity number is missing), fails again on every try, because the case data must first be corrected by a person. A **technical error**, for example `Timeout vid anslutning` (connection timeout), comes from the target system and often goes away by itself.
+
+During the week of the ticket, the target systems answered unreliably. To create this problem in the lab, a temporary test switch was added to Journalsamordning: some transfers time out once and work on the next try, and the external care provider does not answer at all. The data errors stay as they are.
+
+The coordinator pressed **Försök igen** on transfer T-0021 (Figure 54):
+
+1. The counters still show 9 failed transfers.
+2. T-0021 failed again with `Timeout vid anslutning`. The page looks exactly as before, so it is easy to miss that the try was made at all.
+
+![T-0021 after the first try](Screenshots/transfers-before-t0021-retry1.png)
+
+*Figure 54. The failed transfers after the first new try of T-0021.*
+
+A second click on the same transfer worked (Figure 55):
+
+1. The counters changed to 36 done and 8 failed.
+2. T-0021 is no longer in the list of failed transfers.
+
+![T-0021 after the second try](Screenshots/transfers-before-t0021-retry2.png)
+
+*Figure 55. The failed transfers after the second try of T-0021.*
+
+Transfer T-0040 to the external care provider failed again with `Målsystemet svarade inte` (the target system did not answer). The coordinator has to decide alone how often to try again, and at the end of the day there is no list of which transfers were finished, which ones need a data correction, and which target could not be reached.
+
+### 7.3 What the Robot Should Change
+
+The robot is only worth building if it improves the daily work of the coordination team. After the automation is in place, the following goals are expected to be met:
+
+| Goal | Today (manual) | Expected after the automation |
+|---|---|---|
+| **Work** | About 20 clicks a day, one transfer at a time, plus new clicks on the failed ones | No clicks. The robot runs all open transfers. |
+| **Decision** | The coordinator guesses whether a failed transfer needs a new try or a data correction | The robot decides by a fixed rule: a technical error gets 2 new tries, a data error goes straight to a person |
+| **Safety** | Easy to click a data error again and again, or to miss a try, because the page looks the same | A transfer that is already done is never started again, and a data error is never tried again |
+| **Overview** | No list at the end of the day | One report and the Orchestrator queue show what is done, what needs a data correction and what must be escalated |
+| **Follow-up** | Problems with an external care provider are noticed late | "Still unavailable - escalate" lists exactly which transfers and target systems to report to IT |
+
+In short, the coordinator should only work on the transfers that really need a person, with a clear list of them.
+
+### 7.4 The Design of the Robot
+
+Each problem from the manual work in Section 7.2 is solved by one part of the design. Together, these parts give the shape of the robot.
+
+**Problem 1: one click per transfer.** The coordinator starts every transfer alone, and the list of open transfers changes from day to day.
+
+*Solution: a queue in Orchestrator.* An Orchestrator queue is a list of work items that a robot handles one by one. Each item is one transfer. The robot is split into two parts:
+
+- The **dispatcher** (`Dispatcher.xaml`) does what the coordinator does first: it opens the Överföringar page, finds all open transfers and puts one item for each of them into the queue `P04_Transfers`.
+- The **performer** (`Main.xaml`) does what the coordinator does next: it takes one item from the queue, opens that transfer and presses its button. Then it takes the next item, until the queue is empty.
+
+The performer is built with the REFramework, a UiPath template made for exactly this kind of work: take one item, handle it, set its result, and go on with the next one. If one transfer goes wrong, the others are still handled.
+
+**Problem 2: guessing whether to try again.** The coordinator cannot see at once whether a failed transfer will work on the next try.
+
+*Solution: two types of errors, with a fixed rule for each.* The robot reads the error text of the transfer and sorts it into one of two groups:
+
+- A **data error**, such as a missing personal identity number, becomes a **business exception**. The robot worked correctly, but the case data is wrong. A new try would only give the same error, so the transfer is never tried again. It goes straight to a person.
+- A **technical error**, such as a timeout, becomes a **system exception**. The problem is in the target system, so a new try may work. The queue was created with **Max # retries = 2**, which means that Orchestrator puts the same transfer back into the queue at most two more times. If the third try also fails, the transfer is marked to be escalated. The retry setting inside the REFramework, `MaxRetryNumber`, stays 0, so every retry is done by the queue and can be seen in Orchestrator.
+
+**Problem 3: the page looks the same after a try.** It is easy to miss a try, or to start a transfer that is already done.
+
+*Solution: read before and after every click.* The robot reads the status of the transfer before it presses any button. A transfer that is already done is never started again. After the click, the robot reads the status once more, so the result of every try is known.
+
+**Problem 4: no list at the end of the day.** Nothing shows which transfers were finished and which ones still need work.
+
+*Solution: a report and the queue history.* Every try is written as one line in a daily report file, and Orchestrator keeps the history of every queue item.
+
+When the four parts are combined, every transfer ends in one of four clear outcomes:
+
+| What happens | Type of error | Tried again? | Outcome in the report |
+|---|---|---|---|
+| The transfer is done at once | None | No | Completed |
+| A technical error, and a later try works | System exception | Yes, by the queue | Recovered after technical retry |
+| A technical error on every try | System exception | Yes, at most 2 times | Still unavailable - escalate |
+| A data error | Business exception | Never | Needs manual data correction |
+
+### 7.5 Building the Robot
+
+The robot was built in the REFramework project `P04_HospitalBotMaintenance`. The login workflow and the Object Repository for Journalsamordning were taken from the P03 project, and the password is read from Windows Credential Manager, as in P03. New elements were captured for the transfer table: the status, the error text and the button of one row, found by the transfer ID.
+
+The new workflow `Dispatcher.xaml` fills the queue (Figure 56):
+
+1. **Log In to Journalsamordning** signs in as the coordinator.
+2. **For Each Open Status** goes through the three open statuses: Misslyckad (failed), Klar för överföring (ready) and Väntar på svar (waiting).
+3. **Read the Transfer List** opens the Överföringar page filtered on one status and reads all rows of the table.
+4. **Add Transfer to the Queue** adds one queue item for each row. The reference is the transfer ID, and the item also keeps the case, the target system, the status and the error text.
+
+![Dispatcher.xaml in UiPath Studio](Screenshots/transfer-dispatcher.png)
+
+*Figure 56. The dispatcher `Dispatcher.xaml`.*
+
+The queue name and its Orchestrator folder are kept in `Data/Config.json`, together with the address of Journalsamordning and the name of the saved login.
+
+The work for one transfer is done in `Framework/Process.xaml` (Figure 57):
+
+1. **Read the Transfer** opens the transfer by its ID and reads its status and error text.
+2. **Is the Transfer Already Done?** A transfer with the status Överförd is not touched again.
+3. **Is It a Known Data Error?** A failed transfer with a data error becomes a business exception before any button is pressed.
+4. **Press the Transfer Button** clicks Utför or Försök igen and waits until Journalsamordning answers. **Read the Transfer Again** reads the new status.
+5. If the transfer still failed, a data error becomes a business exception, and any other error becomes a system exception with the text from the target system.
+6. **Report Success** adds a line to the daily report.
+7. Both exception types also add a line to the report before the exception is passed on to the framework, which sets the status of the queue item.
+
+![Process.xaml in UiPath Studio](Screenshots/transfer-process.png)
+
+*Figure 57. The handling of one transfer in `Process.xaml`.*
+
+The report is the file `Data/Output/transfer_report_<date>.csv`. It has one line for every try, with the transfer, the try number, the status before, the result and the outcome.
+
+### 7.6 Testing the Robot
+
+The test switch was turned on again, so the target systems behaved in the same unreliable way as in Section 7.2. The dispatcher added the 20 open transfers to the queue (9 failed, 10 ready and 1 waiting), and then `Main.xaml` was run from Studio. All 20 transfers were handled in about five minutes, without any click by a person.
+
+The queue in Orchestrator shows the result (Figure 58):
+
+1. **Successful 12**: 8 transfers worked at once, and 4 worked on the second try.
+2. **App Exceptions 13**: every try that ended in a system exception, including the tries that were followed by a successful one.
+3. **Biz Exceptions 5**: the 5 transfers with data errors.
+
+![The queue P04_Transfers in Orchestrator](Screenshots/transfer-queue-overview.png)
+
+*Figure 58. The queue `P04_Transfers` after the run.*
+
+Each try is its own row in the list of transactions (Figure 59):
+
+1. T-0005, T-0023 and T-0040 failed on their last try. All three go to the external care provider, which never answered.
+2. T-0051 worked on its second try.
+3. Its first try, which ended in a timeout, has the status Retried.
+
+![The transactions of the queue](Screenshots/transfer-queue-transactions.png)
+
+*Figure 59. The transactions of the queue in Orchestrator.*
+
+The details of T-0040 show the whole history of one transfer (Figure 60):
+
+1. The data that the dispatcher saved with the item.
+2. The reason of the last system exception: `Målsystemet svarade inte`.
+3. Three tries: the first two ended as Retried and the last one as Failed, all with the exception type Application.
+
+![The details of transaction T-0040](Screenshots/transfer-t0040-details.png)
+
+*Figure 60. Transaction T-0040 after three tries.*
+
+A transfer with a data error looks different (Figure 61):
+
+1. The reason: `Needs manual data correction: Mappningsfel: okänd procedurkod` (unknown procedure code).
+2. Only one try, with the exception type Business. The transfer was never tried again.
+
+![The details of transaction T-0047](Screenshots/transfer-t0047-details.png)
+
+*Figure 61. Transaction T-0047 with a data error.*
+
+The report gives the same picture in one file (Figure 62):
+
+1. T-0047 needs a manual data correction.
+2. The first try of T-0015 ended in a timeout and was marked to be tried again.
+3. The second try of T-0015 worked: **Recovered after technical retry**.
+4. After the third try, T-0040, T-0023 and T-0005 were marked **Still unavailable - escalate**.
+
+![The transfer report in Excel](Screenshots/transfer-report.png)
+
+*Figure 62. The report `transfer_report_2026-10-31.csv`, opened in Excel.*
+
+In Journalsamordning, only the transfers that need a person are left (Figure 63):
+
+1. No transfer is ready or waiting any more, 47 are done and 8 have failed.
+2. The 8 failed transfers are the 5 with data errors and the 3 for the external care provider that did not answer.
+
+![The failed transfers after the robot](Screenshots/transfers-after-failed.png)
+
+*Figure 63. The failed transfers after the robot run, signed in as the coordinator.*
+
+The result was exactly as expected for every transfer:
+
+| Outcome | Transfers |
+|---|---|
+| Completed | T-0002, T-0007, T-0010, T-0017, T-0028, T-0029, T-0034, T-0041 |
+| Recovered after technical retry | T-0015, T-0021, T-0033, T-0051 |
+| Needs manual data correction | T-0003, T-0006, T-0018, T-0038, T-0047 |
+| Still unavailable - escalate | T-0005, T-0023, T-0040 |
+
+After the test, the test switch was turned off and the transfer data in the lab was restored from a backup taken before the test.
+
+Before the robot, the coordinator clicked each transfer by hand, tried the failed ones again without a rule, and had no list of the result. The test showed every row of the table in Section 7.3: 8 transfers were done at once, 4 recovered after a new try, 5 were sent to a person for a data correction, and 3 were listed to escalate. No click was needed, and the coordinator now only has to look at those 8 transfers.
