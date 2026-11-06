@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="NEUud827O0CLl6xusFdJ2Q" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="2194, 1427, 38, 41" DesignTimeScaleFactor="1.3499999046325684" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl aria-label='Nästa sida' href='*?page=*' tag='A' /&gt;" Guid="f5b7ea58-0203-42d5-b048-f195f9f7cf9f" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/ekonomi*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="7f375068bcab0ba0198b2f67337f0730.jpg" xmlns="">0YgAsjYdrV0WQyWLJZ3015A</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>
