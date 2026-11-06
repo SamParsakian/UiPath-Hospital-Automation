@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Next Page Link",
+  "Description": "Link Nasta sida under the purchase orders table, shown only when there is a next page",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "X51jbbRJD02-5PyrTOXZvw",
+  "Reference": "OEmMk564hEmw20ClD15V9g/X51jbbRJD02-5PyrTOXZvw",
+  "ParentRef": "OEmMk564hEmw20ClD15V9g/pcu961cVPUqH9eqsRZavWA",
+  "Created": "2026-10-21T11:53:25.8939797Z",
+  "Updated": "2026-10-21T11:53:25.8939797Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.2.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
