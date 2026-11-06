@@ -1,0 +1,6 @@
+# Keep test files and images byte for byte (no line ending changes)
+*.pdf binary
+*.PDF binary
+*.xlsx binary
+*.png binary
+*.jpg binary

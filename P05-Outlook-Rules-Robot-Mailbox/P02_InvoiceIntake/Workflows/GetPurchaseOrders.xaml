@@ -1,0 +1,193 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_GetPurchaseOrders" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p="http://schemas.uipath.com/workflow/activities/credentials" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd2="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="out_PurchaseOrders" Type="OutArgument(sd:DataTable)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Security</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Credentials.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Get Purchase Orders" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:Int32" Default="1" Name="page" />
+      <Variable x:TypeArguments="x:Boolean" Default="True" Name="morePages" />
+      <Variable x:TypeArguments="x:Int32" Default="2" Name="rowIndex" />
+      <Variable x:TypeArguments="x:Boolean" Default="True" Name="moreRows" />
+      <Variable x:TypeArguments="x:String" Name="orderNumber" />
+      <Variable x:TypeArguments="x:String" Name="supplierName" />
+      <Variable x:TypeArguments="x:String" Name="amountText" />
+      <Variable x:TypeArguments="x:Decimal" Name="netAmount" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:BuildDataTable DataTable="[out_PurchaseOrders]" DisplayName="Build Purchase Orders Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;PurchaseOrders&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;PurchaseOrders&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;PoRef&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;SupplierName&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;NetAmount&quot; type=&quot;xs:decimal&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <uix:NApplicationCard AttachMode="ByInstance" DisplayName="Personalportalen" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" OpenMode="IfNotOpen" ScopeGuid="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Version="V2">
+      <uix:NApplicationCard.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <uix:NGoToUrl DisplayName="Open Purchase Orders Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_2" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Url="[in_Config(&quot;LabPortalUrl&quot;) &amp; &quot;/ekonomi/inkop&quot;]" Version="V5" />
+            <uix:NCheckState DisplayName="Is the Login Form Shown?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_1" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Timeout="5" Version="V5">
+              <uix:NCheckState.IfExists>
+                <Sequence DisplayName="Log In" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                  <Sequence.Variables>
+                    <Variable x:TypeArguments="x:String" Name="username" />
+                    <Variable x:TypeArguments="ss:SecureString" Name="password" />
+                  </Sequence.Variables>
+                  <p:GetSecureCredential CredentialType="Generic" DisplayName="Get Portal Login" sap2010:WorkflowViewState.IdRef="GetSecureCredential_1" Password="[password]" PersistanceType="Enterprise" Target="[in_Config(&quot;LabCredential&quot;)]" Username="[username]" />
+                  <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="Single" DisplayName="Type Username" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NTypeInto_1" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Text="[username]" Version="V5">
+                    <uix:NTypeInto.Target>
+                      <uix:TargetAnchorable DesignTimeRectangle="0, 0, 0, 0" DesignTimeScaleFactor="1" ElementType="InputBox" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='username' tag='INPUT' /&gt;" Guid="21df97cd-6cce-4800-9ef5-9aaef2ba435b" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NTypeInto.Target>
+                  </uix:NTypeInto>
+                  <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="Single" DisplayName="Type Password" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NTypeInto_2" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" SecureText="[password]" Version="V5">
+                    <uix:NTypeInto.Target>
+                      <uix:TargetAnchorable DesignTimeRectangle="0, 0, 0, 0" DesignTimeScaleFactor="1" ElementType="InputBoxPassword" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='password' tag='INPUT' /&gt;" Guid="9f318083-4f9e-4065-aba7-ac797dbe2823" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NTypeInto.Target>
+                  </uix:NTypeInto>
+                  <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click Log In" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_1" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Version="V5">
+                    <uix:NClick.Target>
+                      <uix:TargetAnchorable DesignTimeRectangle="0, 0, 0, 0" DesignTimeScaleFactor="1" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='login-button' tag='BUTTON' /&gt;" Guid="7f008fe4-f533-45c8-967d-663299817616" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NClick.Target>
+                  </uix:NClick>
+                </Sequence>
+              </uix:NCheckState.IfExists>
+              <uix:NCheckState.IfNotExists>
+                <ui:LogMessage DisplayName="Log Already Logged In" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Already logged in to Personalportalen&quot;]" />
+              </uix:NCheckState.IfNotExists>
+              <uix:NCheckState.Target>
+                <uix:TargetAnchorable DesignTimeRectangle="0, 0, 0, 0" DesignTimeScaleFactor="1" ElementType="InputBox" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='username' tag='INPUT' /&gt;" Guid="31c46c2d-7f4e-4b43-9d26-3409438a68ec" ScopeSelectorArgument="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/login*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NCheckState.Target>
+            </uix:NCheckState>
+            <Assign x:TypeArguments="x:Int32" DisplayName="Start At Page 1" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[page]" Value="1" />
+            <While DisplayName="While There Are More Pages" sap2010:WorkflowViewState.IdRef="While_1" Condition="[morePages And page &lt;= 10]">
+              <Sequence DisplayName="Read One Page" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                <uix:NGoToUrl DisplayName="Go To Purchase Orders Page" sap2010:WorkflowViewState.IdRef="NGoToUrl_1" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Url="[in_Config(&quot;LabPortalUrl&quot;) &amp; &quot;/ekonomi/inkop?page=&quot; &amp; page.ToString()]" Version="V5" />
+                <Assign x:TypeArguments="x:Int32" DisplayName="Start At First Row" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[rowIndex]" Value="2" />
+                <Assign x:TypeArguments="x:Boolean" DisplayName="Expect Rows" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[moreRows]" Value="True" />
+                <While DisplayName="While There Are More Rows" sap2010:WorkflowViewState.IdRef="While_2" Condition="[moreRows And rowIndex &lt;= 11]">
+                  <uix:NCheckState DisplayName="Is There an Order Row?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_2" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Timeout="3" Version="V5">
+                    <uix:NCheckState.IfExists>
+                      <Sequence DisplayName="Read Row" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                        <uix:NGetText DisplayName="Get Order Number" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" TextString="[orderNumber]" Version="V5">
+                          <uix:NGetText.Target>
+                            <uix:TargetAnchorable ContentHash="I1CROtxof06bCUqY05Snew" DesignTimeRectangle="328, 814, 221, 60" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl aaname='Order Leverantör Kostnadsställe Datum Belopp exkl. moms Status Fakturor Fakturerat' tag='TABLE' /&gt;&lt;webctrl colName='Order' parentid='order-table' tableCol='1' tableRow='{0}' tag='TD' /&gt;&quot;, rowIndex)]" Guid="5039a4ea-2854-4f5d-82ee-d610d072de7c" InformativeScreenshot="edbe13e777fa272047b56c9bba3ca340.jpg" Reference="OEmMk564hEmw20ClD15V9g/9HvGIpoRWkuZSuArt5hf-w" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/ekonomi*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                          </uix:NGetText.Target>
+                        </uix:NGetText>
+                        <uix:NGetText DisplayName="Get Supplier Name" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_2" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" TextString="[supplierName]" Version="V5">
+                          <uix:NGetText.Target>
+                            <uix:TargetAnchorable ContentHash="xKdcFc2P8UKj1Mt0LXXVng" DesignTimeRectangle="549, 814, 424, 60" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl aaname='Order Leverantör Kostnadsställe Datum Belopp exkl. moms Status Fakturor Fakturerat' tag='TABLE' /&gt;&lt;webctrl colName='Leverantör' parentid='order-table' tableCol='2' tableRow='{0}' tag='TD' /&gt;&quot;, rowIndex)]" Guid="42d7cee8-09d8-4308-9376-0a73a8852d45" InformativeScreenshot="3fd373388de5327fbc602f1624611a29.jpg" Reference="OEmMk564hEmw20ClD15V9g/Uo8wrUAdi0iQ5_T1jhgFLg" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/ekonomi*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                          </uix:NGetText.Target>
+                        </uix:NGetText>
+                        <uix:NGetText DisplayName="Get Net Amount" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_3" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" TextString="[amountText]" Version="V5">
+                          <uix:NGetText.Target>
+                            <uix:TargetAnchorable ContentHash="-eYfdFEvFUGkflEkd2NWQg" DesignTimeRectangle="1368, 814, 266, 60" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl aaname='Order Leverantör Kostnadsställe Datum Belopp exkl. moms Status Fakturor Fakturerat' tag='TABLE' /&gt;&lt;webctrl colName='Belopp exkl. moms' parentid='order-table' tableCol='5' tableRow='{0}' tag='TD' /&gt;&quot;, rowIndex)]" Guid="90cd08a6-1103-4eb2-80b9-ff9ecf5f60cd" InformativeScreenshot="e0d8a0622f1c1742df3e15f469664f25.jpg" Reference="OEmMk564hEmw20ClD15V9g/TOSwFMZYIESAQd9WEfvTtw" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/ekonomi*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                          </uix:NGetText.Target>
+                        </uix:NGetText>
+                        <Assign x:TypeArguments="x:Decimal" DisplayName="Convert Amount To Number" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[netAmount]" Value="[Decimal.Parse(amountText.Replace(&quot;kr&quot;, &quot;&quot;).Replace(&quot; &quot;, &quot;&quot;).Replace(ChrW(160), &quot;&quot;).Replace(ChrW(8239), &quot;&quot;).Replace(&quot;,&quot;, &quot;.&quot;).Trim(), System.Globalization.CultureInfo.InvariantCulture)]" />
+                        <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {orderNumber.Trim(), supplierName.Trim(), netAmount}]" DataTable="[out_PurchaseOrders]" DisplayName="Add Order Row" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
+                        <Assign x:TypeArguments="x:Int32" DisplayName="Next Row" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[rowIndex]" Value="[rowIndex + 1]" />
+                      </Sequence>
+                    </uix:NCheckState.IfExists>
+                    <uix:NCheckState.IfNotExists>
+                      <Assign x:TypeArguments="x:Boolean" DisplayName="No More Rows" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[moreRows]" Value="False" />
+                    </uix:NCheckState.IfNotExists>
+                    <uix:NCheckState.Target>
+                      <uix:TargetAnchorable ContentHash="I1CROtxof06bCUqY05Snew" DesignTimeRectangle="328, 814, 221, 60" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="[string.Format(&quot;&lt;webctrl aaname='Order Leverantör Kostnadsställe Datum Belopp exkl. moms Status Fakturor Fakturerat' tag='TABLE' /&gt;&lt;webctrl colName='Order' parentid='order-table' tableCol='1' tableRow='{0}' tag='TD' /&gt;&quot;, rowIndex)]" Guid="5039a4ea-2854-4f5d-82ee-d610d072de7c" InformativeScreenshot="edbe13e777fa272047b56c9bba3ca340.jpg" Reference="OEmMk564hEmw20ClD15V9g/9HvGIpoRWkuZSuArt5hf-w" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/ekonomi*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NCheckState.Target>
+                  </uix:NCheckState>
+                </While>
+                <uix:NCheckState DisplayName="Is There a Next Page?" HealingAgentBehavior="Disabled" sap2010:WorkflowViewState.IdRef="NCheckState_3" ScopeIdentifier="67fb0e2a-2752-4367-a7d6-a5f0be6c776f" Timeout="3" Version="V5">
+                  <uix:NCheckState.IfExists>
+                    <Assign x:TypeArguments="x:Int32" DisplayName="Next Page" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[page]" Value="[page + 1]" />
+                  </uix:NCheckState.IfExists>
+                  <uix:NCheckState.IfNotExists>
+                    <Assign x:TypeArguments="x:Boolean" DisplayName="No More Pages" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[morePages]" Value="False" />
+                  </uix:NCheckState.IfNotExists>
+                  <uix:NCheckState.Target>
+                    <uix:TargetAnchorable ContentHash="NEUud827O0CLl6xusFdJ2Q" DesignTimeRectangle="2194, 1427, 38, 41" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl aria-label='Nästa sida' href='*?page=*' tag='A' /&gt;" Guid="f5b7ea58-0203-42d5-b048-f195f9f7cf9f" InformativeScreenshot="7f375068bcab0ba0198b2f67337f0730.jpg" Reference="OEmMk564hEmw20ClD15V9g/X51jbbRJD02-5PyrTOXZvw" ScopeSelectorArgument="&lt;html app='chrome.exe' title='*Stockholm Demo Hospital*' url='http://100.99.72.90:8080/ekonomi*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                  </uix:NCheckState.Target>
+                </uix:NCheckState>
+              </Sequence>
+            </While>
+          </Sequence>
+        </ActivityAction>
+      </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sd1:Image, scg:IEnumerable(scg:KeyValuePair(sd2:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sd1:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
+      <uix:NApplicationCard.TargetApp>
+        <uix:TargetApp Area="0, 0, 0, 0" BrowserType="Chrome" Selector="&lt;html app='chrome.exe' url='http://100.99.72.90:8080/*' /&gt;" Url="http://100.99.72.90:8080/login" Version="V3">
+          <uix:TargetApp.Arguments>
+            <InArgument x:TypeArguments="x:String" />
+          </uix:TargetApp.Arguments>
+          <uix:TargetApp.WorkingDirectory>
+            <InArgument x:TypeArguments="x:String" />
+          </uix:TargetApp.WorkingDirectory>
+        </uix:TargetApp>
+      </uix:NApplicationCard.TargetApp>
+    </uix:NApplicationCard>
+    <If Condition="[out_PurchaseOrders.Rows.Count = 0]" DisplayName="Were Any Orders Read?" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <Throw DisplayName="Throw No Orders" Exception="[New Exception(&quot;No purchase orders were read. The Inköp page did not load or the login failed.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[$&quot;Purchase orders read: {out_PurchaseOrders.Rows.Count} from {page} pages&quot;]" />
+  </Sequence>
+</Activity>
