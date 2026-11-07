@@ -296,7 +296,17 @@ The script creates the account, but somebody still has to read the email, check 
 
 The settings of the robot, such as the address of HR, the known departments and the folder for handled requests, are kept in `Data/Config.xlsx`. The client ID, the tenant ID and the certificate thumbprint from Section 6 are not in the project. They are stored as three assets in UiPath Orchestrator and read when the robot starts.
 
-The numbers in Figure 19 show the main steps of `Main.xaml`:
+The assets are created in Orchestrator under **Assets**, as type Text (Figure 19):
+
+1. The page **Assets**.
+2. The folder **My Workspace**, where the robot runs.
+3. The three assets of this project. The values are blacked out here.
+
+![The Orchestrator assets of the robot](Screenshots/orchestrator-assets.png)
+
+*Figure 19. The three P06 assets in UiPath Orchestrator.*
+
+The numbers in Figure 20 show the main steps of `Main.xaml`:
 
 1. **Get Inbox Emails** reads the Inbox of the mailbox.
 2. **Request From HR?** handles only the emails from HR with the right subject.
@@ -307,7 +317,7 @@ The numbers in Figure 19 show the main steps of `Main.xaml`:
 
 ![The main workflow of the robot](Screenshots/studio-main-workflow.png)
 
-*Figure 19. Main.xaml in UiPath Studio, with the loop over the emails opened.*
+*Figure 20. Main.xaml in UiPath Studio, with the loop over the emails opened.*
 
 If something goes wrong with one request, the error is written to the log, the request stays in the Inbox, and the robot continues with the next email. No request is moved to "Hanterade" without an answer.
 
@@ -317,7 +327,7 @@ If something goes wrong with one request, the error is written to the log, the r
 
 **Problem 7: UiPath must run the script and understand the result.** The robot should not click in the admin center, and it must know if the account was created, already existed, or failed.
 
-*Solution: one Invoke Power Shell activity.* The workflow `CreateAccount.xaml` runs `New-StaffAccount.ps1` from the project folder with the activity **Invoke Power Shell** (Figure 20):
+*Solution: one Invoke Power Shell activity.* The workflow `CreateAccount.xaml` runs `New-StaffAccount.ps1` from the project folder with the activity **Invoke Power Shell** (Figure 21):
 
 1. **Run New-StaffAccount.ps1**: the command text is the path to the script.
 2. **Parameters**: the nine values for the script. The names, the title and the department come from the form. The IDs come from the Orchestrator assets, and the domain and the license from the settings file.
@@ -327,7 +337,7 @@ If something goes wrong with one request, the error is written to the log, the r
 
 ![The Invoke Power Shell activity](Screenshots/studio-invoke-powershell.png)
 
-*Figure 20. CreateAccount.xaml with the properties of Invoke Power Shell.*
+*Figure 21. CreateAccount.xaml with the properties of Invoke Power Shell.*
 
 **Problem 8: HR gets no answer.** In Section 3, HR sent the same request again because nobody answered.
 
@@ -343,7 +353,7 @@ The answer is sent from the mailbox of Andreas Henriksson to Frida Sjöberg at H
 
 The robot was tested with the same six requests from HR as in Section 2. The account of Elsa Lindqvist that was created by hand in Section 2 was deleted first, so that all six requests were handled in the same situation as on Friday morning. The robot was then started once from UiPath Studio.
 
-The Output panel shows how each request was handled (Figure 21):
+The Output panel shows how each request was handled (Figure 22):
 
 1. The first request for Elsa Lindqvist: the script returned **Created**. Johan Bergström, Amira Hassan and Oskar Wikström were created in the same way.
 2. The request for Sara Nilsson: the check found that **Avdelning** is missing, so the script was not run.
@@ -352,63 +362,63 @@ The Output panel shows how each request was handled (Figure 21):
 
 ![The Output panel after the run](Screenshots/studio-run-output.png)
 
-*Figure 21. The run of the robot in UiPath Studio. The six requests took 1 minute and 13 seconds.*
+*Figure 22. The run of the robot in UiPath Studio. The six requests took 1 minute and 13 seconds.*
 
-The mailbox shows the same result (Figure 22):
+The mailbox shows the same result (Figure 23):
 
 1. Only the 2 emails that are not from HR are left in the Inbox.
 2. All six requests are in "Hanterade".
 
 ![The mailbox after the run](Screenshots/outlook-andreas-after-run.png)
 
-*Figure 22. The folder Hanterade after the run.*
+*Figure 23. The folder Hanterade after the run.*
 
-HR got one answer for each request (Figure 23):
+HR got one answer for each request (Figure 24):
 
 1. Six answers, one for each request, including the second request for Elsa Lindqvist.
 2. The answer for Johan Bergström, with his username, his department group and the start date. No password is in the email.
 
 ![The answers to HR](Screenshots/outlook-frida-answers.png)
 
-*Figure 23. The answers from the robot in the Inbox of Frida Sjöberg at HR.*
+*Figure 24. The answers from the robot in the Inbox of Frida Sjöberg at HR.*
 
-The answer for Sara Nilsson tells HR exactly what to do (Figure 24):
+The answer for Sara Nilsson tells HR exactly what to do (Figure 25):
 
 1. The field Avdelning is missing, the request should be sent again, and no account was created.
 
 ![The answer for the incomplete request](Screenshots/outlook-frida-sara-answer.png)
 
-*Figure 24. The answer for Sara Nilsson.*
+*Figure 25. The answer for Sara Nilsson.*
 
-In the Microsoft Entra admin center, the four new accounts are in the list of users (Figure 25):
+In the Microsoft Entra admin center, the four new accounts are in the list of users (Figure 26):
 
 1. Amira Hassan, Elsa Lindqvist, Johan Bergström and Oskar Wikström. There is only one account for Elsa Lindqvist, and none for Sara Nilsson.
 
 ![The new users](Screenshots/entra-new-users.png)
 
-*Figure 25. The users after the run.*
+*Figure 26. The users after the run.*
 
-The audit log of Amira Hassan shows who created the account (Figure 26):
+The audit log of Amira Hassan shows who created the account (Figure 27):
 
 1. **P06 Staff Account Robot** set the password profile, added the user, set the license and added the user to the group, all within three seconds. Nobody signed in to the admin center. The ID of the group is blacked out here.
 
 ![The audit log of a new user](Screenshots/entra-amira-audit-log.png)
 
-*Figure 26. The audit log of Amira Hassan.*
+*Figure 27. The audit log of Amira Hassan.*
 
-The account is complete, with the group of the department (Figure 27) and the license (Figure 28):
+The account is complete, with the group of the department (Figure 28) and the license (Figure 29):
 
 1. **Akuten - Personal**, the group of her department.
 
 ![The groups of a new user](Screenshots/entra-amira-groups.png)
 
-*Figure 27. The groups of Amira Hassan. The object IDs are blacked out here.*
+*Figure 28. The groups of Amira Hassan. The object IDs are blacked out here.*
 
 1. **Microsoft 365 Business Standard** is active.
 
 ![The license of a new user](Screenshots/entra-amira-license.png)
 
-*Figure 28. The license of Amira Hassan.*
+*Figure 29. The license of Amira Hassan.*
 
 ### 8.1 Before and After
 
@@ -426,12 +436,12 @@ The account is complete, with the group of the department (Figure 27) and the li
 
 | Goal | Result | Shown in |
 |---|---|---|
-| **No typing** | Met. All values came from the form in the email | Figures 21, 23 |
-| **Checked before use** | Met. The request for Sara Nilsson was stopped before anything was created | Figures 21, 24, 25 |
-| **Correct group** | Met. Each new user is a member of the group of the department | Figures 23, 27 |
-| **Clear answer to HR** | Met. Six requests got six answers | Figure 23 |
-| **No second account** | Met. The second request for Elsa Lindqvist was answered with "already exists" | Figures 21, 25 |
-| **No password on the screen** | Met. The password is not in the log, in the answer or on any screen | Figures 21, 23 |
-| **No clicking in a web page** | Met. The account was created by the app through Microsoft Graph | Figure 26 |
+| **No typing** | Met. All values came from the form in the email | Figures 22, 24 |
+| **Checked before use** | Met. The request for Sara Nilsson was stopped before anything was created | Figures 22, 25, 26 |
+| **Correct group** | Met. Each new user is a member of the group of the department | Figures 24, 28 |
+| **Clear answer to HR** | Met. Six requests got six answers | Figure 24 |
+| **No second account** | Met. The second request for Elsa Lindqvist was answered with "already exists" | Figures 22, 26 |
+| **No password on the screen** | Met. The password is not in the log, in the answer or on any screen | Figures 22, 24 |
+| **No clicking in a web page** | Met. The account was created by the app through Microsoft Graph | Figure 27 |
 
 Requests from HR used to be copied by hand into the admin center, and HR never got an answer. Now UiPath reads and checks each request, one PowerShell script creates the account through Microsoft Graph, and HR gets a clear answer for every request. Six requests were handled in about one minute, without a single value typed by hand.
