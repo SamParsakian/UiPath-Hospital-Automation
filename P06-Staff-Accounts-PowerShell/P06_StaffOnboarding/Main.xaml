@@ -1,0 +1,247 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Main" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Activities.Mail</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Staff Onboarding" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:Dictionary(x:String, x:String)" Name="config" />
+      <Variable x:TypeArguments="scg:List(umm:Office365Message)" Name="inboxEmails" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="createdCount" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="existsCount" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="missingCount" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="errorCount" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="skippedCount" />
+    </Sequence.Variables>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Read Config" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\ReadConfig.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="out_Config">[config]</OutArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <umam:GetEmailListConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Get Inbox Emails" EmailList="[inboxEmails]" IncludeAttachments="None" IncludeSubfolders="False" MarkAsRead="False" MaxResults="0" UnreadOnly="False" UseConnectionService="True" WithAttachmentsOnly="False" sap2010:WorkflowViewState.IdRef="GetEmailListConnections_1">
+      <umam:GetEmailListConnections.FilterSelectionBackup>
+        <usau:BackupSlot x:TypeArguments="umame:FilterMode" StoredValue="ConditionBuilder">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umame:FilterMode, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umam:GetEmailListConnections.FilterSelectionBackup>
+      <umam:GetEmailListConnections.MailFolderArgument>
+        <umamm:MailFolderArgument SelectionMode="EnterPath">
+          <umamm:MailFolderArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:ItemSelectionMode" StoredValue="EnterPath">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailFolderArgument.Backup>
+          <umamm:MailFolderArgument.ManualEntryFolder>
+            <InArgument x:TypeArguments="x:String">Inbox</InArgument>
+          </umamm:MailFolderArgument.ManualEntryFolder>
+        </umamm:MailFolderArgument>
+      </umam:GetEmailListConnections.MailFolderArgument>
+      <umam:GetEmailListConnections.MailboxArg>
+        <umamm:MailboxArgument UseSharedMailbox="False">
+          <umamm:MailboxArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailboxArgument.Backup>
+        </umamm:MailboxArgument>
+      </umam:GetEmailListConnections.MailboxArg>
+    </umam:GetEmailListConnections>
+    <Assign x:TypeArguments="scg:List(umm:Office365Message)" DisplayName="Sort Oldest First" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[inboxEmails]" Value="[inboxEmails.OrderBy(Function(m) m.ReceivedDateTime).ToList()]" />
+    <ui:ForEach x:TypeArguments="umm:Office365Message" CurrentIndex="{x:Null}" DisplayName="For Each Inbox Email" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[inboxEmails]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="umm:Office365Message">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="umm:Office365Message" Name="email" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <If Condition="[email.FromAddress.ToLower() = config(&quot;HrSender&quot;).ToLower() AndAlso email.Subject.StartsWith(config(&quot;SubjectStart&quot;))]" DisplayName="Request From HR?" sap2010:WorkflowViewState.IdRef="If_1">
+              <If.Then>
+                <TryCatch DisplayName="Try Handle Request" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+                  <TryCatch.Try>
+                    <Sequence DisplayName="Handle Request" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                      <Sequence.Variables>
+                        <Variable x:TypeArguments="x:String" Name="firstName" />
+                        <Variable x:TypeArguments="x:String" Name="lastName" />
+                        <Variable x:TypeArguments="x:String" Name="jobTitle" />
+                        <Variable x:TypeArguments="x:String" Name="department" />
+                        <Variable x:TypeArguments="x:String" Name="startDate" />
+                        <Variable x:TypeArguments="x:String" Name="manager" />
+                        <Variable x:TypeArguments="x:String" Name="problem" />
+                        <Variable x:TypeArguments="x:String" Name="status" />
+                        <Variable x:TypeArguments="x:String" Name="userPrincipalName" />
+                        <Variable x:TypeArguments="x:String" Name="resultMessage" />
+                      </Sequence.Variables>
+                      <ui:LogMessage DisplayName="Log Request" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;Request: {email.Subject} ({email.ReceivedDateTime:HH:mm})&quot;]" />
+                      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Read Request" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\ReadRequest.xaml">
+                        <ui:InvokeWorkflowFile.Arguments>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_Body">[email.Body]</InArgument>
+                          <OutArgument x:TypeArguments="x:String" x:Key="out_FirstName">[firstName]</OutArgument>
+                          <OutArgument x:TypeArguments="x:String" x:Key="out_LastName">[lastName]</OutArgument>
+                          <OutArgument x:TypeArguments="x:String" x:Key="out_JobTitle">[jobTitle]</OutArgument>
+                          <OutArgument x:TypeArguments="x:String" x:Key="out_Department">[department]</OutArgument>
+                          <OutArgument x:TypeArguments="x:String" x:Key="out_StartDate">[startDate]</OutArgument>
+                          <OutArgument x:TypeArguments="x:String" x:Key="out_Manager">[manager]</OutArgument>
+                        </ui:InvokeWorkflowFile.Arguments>
+                      </ui:InvokeWorkflowFile>
+                      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Check Request" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\CheckRequest.xaml">
+                        <ui:InvokeWorkflowFile.Arguments>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_FirstName">[firstName]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_LastName">[lastName]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_JobTitle">[jobTitle]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_Department">[department]</InArgument>
+                          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+                          <OutArgument x:TypeArguments="x:String" x:Key="out_Problem">[problem]</OutArgument>
+                        </ui:InvokeWorkflowFile.Arguments>
+                      </ui:InvokeWorkflowFile>
+                      <If Condition="[problem &lt;&gt; String.Empty]" DisplayName="Problem With the Form?" sap2010:WorkflowViewState.IdRef="If_2">
+                        <If.Then>
+                          <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                            <Assign x:TypeArguments="x:String" DisplayName="Set Status Missing" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[status]" Value="[&quot;Missing&quot;]" />
+                            <Assign x:TypeArguments="x:String" DisplayName="Set Problem Message" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[resultMessage]" Value="[problem]" />
+                            <Assign x:TypeArguments="x:String" DisplayName="No Username" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[userPrincipalName]" Value="[String.Empty]" />
+                          </Sequence>
+                        </If.Then>
+                        <If.Else>
+                          <Sequence DisplayName="Else" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                            <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Create Account" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4" UnSafe="False" WorkflowFileName="Workflows\CreateAccount.xaml">
+                              <ui:InvokeWorkflowFile.Arguments>
+                                <InArgument x:TypeArguments="x:String" x:Key="in_FirstName">[firstName]</InArgument>
+                                <InArgument x:TypeArguments="x:String" x:Key="in_LastName">[lastName]</InArgument>
+                                <InArgument x:TypeArguments="x:String" x:Key="in_JobTitle">[jobTitle]</InArgument>
+                                <InArgument x:TypeArguments="x:String" x:Key="in_Department">[department]</InArgument>
+                                <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[status]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_UserPrincipalName">[userPrincipalName]</OutArgument>
+                                <OutArgument x:TypeArguments="x:String" x:Key="out_Message">[resultMessage]</OutArgument>
+                              </ui:InvokeWorkflowFile.Arguments>
+                            </ui:InvokeWorkflowFile>
+                          </Sequence>
+                        </If.Else>
+                      </If>
+                      <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Reply To HR" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_5" UnSafe="False" WorkflowFileName="Workflows\ReplyToHR.xaml">
+                        <ui:InvokeWorkflowFile.Arguments>
+                          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)" x:Key="in_Config">[config]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_RequestSubject">[email.Subject]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_FullName">[(firstName &amp; " " &amp; lastName).Trim()]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_Department">[department]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_StartDate">[startDate]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_Status">[status]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_UserPrincipalName">[userPrincipalName]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="in_Message">[resultMessage]</InArgument>
+                        </ui:InvokeWorkflowFile.Arguments>
+                      </ui:InvokeWorkflowFile>
+                      <umam:MoveEmailConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" CreateFolderIfMissing="False" DisplayName="Move Request To Done Folder" Email="[email]" IncludeAttachments="None" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="MoveEmailConnections_1">
+                        <umam:MoveEmailConnections.MailFolderArgument>
+                          <umamm:MailFolderArgument SelectionMode="EnterPath">
+                            <umamm:MailFolderArgument.Backup>
+                              <usau:BackupSlot x:TypeArguments="umame:ItemSelectionMode" StoredValue="EnterPath">
+                                <usau:BackupSlot.BackupValues>
+                                  <scg:Dictionary x:TypeArguments="umame:ItemSelectionMode, scg:List(x:Object)" />
+                                </usau:BackupSlot.BackupValues>
+                              </usau:BackupSlot>
+                            </umamm:MailFolderArgument.Backup>
+                            <umamm:MailFolderArgument.ManualEntryFolder>
+                              <InArgument x:TypeArguments="x:String">[config("DoneFolder")]</InArgument>
+                            </umamm:MailFolderArgument.ManualEntryFolder>
+                          </umamm:MailFolderArgument>
+                        </umam:MoveEmailConnections.MailFolderArgument>
+                        <umam:MoveEmailConnections.MailboxArg>
+                          <umamm:MailboxArgument UseSharedMailbox="False">
+                            <umamm:MailboxArgument.Backup>
+                              <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+                                <usau:BackupSlot.BackupValues>
+                                  <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+                                </usau:BackupSlot.BackupValues>
+                              </usau:BackupSlot>
+                            </umamm:MailboxArgument.Backup>
+                          </umamm:MailboxArgument>
+                        </umam:MoveEmailConnections.MailboxArg>
+                      </umam:MoveEmailConnections>
+                      <Switch x:TypeArguments="x:String" DisplayName="Count Result" Expression="[status]" sap2010:WorkflowViewState.IdRef="Switch`1_1">
+                        <Switch.Default>
+                          <Sequence DisplayName="Error" sap2010:WorkflowViewState.IdRef="Sequence_6">
+                            <Assign x:TypeArguments="x:Int32" DisplayName="Count Error" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[errorCount]" Value="[errorCount + 1]" />
+                          </Sequence>
+                        </Switch.Default>
+                        <Sequence x:Key="Created" DisplayName="Created" sap2010:WorkflowViewState.IdRef="Sequence_7">
+                          <Assign x:TypeArguments="x:Int32" DisplayName="Count Created" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[createdCount]" Value="[createdCount + 1]" />
+                        </Sequence>
+                        <Sequence x:Key="Exists" DisplayName="Exists" sap2010:WorkflowViewState.IdRef="Sequence_8">
+                          <Assign x:TypeArguments="x:Int32" DisplayName="Count Exists" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[existsCount]" Value="[existsCount + 1]" />
+                        </Sequence>
+                        <Sequence x:Key="Missing" DisplayName="Missing" sap2010:WorkflowViewState.IdRef="Sequence_9">
+                          <Assign x:TypeArguments="x:Int32" DisplayName="Count Missing" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[missingCount]" Value="[missingCount + 1]" />
+                        </Sequence>
+                      </Switch>
+                    </Sequence>
+                  </TryCatch.Try>
+                  <TryCatch.Catches>
+                    <Catch x:TypeArguments="s:Exception" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+                      <ActivityAction x:TypeArguments="s:Exception">
+                        <ActivityAction.Argument>
+                          <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                        </ActivityAction.Argument>
+                        <Sequence DisplayName="Handle Error" sap2010:WorkflowViewState.IdRef="Sequence_10">
+                          <ui:LogMessage DisplayName="Log Request Error" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Error" Message="[$&quot;Failed, the request stays in the Inbox: {email.Subject}: {exception.Source}: {exception.Message}&quot;]" />
+                          <Assign x:TypeArguments="x:Int32" DisplayName="Count Robot Error" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[errorCount]" Value="[errorCount + 1]" />
+                        </Sequence>
+                      </ActivityAction>
+                    </Catch>
+                  </TryCatch.Catches>
+                </TryCatch>
+              </If.Then>
+              <If.Else>
+                <Sequence DisplayName="Else" sap2010:WorkflowViewState.IdRef="Sequence_11">
+                  <Assign x:TypeArguments="x:Int32" DisplayName="Count Skipped" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[skippedCount]" Value="[skippedCount + 1]" />
+                </Sequence>
+              </If.Else>
+            </If>
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <ui:LogMessage DisplayName="Log Summary" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[$&quot;Requests: {createdCount} created, {existsCount} already existed, {missingCount} incomplete, {errorCount} errors. Other emails left in the Inbox: {skippedCount}.&quot;]" />
+  </Sequence>
+</Activity>

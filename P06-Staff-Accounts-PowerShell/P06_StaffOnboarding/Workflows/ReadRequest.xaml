@@ -1,0 +1,53 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadRequest" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Body" Type="InArgument(x:String)" />
+    <x:Property Name="out_FirstName" Type="OutArgument(x:String)" />
+    <x:Property Name="out_LastName" Type="OutArgument(x:String)" />
+    <x:Property Name="out_JobTitle" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Department" Type="OutArgument(x:String)" />
+    <x:Property Name="out_StartDate" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Manager" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Text.RegularExpressions</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Read Request" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Assign x:TypeArguments="x:String" DisplayName="Read Förnamn" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[out_FirstName]" Value="[Regex.Match(in_Body, &quot;Förnamn:[ \t]*([^\r\n]*)&quot;).Groups(1).Value.Trim()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Read Efternamn" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[out_LastName]" Value="[Regex.Match(in_Body, &quot;Efternamn:[ \t]*([^\r\n]*)&quot;).Groups(1).Value.Trim()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Read Titel" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[out_JobTitle]" Value="[Regex.Match(in_Body, &quot;Titel:[ \t]*([^\r\n]*)&quot;).Groups(1).Value.Trim()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Read Avdelning" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[out_Department]" Value="[Regex.Match(in_Body, &quot;Avdelning:[ \t]*([^\r\n]*)&quot;).Groups(1).Value.Trim()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Read Startdatum" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[out_StartDate]" Value="[Regex.Match(in_Body, &quot;Startdatum:[ \t]*([^\r\n]*)&quot;).Groups(1).Value.Trim()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Read Chef" sap2010:WorkflowViewState.IdRef="Assign`1_6" To="[out_Manager]" Value="[Regex.Match(in_Body, &quot;Chef:[ \t]*([^\r\n]*)&quot;).Groups(1).Value.Trim()]" />
+    <ui:LogMessage DisplayName="Log Request" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;Request read: {out_FirstName} {out_LastName}, {out_JobTitle}, department '{out_Department}', start {out_StartDate}&quot;]" />
+  </Sequence>
+</Activity>

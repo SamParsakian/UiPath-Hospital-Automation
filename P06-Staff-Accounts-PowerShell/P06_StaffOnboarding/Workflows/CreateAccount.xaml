@@ -1,0 +1,75 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_CreateAccount" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sc="clr-namespace:System.Collections;assembly=System.Private.CoreLib" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_FirstName" Type="InArgument(x:String)" />
+    <x:Property Name="in_LastName" Type="InArgument(x:String)" />
+    <x:Property Name="in_JobTitle" Type="InArgument(x:String)" />
+    <x:Property Name="in_Department" Type="InArgument(x:String)" />
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="out_Status" Type="OutArgument(x:String)" />
+    <x:Property Name="out_UserPrincipalName" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Message" Type="OutArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Create Account" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="scriptPath" />
+      <Variable x:TypeArguments="sco:Collection(sc:Hashtable)" Name="scriptResults" />
+      <Variable x:TypeArguments="sc:Hashtable" Name="result" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:String" DisplayName="Get Script Path" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[scriptPath]" Value="[Path.Combine(Environment.CurrentDirectory, in_Config(&quot;ScriptPath&quot;))]" />
+    <ui:InvokePowerShell x:TypeArguments="sc:Hashtable" CommandText="[scriptPath]" ContinueOnError="{x:Null}" DisplayName="Run New-StaffAccount.ps1" IsScript="False" Output="[scriptResults]" PowerShellProcess="WindowsPowerShell64" sap2010:WorkflowViewState.IdRef="InvokePowerShell`1_1">
+      <ui:InvokePowerShell.Parameters>
+        <InArgument x:TypeArguments="x:String" x:Key="FirstName">[in_FirstName]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="LastName">[in_LastName]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="JobTitle">[in_JobTitle]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="Department">[in_Department]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="ClientId">[in_Config(&quot;GraphClientId&quot;)]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="TenantId">[in_Config(&quot;GraphTenantId&quot;)]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="CertificateThumbprint">[in_Config(&quot;GraphCertThumbprint&quot;)]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="Domain">[in_Config(&quot;Domain&quot;)]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="LicenseSkuId">[in_Config(&quot;LicenseSkuId&quot;)]</InArgument>
+      </ui:InvokePowerShell.Parameters>
+      <ui:InvokePowerShell.PowerShellVariables>
+        <scg:Dictionary x:TypeArguments="x:String, Argument" />
+      </ui:InvokePowerShell.PowerShellVariables>
+    </ui:InvokePowerShell>
+    <Assign x:TypeArguments="sc:Hashtable" DisplayName="Take the Script Result" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[result]" Value="[scriptResults(scriptResults.Count - 1)]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Status" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[out_Status]" Value="[result(&quot;Status&quot;).ToString()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Username" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[out_UserPrincipalName]" Value="[result(&quot;UserPrincipalName&quot;).ToString()]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Message" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[out_Message]" Value="[result(&quot;Message&quot;).ToString()]" />
+    <ui:LogMessage DisplayName="Log Script Result" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;New-StaffAccount.ps1: {out_Status} - {out_Message}&quot;]" />
+  </Sequence>
+</Activity>
