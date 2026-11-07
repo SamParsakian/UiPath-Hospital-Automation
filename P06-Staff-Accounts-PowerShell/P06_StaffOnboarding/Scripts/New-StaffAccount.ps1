@@ -14,7 +14,7 @@
       5. adds the user to the department group
 
     The first password is random. It is never shown, logged or returned.
-    The script returns one result object: Status (Created, Exists or Error), UserPrincipalName and Message.
+    The script returns one result table (hashtable): Status (Created, Exists or Error), UserPrincipalName and Message.
 
 .EXAMPLE
     .\New-StaffAccount.ps1 -FirstName Elsa -LastName Lindqvist -JobTitle Sjuksköterska -Department Kardiologi `
@@ -39,7 +39,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 function New-Result([string] $Status, [string] $UserPrincipalName, [string] $Message) {
-    [PSCustomObject]@{
+    @{
         Status            = $Status
         UserPrincipalName = $UserPrincipalName
         Message           = $Message
