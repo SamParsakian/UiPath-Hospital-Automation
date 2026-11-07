@@ -444,4 +444,43 @@ The account is complete, with the group of the department (Figure 28) and the li
 | **No password on the screen** | Met. The password is not in the log, in the answer or on any screen | Figures 22, 24 |
 | **No clicking in a web page** | Met. The account was created by the app through Microsoft Graph | Figure 27 |
 
+### 8.3 Removing the Access of the Robot
+
+An app with permissions to create users should not stay active when it is no longer used. In the Microsoft Entra admin center, the page of the app registration offers two options:
+
+- **Deactivate:** the app and its settings stay, but it cannot get new tokens, so the script cannot sign in anymore. **Activate** turns it on again.
+- **Delete:** the app is removed together with its permissions and its certificate. For 30 days it can still be restored under **Deleted applications**.
+
+At the end of this project, P06 Staff Account Robot was first deactivated (Figure 30):
+
+1. **Activate** and **Delete** are the actions for a deactivated app.
+2. The message that the app can still be managed but cannot get new tokens.
+3. **State: Deactivated**. The tenant ID is blacked out here.
+4. The confirmation of the deactivation.
+
+![The deactivated app registration](Screenshots/entra-app-deactivated.png)
+
+*Figure 30. P06 Staff Account Robot after Deactivate.*
+
+Because the robot is not used anymore, the app was then deleted (Figure 31):
+
+1. The confirmation that the app was deleted.
+2. **Deleted applications** keeps the app for 30 days, and **Deactivated applications** lists the apps that are only turned off.
+
+![The deleted app registration](Screenshots/entra-app-deleted.png)
+
+*Figure 31. App registrations after Delete.*
+
+Admin consent can also be given to the tools of Microsoft. **Microsoft Graph Command Line Tools** is the app that is used when a person signs in to Microsoft Graph PowerShell. For the work with the department groups, it had the permission **Group.ReadWrite.All** with admin consent. This permission is not needed anymore, so it was revoked under **Enterprise applications**, **Microsoft Graph Command Line Tools**, **Permissions** (Figure 32):
+
+1. The tab **Admin consent**, filtered on "Group".
+2. **Group.ReadWrite.All**, granted by an administrator for the whole organization.
+3. **Revoke permission** in the menu of the permission removes it.
+
+![Revoking an admin consent](Screenshots/entra-revoke-consent.png)
+
+*Figure 32. Revoking Group.ReadWrite.All for Microsoft Graph Command Line Tools.*
+
+The certificate was also removed from the robot computer, and the three assets were removed from Orchestrator. Nothing that can sign in as the robot is left.
+
 Requests from HR used to be copied by hand into the admin center, and HR never got an answer. Now UiPath reads and checks each request, one PowerShell script creates the account through Microsoft Graph, and HR gets a clear answer for every request. Six requests were handled in about one minute, without a single value typed by hand.
