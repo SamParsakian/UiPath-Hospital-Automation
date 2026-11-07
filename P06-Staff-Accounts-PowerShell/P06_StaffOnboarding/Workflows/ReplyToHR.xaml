@@ -1,0 +1,98 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReplyToHR" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:String))" />
+    <x:Property Name="in_RequestSubject" Type="InArgument(x:String)" />
+    <x:Property Name="in_FullName" Type="InArgument(x:String)" />
+    <x:Property Name="in_Department" Type="InArgument(x:String)" />
+    <x:Property Name="in_StartDate" Type="InArgument(x:String)" />
+    <x:Property Name="in_Status" Type="InArgument(x:String)" />
+    <x:Property Name="in_UserPrincipalName" Type="InArgument(x:String)" />
+    <x:Property Name="in_Message" Type="InArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Activities.Mail</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Reply To HR" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="replySubject" />
+      <Variable x:TypeArguments="x:String" Name="replyText" />
+    </Sequence.Variables>
+    <Assign x:TypeArguments="x:String" DisplayName="Build Reply Subject" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[replySubject]" Value="[&quot;SV: &quot; &amp; in_RequestSubject]" />
+    <Switch x:TypeArguments="x:String" DisplayName="Which Answer?" Expression="[in_Status]" sap2010:WorkflowViewState.IdRef="Switch`1_1">
+      <Switch.Default>
+        <Sequence DisplayName="Error" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <Assign x:TypeArguments="x:String" DisplayName="Build Error Text" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[replyText]" Value="[String.Join(vbCrLf, {&quot;Hej,&quot;, &quot;&quot;, &quot;Kontot för &quot; &amp; in_FullName &amp; &quot; kunde inte skapas.&quot;, &quot;Orsak: &quot; &amp; in_Message, &quot;&quot;, &quot;IT kontrollerar förfrågan och återkommer.&quot;, &quot;&quot;, &quot;Med vänlig hälsning&quot;, &quot;IT-avdelningen&quot;, &quot;&quot;, &quot;Detta mejl skickades av roboten.&quot;})]" />
+        </Sequence>
+      </Switch.Default>
+      <Sequence x:Key="Created" DisplayName="Created" sap2010:WorkflowViewState.IdRef="Sequence_3">
+        <Assign x:TypeArguments="x:String" DisplayName="Build Created Text" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[replyText]" Value="[String.Join(vbCrLf, {&quot;Hej,&quot;, &quot;&quot;, &quot;Kontot för &quot; &amp; in_FullName &amp; &quot; är klart.&quot;, &quot;&quot;, &quot;Användarnamn: &quot; &amp; in_UserPrincipalName, &quot;Avdelning: &quot; &amp; in_Department &amp; &quot; (gruppen &quot; &amp; in_Department &amp; &quot; - Personal)&quot;, &quot;Startdatum: &quot; &amp; in_StartDate, &quot;&quot;, &quot;Det första lösenordet lämnas ut av IT-servicedesk på den första arbetsdagen.&quot;, &quot;&quot;, &quot;Med vänlig hälsning&quot;, &quot;IT-avdelningen&quot;, &quot;&quot;, &quot;Detta mejl skickades av roboten.&quot;})]" />
+      </Sequence>
+      <Sequence x:Key="Exists" DisplayName="Exists" sap2010:WorkflowViewState.IdRef="Sequence_4">
+        <Assign x:TypeArguments="x:String" DisplayName="Build Exists Text" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[replyText]" Value="[String.Join(vbCrLf, {&quot;Hej,&quot;, &quot;&quot;, &quot;Kontot &quot; &amp; in_UserPrincipalName &amp; &quot; för &quot; &amp; in_FullName &amp; &quot; finns redan.&quot;, &quot;Inget nytt konto skapades.&quot;, &quot;&quot;, &quot;Med vänlig hälsning&quot;, &quot;IT-avdelningen&quot;, &quot;&quot;, &quot;Detta mejl skickades av roboten.&quot;})]" />
+      </Sequence>
+      <Sequence x:Key="Missing" DisplayName="Missing" sap2010:WorkflowViewState.IdRef="Sequence_5">
+        <Assign x:TypeArguments="x:String" DisplayName="Build Missing Text" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[replyText]" Value="[String.Join(vbCrLf, {&quot;Hej,&quot;, &quot;&quot;, &quot;Förfrågan för &quot; &amp; in_FullName &amp; &quot; kunde inte hanteras.&quot;, in_Message, &quot;&quot;, &quot;Skicka förfrågan igen med alla uppgifter. Inget konto skapades.&quot;, &quot;&quot;, &quot;Med vänlig hälsning&quot;, &quot;IT-avdelningen&quot;, &quot;&quot;, &quot;Detta mejl skickades av roboten.&quot;})]" />
+      </Sequence>
+    </Switch>
+    <umam:SendMailConnections ConnectionId="1c702018-5e37-436e-8ec9-9ba68419b88b" DisplayName="Send Answer To HR" Importance="Normal" InputType="TEXT" IsDeliveryReceiptRequested="False" IsReadReceiptRequested="False" SaveAsDraft="False" Subject="[replySubject]" TextBody="[replyText]" To="[New String() {in_Config(&quot;ReplyRecipient&quot;)}]" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="SendMailConnections_1">
+      <umam:SendMailConnections.InputTypeBackup>
+        <usau:BackupSlot x:TypeArguments="umame:BodyInputType" StoredValue="TEXT">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umame:BodyInputType, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umam:SendMailConnections.InputTypeBackup>
+      <umam:SendMailConnections.AttachmentsBackup>
+        <usau:BackupSlot x:TypeArguments="umame:AttachmentInputMode" StoredValue="Existing">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umame:AttachmentInputMode, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umam:SendMailConnections.AttachmentsBackup>
+      <umam:SendMailConnections.MailboxArg>
+        <umamm:MailboxArgument UseSharedMailbox="False">
+          <umamm:MailboxArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailboxArgument.Backup>
+        </umamm:MailboxArgument>
+      </umam:SendMailConnections.MailboxArg>
+    </umam:SendMailConnections>
+    <ui:LogMessage DisplayName="Log Answer Sent" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;Answer sent to HR: {in_Status} for {in_FullName}&quot;]" />
+  </Sequence>
+</Activity>

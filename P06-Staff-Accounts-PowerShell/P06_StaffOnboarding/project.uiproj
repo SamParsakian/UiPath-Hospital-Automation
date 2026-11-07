@@ -1,0 +1,6 @@
+{
+  "Name": "P06_StaffOnboarding",
+  "ProjectType": "Process",
+  "Description": "Reads new staff requests from HR, checks the form, creates the Microsoft 365 account with PowerShell and Microsoft Graph, and replies to HR.",
+  "MainFile": "Main.xaml"
+}
