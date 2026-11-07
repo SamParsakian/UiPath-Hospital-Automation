@@ -6,6 +6,32 @@ The goal of this project is to create the Microsoft 365 accounts for new hospita
 
 The project shows how the work is split between UiPath and PowerShell: UiPath reads and checks the request from HR and answers it, and one PowerShell step with Microsoft Graph creates the account. All data in this project is fictional.
 
+### 1.1 Before Automation - Manual Process
+
+1. **Read the request:** An IT person opens the email from HR and reads the form: first name, last name, title, department, start date and manager.
+2. **Check the form:** The IT person looks for missing fields. If something is missing, a reply to HR is written by hand.
+3. **Add the user:** In the Microsoft 365 admin center, the Add a user wizard is filled in by hand: names, username, license, title and department.
+4. **Note the password:** The first password is shown on the screen and must be passed to the new employee in a safe way.
+5. **Add the group:** On another page of the user, the group of the department is chosen by hand.
+6. **Answer HR:** Usually nobody answers, so HR does not know that the account exists and sometimes sends the same request again.
+
+One account takes a few minutes of typing and clicking, and every request from HR means the same steps again.
+
+### 1.2 After Automation - UiPath and PowerShell Process
+
+1. **Read the requests:** The UiPath robot reads the mailbox and takes only the emails from HR with the subject "Ny medarbetare:", oldest first.
+2. **Read the form:** Each field is read from the text of the email.
+3. **Check the form:** All required fields must be filled in, and the department must be known. Otherwise nothing is created, and HR gets an answer with what is missing.
+4. **Create the account:** One Invoke Power Shell activity runs a script that uses Microsoft Graph. The script checks that the username is not already used, then creates the user with a random first password, gives the license and adds the department group.
+5. **Answer HR:** The robot sends one of three answers: the account is created, the account already exists, or the form is incomplete.
+6. **Close the request:** The email is moved to the folder "Hanterade" (handled).
+
+![The run of the robot with six requests](Screenshots/studio-run-output.png)
+
+*The six requests of one morning handled by the robot in 1 minute and 13 seconds: 4 accounts created, 1 already existed, 1 incomplete request.*
+
+Nobody types the values again, no password is shown on the screen, and HR gets an answer for every request.
+
 ## 2. How a New Account Is Created Today
 
 When a new nurse or doctor starts at the hospital, HR sends an email to IT with the subject "Ny medarbetare:" and the name of the person. The body is a short form with six fields: first name, last name, title, department, start date and manager. On a normal Friday morning, six such requests arrived in the mailbox that IT reads for new accounts.
@@ -196,51 +222,47 @@ The app cannot read mail, change roles or delete groups. It can only do what the
 
 **Problem 2: a password in a file can be stolen.** A script that signs in with a client secret needs the secret in a file or in the script. Anyone who reads the file can then use the app.
 
-*Solution: sign in with a certificate.* A certificate was created in Windows PowerShell on the computer of the robot. Its private key stays in the Windows certificate store and cannot be exported. Only the public part is saved to a file:
+*Solution: sign in with a certificate.* A certificate was created in Windows PowerShell on the computer of the robot. Its private key stays in the Windows certificate store and cannot be exported. Only the public part is saved to a file. Figure 13 shows the two commands, with the most important parts marked.
 
-```powershell
-$cert = New-SelfSignedCertificate -Subject 'CN=P06 Staff Account Robot' `
-    -CertStoreLocation 'Cert:\CurrentUser\My' -KeySpec Signature `
-    -KeyExportPolicy NonExportable -NotAfter (Get-Date).AddMonths(6)
-Export-Certificate -Cert $cert -FilePath "$HOME\Documents\P06-Staff-Account-Robot.cer"
-```
+![The commands that create the certificate](Screenshots/script-certificate.png)
 
-The certificate can be seen in **certmgr.msc** (Manage user certificates), under **Personal**, **Certificates** (Figure 13):
+*Figure 13. The certificate is created and its public part is saved.*
+
+The certificate can be seen in **certmgr.msc** (Manage user certificates), under **Personal**, **Certificates** (Figure 14):
 
 1. **P06 Staff Account Robot**, issued to itself, valid for six months.
 
 ![The certificate in the Windows certificate store](Screenshots/certmgr-certificate.png)
 
-*Figure 13. The certificate of the robot in the certificate store of the current user.*
+*Figure 14. The certificate of the robot in the certificate store of the current user.*
 
-The public file was then uploaded to the app under **Certificates & secrets**, **Upload certificate** (Figure 14):
+The public file was then uploaded to the app under **Certificates & secrets**, **Upload certificate** (Figure 15):
 
 1. **Certificates (1)**: the app has one certificate and no client secret.
 2. The uploaded certificate with its description and expiry date. The thumbprint and the certificate ID are blacked out here.
 
 ![The certificate of the app](Screenshots/entra-certificate.png)
 
-*Figure 14. Certificates & secrets of P06 Staff Account Robot.*
+*Figure 15. Certificates & secrets of P06 Staff Account Robot.*
 
 The script now signs in with the client ID of the app, the tenant ID and the thumbprint of the certificate. None of them is a secret, and no password is stored anywhere.
 
 **Problem 3: Windows PowerShell has no commands for Microsoft Graph.** PowerShell can call Microsoft Graph only after the Microsoft Graph module is installed.
 
-*Solution: install only the parts that are needed.* The full Microsoft Graph module has many parts. Only four of them were installed from the PowerShell Gallery, for the current user:
+*Solution: install only the parts that are needed.* The full Microsoft Graph module has many parts. Only four of them were installed from the PowerShell Gallery, for the current user (Figure 16).
 
-```powershell
-Install-Module Microsoft.Graph.Authentication, Microsoft.Graph.Users, `
-    Microsoft.Graph.Users.Actions, Microsoft.Graph.Groups -Scope CurrentUser
-```
+![The command that installs the Microsoft Graph modules](Screenshots/script-install-modules.png)
 
-The installed parts are shown with one command (Figure 15):
+*Figure 16. Four parts of the Microsoft Graph module are installed.*
+
+The installed parts are shown with one command (Figure 17):
 
 1. `Get-InstalledModule Microsoft.Graph*` lists the installed Graph modules.
 2. Authentication for the sign-in, Users for creating the user, Users.Actions for the license, and Groups for the group membership.
 
 ![The installed Microsoft Graph modules](Screenshots/powershell-graph-modules.png)
 
-*Figure 15. The four Microsoft Graph modules in Windows PowerShell.*
+*Figure 17. The four Microsoft Graph modules in Windows PowerShell.*
 
 **Problem 4: the account must be created in the same way every time.** By hand, every account depends on the person who types it.
 
@@ -252,35 +274,11 @@ The installed parts are shown with one command (Figure 15):
 4. It gives the user the Microsoft 365 license.
 5. It adds the user to the group of the department.
 
-The main part of the script:
+Figure 18 shows the main part of the script, with the most important commands marked. All commands with **Mg** in the name come from the Microsoft Graph module. The full script is in the project folder.
 
-```powershell
-# 1. The group of the department must exist
-$groupName = "$Department - Personal"
-$group = Get-MgGroup -Filter "displayName eq '$groupName'"
-if (-not $group) {
-    return New-Result 'Error' $upn "No group '$groupName' was found for the department '$Department'."
-}
+![The main part of New-StaffAccount.ps1](Screenshots/script-main-part.png)
 
-# 2. Do not create the same person twice
-$existing = Get-MgUser -Filter "userPrincipalName eq '$upn'"
-if ($existing) {
-    return New-Result 'Exists' $upn "The account $upn already exists. Nothing was changed."
-}
-
-# 3. Create the user. The random first password must be changed at the first sign-in.
-$user = New-MgUser -AccountEnabled `
-    -GivenName $FirstName -Surname $LastName -DisplayName "$FirstName $LastName" `
-    -JobTitle $JobTitle -Department $Department `
-    -MailNickname $userName -UserPrincipalName $upn `
-    -UsageLocation 'SE' -PasswordProfile $passwordProfile
-
-# 4. Microsoft 365 license
-Set-MgUserLicense -UserId $user.Id -AddLicenses @(@{ SkuId = $LicenseSkuId }) -RemoveLicenses @()
-
-# 5. Member of the department group
-New-MgGroupMember -GroupId $group.Id -DirectoryObjectId $user.Id
-```
+*Figure 18. The main part of New-StaffAccount.ps1 with short notes.*
 
 The first password is created at random inside the script. It is never shown, written to a log or returned. The new employee gets a first password from the service desk on the first day, and must change it at the first sign-in.
 
@@ -298,7 +296,17 @@ The script creates the account, but somebody still has to read the email, check 
 
 The settings of the robot, such as the address of HR, the known departments and the folder for handled requests, are kept in `Data/Config.xlsx`. The client ID, the tenant ID and the certificate thumbprint from Section 6 are not in the project. They are stored as three assets in UiPath Orchestrator and read when the robot starts.
 
-The numbers in Figure 16 show the main steps of `Main.xaml`:
+The assets are created in Orchestrator under **Assets**, as type Text (Figure 19):
+
+1. The page **Assets**.
+2. The folder **My Workspace**, where the robot runs.
+3. The three assets of this project. The values are blacked out here.
+
+![The Orchestrator assets of the robot](Screenshots/orchestrator-assets.png)
+
+*Figure 19. The three P06 assets in UiPath Orchestrator.*
+
+The numbers in Figure 20 show the main steps of `Main.xaml`:
 
 1. **Get Inbox Emails** reads the Inbox of the mailbox.
 2. **Request From HR?** handles only the emails from HR with the right subject.
@@ -309,7 +317,7 @@ The numbers in Figure 16 show the main steps of `Main.xaml`:
 
 ![The main workflow of the robot](Screenshots/studio-main-workflow.png)
 
-*Figure 16. Main.xaml in UiPath Studio, with the loop over the emails opened.*
+*Figure 20. Main.xaml in UiPath Studio, with the loop over the emails opened.*
 
 If something goes wrong with one request, the error is written to the log, the request stays in the Inbox, and the robot continues with the next email. No request is moved to "Hanterade" without an answer.
 
@@ -319,7 +327,7 @@ If something goes wrong with one request, the error is written to the log, the r
 
 **Problem 7: UiPath must run the script and understand the result.** The robot should not click in the admin center, and it must know if the account was created, already existed, or failed.
 
-*Solution: one Invoke Power Shell activity.* The workflow `CreateAccount.xaml` runs `New-StaffAccount.ps1` from the project folder with the activity **Invoke Power Shell** (Figure 17):
+*Solution: one Invoke Power Shell activity.* The workflow `CreateAccount.xaml` runs `New-StaffAccount.ps1` from the project folder with the activity **Invoke Power Shell** (Figure 21):
 
 1. **Run New-StaffAccount.ps1**: the command text is the path to the script.
 2. **Parameters**: the nine values for the script. The names, the title and the department come from the form. The IDs come from the Orchestrator assets, and the domain and the license from the settings file.
@@ -329,7 +337,7 @@ If something goes wrong with one request, the error is written to the log, the r
 
 ![The Invoke Power Shell activity](Screenshots/studio-invoke-powershell.png)
 
-*Figure 17. CreateAccount.xaml with the properties of Invoke Power Shell.*
+*Figure 21. CreateAccount.xaml with the properties of Invoke Power Shell.*
 
 **Problem 8: HR gets no answer.** In Section 3, HR sent the same request again because nobody answered.
 
@@ -345,7 +353,7 @@ The answer is sent from the mailbox of Andreas Henriksson to Frida Sjöberg at H
 
 The robot was tested with the same six requests from HR as in Section 2. The account of Elsa Lindqvist that was created by hand in Section 2 was deleted first, so that all six requests were handled in the same situation as on Friday morning. The robot was then started once from UiPath Studio.
 
-The Output panel shows how each request was handled (Figure 18):
+The Output panel shows how each request was handled (Figure 22):
 
 1. The first request for Elsa Lindqvist: the script returned **Created**. Johan Bergström, Amira Hassan and Oskar Wikström were created in the same way.
 2. The request for Sara Nilsson: the check found that **Avdelning** is missing, so the script was not run.
@@ -354,63 +362,63 @@ The Output panel shows how each request was handled (Figure 18):
 
 ![The Output panel after the run](Screenshots/studio-run-output.png)
 
-*Figure 18. The run of the robot in UiPath Studio. The six requests took 1 minute and 13 seconds.*
+*Figure 22. The run of the robot in UiPath Studio. The six requests took 1 minute and 13 seconds.*
 
-The mailbox shows the same result (Figure 19):
+The mailbox shows the same result (Figure 23):
 
 1. Only the 2 emails that are not from HR are left in the Inbox.
 2. All six requests are in "Hanterade".
 
 ![The mailbox after the run](Screenshots/outlook-andreas-after-run.png)
 
-*Figure 19. The folder Hanterade after the run.*
+*Figure 23. The folder Hanterade after the run.*
 
-HR got one answer for each request (Figure 20):
+HR got one answer for each request (Figure 24):
 
 1. Six answers, one for each request, including the second request for Elsa Lindqvist.
 2. The answer for Johan Bergström, with his username, his department group and the start date. No password is in the email.
 
 ![The answers to HR](Screenshots/outlook-frida-answers.png)
 
-*Figure 20. The answers from the robot in the Inbox of Frida Sjöberg at HR.*
+*Figure 24. The answers from the robot in the Inbox of Frida Sjöberg at HR.*
 
-The answer for Sara Nilsson tells HR exactly what to do (Figure 21):
+The answer for Sara Nilsson tells HR exactly what to do (Figure 25):
 
 1. The field Avdelning is missing, the request should be sent again, and no account was created.
 
 ![The answer for the incomplete request](Screenshots/outlook-frida-sara-answer.png)
 
-*Figure 21. The answer for Sara Nilsson.*
+*Figure 25. The answer for Sara Nilsson.*
 
-In the Microsoft Entra admin center, the four new accounts are in the list of users (Figure 22):
+In the Microsoft Entra admin center, the four new accounts are in the list of users (Figure 26):
 
 1. Amira Hassan, Elsa Lindqvist, Johan Bergström and Oskar Wikström. There is only one account for Elsa Lindqvist, and none for Sara Nilsson.
 
 ![The new users](Screenshots/entra-new-users.png)
 
-*Figure 22. The users after the run.*
+*Figure 26. The users after the run.*
 
-The audit log of Amira Hassan shows who created the account (Figure 23):
+The audit log of Amira Hassan shows who created the account (Figure 27):
 
 1. **P06 Staff Account Robot** set the password profile, added the user, set the license and added the user to the group, all within three seconds. Nobody signed in to the admin center. The ID of the group is blacked out here.
 
 ![The audit log of a new user](Screenshots/entra-amira-audit-log.png)
 
-*Figure 23. The audit log of Amira Hassan.*
+*Figure 27. The audit log of Amira Hassan.*
 
-The account is complete, with the group of the department (Figure 24) and the license (Figure 25):
+The account is complete, with the group of the department (Figure 28) and the license (Figure 29):
 
 1. **Akuten - Personal**, the group of her department.
 
 ![The groups of a new user](Screenshots/entra-amira-groups.png)
 
-*Figure 24. The groups of Amira Hassan. The object IDs are blacked out here.*
+*Figure 28. The groups of Amira Hassan. The object IDs are blacked out here.*
 
 1. **Microsoft 365 Business Standard** is active.
 
 ![The license of a new user](Screenshots/entra-amira-license.png)
 
-*Figure 25. The license of Amira Hassan.*
+*Figure 29. The license of Amira Hassan.*
 
 ### 8.1 Before and After
 
@@ -428,12 +436,51 @@ The account is complete, with the group of the department (Figure 24) and the li
 
 | Goal | Result | Shown in |
 |---|---|---|
-| **No typing** | Met. All values came from the form in the email | Figures 18, 20 |
-| **Checked before use** | Met. The request for Sara Nilsson was stopped before anything was created | Figures 18, 21, 22 |
-| **Correct group** | Met. Each new user is a member of the group of the department | Figures 20, 24 |
-| **Clear answer to HR** | Met. Six requests got six answers | Figure 20 |
-| **No second account** | Met. The second request for Elsa Lindqvist was answered with "already exists" | Figures 18, 22 |
-| **No password on the screen** | Met. The password is not in the log, in the answer or on any screen | Figures 18, 20 |
-| **No clicking in a web page** | Met. The account was created by the app through Microsoft Graph | Figure 23 |
+| **No typing** | Met. All values came from the form in the email | Figures 22, 24 |
+| **Checked before use** | Met. The request for Sara Nilsson was stopped before anything was created | Figures 22, 25, 26 |
+| **Correct group** | Met. Each new user is a member of the group of the department | Figures 24, 28 |
+| **Clear answer to HR** | Met. Six requests got six answers | Figure 24 |
+| **No second account** | Met. The second request for Elsa Lindqvist was answered with "already exists" | Figures 22, 26 |
+| **No password on the screen** | Met. The password is not in the log, in the answer or on any screen | Figures 22, 24 |
+| **No clicking in a web page** | Met. The account was created by the app through Microsoft Graph | Figure 27 |
+
+### 8.3 Removing the Access of the Robot
+
+An app with permissions to create users should not stay active when it is no longer used. In the Microsoft Entra admin center, the page of the app registration offers two options:
+
+- **Deactivate:** the app and its settings stay, but it cannot get new tokens, so the script cannot sign in anymore. **Activate** turns it on again.
+- **Delete:** the app is removed together with its permissions and its certificate. For 30 days it can still be restored under **Deleted applications**.
+
+At the end of this project, P06 Staff Account Robot was first deactivated (Figure 30):
+
+1. **Activate** and **Delete** are the actions for a deactivated app.
+2. The message that the app can still be managed but cannot get new tokens.
+3. **State: Deactivated**. The tenant ID is blacked out here.
+4. The confirmation of the deactivation.
+
+![The deactivated app registration](Screenshots/entra-app-deactivated.png)
+
+*Figure 30. P06 Staff Account Robot after Deactivate.*
+
+Because the robot is not used anymore, the app was then deleted (Figure 31):
+
+1. The confirmation that the app was deleted.
+2. **Deleted applications** keeps the app for 30 days, and **Deactivated applications** lists the apps that are only turned off.
+
+![The deleted app registration](Screenshots/entra-app-deleted.png)
+
+*Figure 31. App registrations after Delete.*
+
+Admin consent can also be given to the tools of Microsoft. **Microsoft Graph Command Line Tools** is the app that is used when a person signs in to Microsoft Graph PowerShell. For the work with the department groups, it had the permission **Group.ReadWrite.All** with admin consent. This permission is not needed anymore, so it was revoked under **Enterprise applications**, **Microsoft Graph Command Line Tools**, **Permissions** (Figure 32):
+
+1. The tab **Admin consent**, filtered on "Group".
+2. **Group.ReadWrite.All**, granted by an administrator for the whole organization.
+3. **Revoke permission** in the menu of the permission removes it.
+
+![Revoking an admin consent](Screenshots/entra-revoke-consent.png)
+
+*Figure 32. Revoking Group.ReadWrite.All for Microsoft Graph Command Line Tools.*
+
+The certificate was also removed from the robot computer, and the three assets were removed from Orchestrator. Nothing that can sign in as the robot is left.
 
 Requests from HR used to be copied by hand into the admin center, and HR never got an answer. Now UiPath reads and checks each request, one PowerShell script creates the account through Microsoft Graph, and HR gets a clear answer for every request. Six requests were handled in about one minute, without a single value typed by hand.
