@@ -1,5 +1,7 @@
 # P06 - PowerShell Creates Accounts for New Staff
 
+![Staff account onboarding with UiPath, PowerShell and Microsoft Graph](Project%20Record/Screenshots/p06-staff-account-onboarding.png)
+
 A UiPath and PowerShell project for a fictional Swedish hospital. HR sends an email for every new employee, and IT created each Microsoft 365 account by hand in the admin center. Now a UiPath robot reads and checks the request, one PowerShell script creates the account through Microsoft Graph, and HR gets an answer for every request.
 
 All data in this project is fictional.
