@@ -1,5 +1,7 @@
 # P05 - Outlook Rules Keep the Robot's Inbox Clean
 
+![Robot mailbox automation with Outlook rules and UiPath](Project%20Record/Screenshots/p05-outlook-rules-robot-mailbox.png)
+
 A UiPath and Outlook project for a fictional Swedish hospital. Out-of-office replies and bounce messages landed in the shared invoice mailbox, and the invoice robot treated them as supplier emails. One Outlook rule on the mailbox now sorts them out before the robot runs, and the robot itself is not changed.
 
 All data in this project is fictional.

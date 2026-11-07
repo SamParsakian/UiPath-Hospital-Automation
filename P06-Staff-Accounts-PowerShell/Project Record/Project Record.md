@@ -1,5 +1,7 @@
 # P06 - PowerShell Creates Accounts for New Staff
 
+![Staff account onboarding with UiPath, PowerShell and Microsoft Graph](Screenshots/p06-staff-account-onboarding.png)
+
 ## 1. Project Goal
 
 The goal of this project is to create the Microsoft 365 accounts for new hospital staff from the request that HR sends by email. Today, every account is created by hand in the admin portal.
