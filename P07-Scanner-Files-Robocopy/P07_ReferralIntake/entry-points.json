@@ -1,0 +1,41 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "entryPoints": [
+    {
+      "filePath": "Main.xaml",
+      "uniqueId": "bf7c3389-a9fd-4dad-8f59-99577c551a3b",
+      "type": "process",
+      "input": {
+        "type": "object",
+        "properties": {
+          "in_ShareFolder": {
+            "type": "string",
+            "x-default-expression": "\"\\\\100.99.72.90\\HospitalShare\\Scanner\\Referrals\"",
+            "default": "\\\\100.99.72.90\\HospitalShare\\Scanner\\Referrals"
+          },
+          "in_WorkFolder": {
+            "type": "string",
+            "x-default-expression": "\"C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Referrals\"",
+            "default": "C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Referrals"
+          },
+          "in_ListFolder": {
+            "type": "string",
+            "x-default-expression": "\"C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Lists\"",
+            "default": "C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Lists"
+          },
+          "in_LogFolder": {
+            "type": "string",
+            "x-default-expression": "\"C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Logs\"",
+            "default": "C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Logs"
+          },
+          "in_ListDate": {
+            "type": "string",
+            "x-default-expression": "\"\"",
+            "default": ""
+          }
+        },
+        "required": []
+      }
+    }
+  ]
+}
