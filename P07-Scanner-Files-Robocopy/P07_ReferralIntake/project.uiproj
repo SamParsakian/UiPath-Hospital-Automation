@@ -1,0 +1,6 @@
+{
+  "Name": "P07_ReferralIntake",
+  "ProjectType": "Process",
+  "Description": "Every morning, brings the new scanned referrals from the department share to the robot's work folder and adds each one to the daily referral list for the coordination team.",
+  "MainFile": "Main.xaml"
+}
