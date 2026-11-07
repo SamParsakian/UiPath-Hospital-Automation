@@ -274,11 +274,17 @@ The installed parts are shown with one command (Figure 17):
 4. It gives the user the Microsoft 365 license.
 5. It adds the user to the group of the department.
 
-Figure 18 shows the main part of the script, with the most important commands marked. All commands with **Mg** in the name come from the Microsoft Graph module. The full script is in the project folder.
+The whole script was written for this project and is about 100 lines long. Figure 18 shows all of it, with one short note for each part: the help text, the parameters from the robot, the sign-in, the five steps, and the answer to the robot.
+
+![The whole New-StaffAccount.ps1 script](Screenshots/script-overview.png)
+
+*Figure 18. New-StaffAccount.ps1 from the first to the last line, with its parts.*
+
+Figure 19 shows the main part of the script in more detail, with the most important commands marked. All commands with **Mg** in the name come from the Microsoft Graph module. The full script is in the project folder.
 
 ![The main part of New-StaffAccount.ps1](Screenshots/script-main-part.png)
 
-*Figure 18. The main part of New-StaffAccount.ps1 with short notes.*
+*Figure 19. The main part of New-StaffAccount.ps1 with short notes.*
 
 The first password is created at random inside the script. It is never shown, written to a log or returned. The new employee gets a first password from the service desk on the first day, and must change it at the first sign-in.
 
@@ -294,9 +300,21 @@ The script creates the account, but somebody still has to read the email, check 
 
 *Solution: the robot reads the form in the email.* The main workflow `Main.xaml` gets the emails from the Inbox and handles the oldest one first. Only emails from HR with a subject that starts with "Ny medarbetare:" are handled. All other emails stay in the Inbox. For each request, the workflow `ReadRequest.xaml` finds each field of the form by its label, for example the text after "Förnamn:".
 
-The settings of the robot, such as the address of HR, the known departments and the folder for handled requests, are kept in `Data/Config.xlsx`. The client ID, the tenant ID and the certificate thumbprint from Section 6 are not in the project. They are stored as three assets in UiPath Orchestrator and read when the robot starts.
+The settings of the robot, such as the address of HR, the known departments and the folder for handled requests, are kept in `Data/Config.xlsx`. The file was made for this project, with one setting per row, so a setting can be changed without changing a workflow (Figure 20):
 
-The assets are created in Orchestrator under **Assets**, as type Text (Figure 19):
+1. The file is in the folder **Data** of the project.
+2. Each row has a **Name**, a **Value** and a **Description**. The robot reads the sheet **Settings** into a list of settings by name.
+3. **Departments**: the known departments for the check of the form. A new department is one more name here, and one more group.
+4. **ReplyRecipient**: the address that gets the answers for HR.
+5. **ScriptPath**: where the PowerShell script is, inside the project.
+
+![The settings file of the robot](Screenshots/studio-config-settings.png)
+
+*Figure 20. Config.xlsx in UiPath Studio, with the settings of the robot.*
+
+The client ID, the tenant ID and the certificate thumbprint from Section 6 are not in the project. They are stored as three assets in UiPath Orchestrator and read when the robot starts.
+
+The assets are created in Orchestrator under **Assets**, as type Text (Figure 21):
 
 1. The page **Assets**.
 2. The folder **My Workspace**, where the robot runs.
@@ -304,9 +322,9 @@ The assets are created in Orchestrator under **Assets**, as type Text (Figure 19
 
 ![The Orchestrator assets of the robot](Screenshots/orchestrator-assets.png)
 
-*Figure 19. The three P06 assets in UiPath Orchestrator.*
+*Figure 21. The three P06 assets in UiPath Orchestrator.*
 
-The numbers in Figure 20 show the main steps of `Main.xaml`:
+The numbers in Figure 22 show the main steps of `Main.xaml`:
 
 1. **Get Inbox Emails** reads the Inbox of the mailbox.
 2. **Request From HR?** handles only the emails from HR with the right subject.
@@ -317,7 +335,7 @@ The numbers in Figure 20 show the main steps of `Main.xaml`:
 
 ![The main workflow of the robot](Screenshots/studio-main-workflow.png)
 
-*Figure 20. Main.xaml in UiPath Studio, with the loop over the emails opened.*
+*Figure 22. Main.xaml in UiPath Studio, with the loop over the emails opened.*
 
 If something goes wrong with one request, the error is written to the log, the request stays in the Inbox, and the robot continues with the next email. No request is moved to "Hanterade" without an answer.
 
@@ -327,7 +345,7 @@ If something goes wrong with one request, the error is written to the log, the r
 
 **Problem 7: UiPath must run the script and understand the result.** The robot should not click in the admin center, and it must know if the account was created, already existed, or failed.
 
-*Solution: one Invoke Power Shell activity.* The workflow `CreateAccount.xaml` runs `New-StaffAccount.ps1` from the project folder with the activity **Invoke Power Shell** (Figure 21):
+*Solution: one Invoke Power Shell activity.* The workflow `CreateAccount.xaml` runs `New-StaffAccount.ps1` from the project folder with the activity **Invoke Power Shell** (Figure 23):
 
 1. **Run New-StaffAccount.ps1**: the command text is the path to the script.
 2. **Parameters**: the nine values for the script. The names, the title and the department come from the form. The IDs come from the Orchestrator assets, and the domain and the license from the settings file.
@@ -337,7 +355,7 @@ If something goes wrong with one request, the error is written to the log, the r
 
 ![The Invoke Power Shell activity](Screenshots/studio-invoke-powershell.png)
 
-*Figure 21. CreateAccount.xaml with the properties of Invoke Power Shell.*
+*Figure 23. CreateAccount.xaml with the properties of Invoke Power Shell.*
 
 **Problem 8: HR gets no answer.** In Section 3, HR sent the same request again because nobody answered.
 
@@ -353,7 +371,7 @@ The answer is sent from the mailbox of Andreas Henriksson to Frida Sjöberg at H
 
 The robot was tested with the same six requests from HR as in Section 2. The account of Elsa Lindqvist that was created by hand in Section 2 was deleted first, so that all six requests were handled in the same situation as on Friday morning. The robot was then started once from UiPath Studio.
 
-The Output panel shows how each request was handled (Figure 22):
+The Output panel shows how each request was handled (Figure 24):
 
 1. The first request for Elsa Lindqvist: the script returned **Created**. Johan Bergström, Amira Hassan and Oskar Wikström were created in the same way.
 2. The request for Sara Nilsson: the check found that **Avdelning** is missing, so the script was not run.
@@ -362,63 +380,63 @@ The Output panel shows how each request was handled (Figure 22):
 
 ![The Output panel after the run](Screenshots/studio-run-output.png)
 
-*Figure 22. The run of the robot in UiPath Studio. The six requests took 1 minute and 13 seconds.*
+*Figure 24. The run of the robot in UiPath Studio. The six requests took 1 minute and 13 seconds.*
 
-The mailbox shows the same result (Figure 23):
+The mailbox shows the same result (Figure 25):
 
 1. Only the 2 emails that are not from HR are left in the Inbox.
 2. All six requests are in "Hanterade".
 
 ![The mailbox after the run](Screenshots/outlook-andreas-after-run.png)
 
-*Figure 23. The folder Hanterade after the run.*
+*Figure 25. The folder Hanterade after the run.*
 
-HR got one answer for each request (Figure 24):
+HR got one answer for each request (Figure 26):
 
 1. Six answers, one for each request, including the second request for Elsa Lindqvist.
 2. The answer for Johan Bergström, with his username, his department group and the start date. No password is in the email.
 
 ![The answers to HR](Screenshots/outlook-frida-answers.png)
 
-*Figure 24. The answers from the robot in the Inbox of Frida Sjöberg at HR.*
+*Figure 26. The answers from the robot in the Inbox of Frida Sjöberg at HR.*
 
-The answer for Sara Nilsson tells HR exactly what to do (Figure 25):
+The answer for Sara Nilsson tells HR exactly what to do (Figure 27):
 
 1. The field Avdelning is missing, the request should be sent again, and no account was created.
 
 ![The answer for the incomplete request](Screenshots/outlook-frida-sara-answer.png)
 
-*Figure 25. The answer for Sara Nilsson.*
+*Figure 27. The answer for Sara Nilsson.*
 
-In the Microsoft Entra admin center, the four new accounts are in the list of users (Figure 26):
+In the Microsoft Entra admin center, the four new accounts are in the list of users (Figure 28):
 
 1. Amira Hassan, Elsa Lindqvist, Johan Bergström and Oskar Wikström. There is only one account for Elsa Lindqvist, and none for Sara Nilsson.
 
 ![The new users](Screenshots/entra-new-users.png)
 
-*Figure 26. The users after the run.*
+*Figure 28. The users after the run.*
 
-The audit log of Amira Hassan shows who created the account (Figure 27):
+The audit log of Amira Hassan shows who created the account (Figure 29):
 
 1. **P06 Staff Account Robot** set the password profile, added the user, set the license and added the user to the group, all within three seconds. Nobody signed in to the admin center. The ID of the group is blacked out here.
 
 ![The audit log of a new user](Screenshots/entra-amira-audit-log.png)
 
-*Figure 27. The audit log of Amira Hassan.*
+*Figure 29. The audit log of Amira Hassan.*
 
-The account is complete, with the group of the department (Figure 28) and the license (Figure 29):
+The account is complete, with the group of the department (Figure 30) and the license (Figure 31):
 
 1. **Akuten - Personal**, the group of her department.
 
 ![The groups of a new user](Screenshots/entra-amira-groups.png)
 
-*Figure 28. The groups of Amira Hassan. The object IDs are blacked out here.*
+*Figure 30. The groups of Amira Hassan. The object IDs are blacked out here.*
 
 1. **Microsoft 365 Business Standard** is active.
 
 ![The license of a new user](Screenshots/entra-amira-license.png)
 
-*Figure 29. The license of Amira Hassan.*
+*Figure 31. The license of Amira Hassan.*
 
 ### 8.1 Before and After
 
@@ -436,13 +454,13 @@ The account is complete, with the group of the department (Figure 28) and the li
 
 | Goal | Result | Shown in |
 |---|---|---|
-| **No typing** | Met. All values came from the form in the email | Figures 22, 24 |
-| **Checked before use** | Met. The request for Sara Nilsson was stopped before anything was created | Figures 22, 25, 26 |
-| **Correct group** | Met. Each new user is a member of the group of the department | Figures 24, 28 |
-| **Clear answer to HR** | Met. Six requests got six answers | Figure 24 |
-| **No second account** | Met. The second request for Elsa Lindqvist was answered with "already exists" | Figures 22, 26 |
-| **No password on the screen** | Met. The password is not in the log, in the answer or on any screen | Figures 22, 24 |
-| **No clicking in a web page** | Met. The account was created by the app through Microsoft Graph | Figure 27 |
+| **No typing** | Met. All values came from the form in the email | Figures 24, 26 |
+| **Checked before use** | Met. The request for Sara Nilsson was stopped before anything was created | Figures 24, 27, 28 |
+| **Correct group** | Met. Each new user is a member of the group of the department | Figures 26, 30 |
+| **Clear answer to HR** | Met. Six requests got six answers | Figure 26 |
+| **No second account** | Met. The second request for Elsa Lindqvist was answered with "already exists" | Figures 24, 28 |
+| **No password on the screen** | Met. The password is not in the log, in the answer or on any screen | Figures 24, 26 |
+| **No clicking in a web page** | Met. The account was created by the app through Microsoft Graph | Figure 29 |
 
 ### 8.3 Removing the Access of the Robot
 
@@ -451,7 +469,7 @@ An app with permissions to create users should not stay active when it is no lon
 - **Deactivate:** the app and its settings stay, but it cannot get new tokens, so the script cannot sign in anymore. **Activate** turns it on again.
 - **Delete:** the app is removed together with its permissions and its certificate. For 30 days it can still be restored under **Deleted applications**.
 
-At the end of this project, P06 Staff Account Robot was first deactivated (Figure 30):
+At the end of this project, P06 Staff Account Robot was first deactivated (Figure 32):
 
 1. **Activate** and **Delete** are the actions for a deactivated app.
 2. The message that the app can still be managed but cannot get new tokens.
@@ -460,18 +478,18 @@ At the end of this project, P06 Staff Account Robot was first deactivated (Figur
 
 ![The deactivated app registration](Screenshots/entra-app-deactivated.png)
 
-*Figure 30. P06 Staff Account Robot after Deactivate.*
+*Figure 32. P06 Staff Account Robot after Deactivate.*
 
-Because the robot is not used anymore, the app was then deleted (Figure 31):
+Because the robot is not used anymore, the app was then deleted (Figure 33):
 
 1. The confirmation that the app was deleted.
 2. **Deleted applications** keeps the app for 30 days, and **Deactivated applications** lists the apps that are only turned off.
 
 ![The deleted app registration](Screenshots/entra-app-deleted.png)
 
-*Figure 31. App registrations after Delete.*
+*Figure 33. App registrations after Delete.*
 
-Admin consent can also be given to the tools of Microsoft. **Microsoft Graph Command Line Tools** is the app that is used when a person signs in to Microsoft Graph PowerShell. For the work with the department groups, it had the permission **Group.ReadWrite.All** with admin consent. This permission is not needed anymore, so it was revoked under **Enterprise applications**, **Microsoft Graph Command Line Tools**, **Permissions** (Figure 32):
+Admin consent can also be given to the tools of Microsoft. **Microsoft Graph Command Line Tools** is the app that is used when a person signs in to Microsoft Graph PowerShell. For the work with the department groups, it had the permission **Group.ReadWrite.All** with admin consent. This permission is not needed anymore, so it was revoked under **Enterprise applications**, **Microsoft Graph Command Line Tools**, **Permissions** (Figure 34):
 
 1. The tab **Admin consent**, filtered on "Group".
 2. **Group.ReadWrite.All**, granted by an administrator for the whole organization.
@@ -479,7 +497,7 @@ Admin consent can also be given to the tools of Microsoft. **Microsoft Graph Com
 
 ![Revoking an admin consent](Screenshots/entra-revoke-consent.png)
 
-*Figure 32. Revoking Group.ReadWrite.All for Microsoft Graph Command Line Tools.*
+*Figure 34. Revoking Group.ReadWrite.All for Microsoft Graph Command Line Tools.*
 
 The certificate was also removed from the robot computer, and the three assets were removed from Orchestrator. Nothing that can sign in as the robot is left.
 
