@@ -1,8 +1,9 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Main" this:Main.in_ShareFolder="\\100.99.72.90\HospitalShare\Scanner\Referrals" this:Main.in_WorkFolder="C:\Users\Public\Documents\P07_ReferralIntake\Referrals" this:Main.in_ListFolder="C:\Users\Public\Documents\P07_ReferralIntake\Lists" this:Main.in_ListDate="" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:si="clr-namespace:System.IO;assembly=System.Private.CoreLib" xmlns:this="clr-namespace:" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Main" this:Main.in_ShareFolder="\\100.99.72.90\HospitalShare\Scanner\Referrals" this:Main.in_WorkFolder="C:\Users\Public\Documents\P07_ReferralIntake\Referrals" this:Main.in_ListFolder="C:\Users\Public\Documents\P07_ReferralIntake\Lists" this:Main.in_LogFolder="C:\Users\Public\Documents\P07_ReferralIntake\Logs" this:Main.in_ListDate="" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:si="clr-namespace:System.IO;assembly=System.Private.CoreLib" xmlns:this="clr-namespace:" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_ShareFolder" Type="InArgument(x:String)" />
     <x:Property Name="in_WorkFolder" Type="InArgument(x:String)" />
     <x:Property Name="in_ListFolder" Type="InArgument(x:String)" />
+    <x:Property Name="in_LogFolder" Type="InArgument(x:String)" />
     <x:Property Name="in_ListDate" Type="InArgument(x:String)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
@@ -65,7 +66,13 @@
     <Sequence.Variables>
       <Variable x:TypeArguments="s:DateTime" Name="startTime" />
       <Variable x:TypeArguments="x:String" Name="listDate" />
-      <Variable x:TypeArguments="x:Int32" Name="copiedCount" Default="0" />
+      <Variable x:TypeArguments="x:String" Name="logPath" />
+      <Variable x:TypeArguments="x:String" Name="scriptPath" />
+      <Variable x:TypeArguments="sco:Collection(x:Int32)" Name="scriptResults" />
+      <Variable x:TypeArguments="x:Int32" Name="exitCode" />
+      <Variable x:TypeArguments="x:String" Name="logText" />
+      <Variable x:TypeArguments="s:String[]" Name="logLines" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="listedNames" Default="[New List(Of String)]" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_ReferralList" />
       <Variable x:TypeArguments="x:String" Name="csvText" />
       <Variable x:TypeArguments="x:String" Name="listPath" />
@@ -83,53 +90,79 @@
         </Sequence>
       </If.Else>
     </If>
-    <ui:LogMessage DisplayName="Log Start" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;Referral intake started for {listDate}. Copying the scanner folder {in_ShareFolder}&quot;]" />
+    <ui:LogMessage DisplayName="Log Start" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[$&quot;Referral intake started for {listDate}. Robocopy copies the new scans from {in_ShareFolder}&quot;]" />
     <ui:CreateDirectory DisplayName="Create Work Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[in_WorkFolder]" />
     <ui:CreateDirectory DisplayName="Create List Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_2" Path="[in_ListFolder]" />
-    <ui:ForEachFileX DisplayName="For Each Scan in Scanner Folder" Filter="*.pdf" Folder="[in_ShareFolder]" IncludeSubDirectories="False" OrderBy="NameAscFirst" SkipFolderWithoutPermission="False" sap2010:WorkflowViewState.IdRef="ForEachFileX_1">
-      <ui:ForEachFileX.Body>
-        <ActivityAction x:TypeArguments="si:FileInfo, x:Int32">
-          <ActivityAction.Argument1>
-            <DelegateInArgument x:TypeArguments="si:FileInfo" Name="CurrentFile" />
-          </ActivityAction.Argument1>
-          <ActivityAction.Argument2>
-            <DelegateInArgument x:TypeArguments="x:Int32" Name="CurrentIndex" />
-          </ActivityAction.Argument2>
-          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_4">
-            <ui:CopyFile DisplayName="Copy Scan to Work Folder" sap2010:WorkflowViewState.IdRef="CopyFile_1" Path="[CurrentFile.FullName]" Destination="[in_WorkFolder]" Overwrite="True" />
-            <Assign x:TypeArguments="x:Int32" DisplayName="Count Copied Scan" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[copiedCount]" Value="[copiedCount + 1]" />
-          </Sequence>
-        </ActivityAction>
-      </ui:ForEachFileX.Body>
-    </ui:ForEachFileX>
-    <ui:LogMessage DisplayName="Log Copy Done" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[$&quot;Copy finished: {copiedCount} scans copied in {(Now - startTime).ToString(&quot;hh\:mm\:ss&quot;)}&quot;]" />
+    <ui:CreateDirectory DisplayName="Create Log Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_3" Path="[in_LogFolder]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Set Log Path" sap2010:WorkflowViewState.IdRef="Assign`1_7" To="[logPath]" Value="[Path.Combine(in_LogFolder, &quot;robocopy_&quot; &amp; listDate &amp; &quot;.log&quot;)]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Script Path" sap2010:WorkflowViewState.IdRef="Assign`1_8" To="[scriptPath]" Value="[Path.Combine(Environment.CurrentDirectory, &quot;Scripts\Copy-NewReferrals.ps1&quot;)]" />
+    <ui:InvokePowerShell x:TypeArguments="x:Int32" ContinueOnError="{x:Null}" CommandText="[scriptPath]" DisplayName="Run Copy-NewReferrals.ps1" sap2010:WorkflowViewState.IdRef="InvokePowerShell`1_1" Output="[scriptResults]" PowerShellProcess="WindowsPowerShell64">
+      <ui:InvokePowerShell.Parameters>
+        <InArgument x:TypeArguments="x:String" x:Key="Source">[in_ShareFolder]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="Destination">[in_WorkFolder]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="LogFile">[logPath]</InArgument>
+      </ui:InvokePowerShell.Parameters>
+      <ui:InvokePowerShell.PowerShellVariables>
+        <scg:Dictionary x:TypeArguments="x:String, Argument" />
+      </ui:InvokePowerShell.PowerShellVariables>
+    </ui:InvokePowerShell>
+    <Assign x:TypeArguments="x:Int32" DisplayName="Get Exit Code" sap2010:WorkflowViewState.IdRef="Assign`1_9" To="[exitCode]" Value="[scriptResults(scriptResults.Count - 1)]" />
+    <ui:LogMessage DisplayName="Log Copy Done" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[$&quot;Robocopy finished with exit code {exitCode} in {(Now - startTime).ToString(&quot;hh\:mm\:ss&quot;)}. Log: {logPath}&quot;]" />
+    <If Condition="[exitCode &gt;= 8]" DisplayName="Copy Failed?" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_6">
+          <Throw DisplayName="Throw Copy Error" Exception="[New Exception($&quot;Robocopy could not copy all new scans (exit code {exitCode}). See the log {logPath}&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+        </Sequence>
+      </If.Then>
+    </If>
     <ui:BuildDataTable DataTable="[dt_ReferralList]" DisplayName="Build Referral List Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xD;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xD;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xD;&#xA;      &lt;xs:complexType&gt;&#xD;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xD;&#xA;          &lt;xs:element name=&quot;TableName&quot;&gt;&#xD;&#xA;            &lt;xs:complexType&gt;&#xD;&#xA;              &lt;xs:sequence&gt;&#xD;&#xA;                &lt;xs:element name=&quot;ReferralNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;ScanDate&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;                &lt;xs:element name=&quot;FileName&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xD;&#xA;              &lt;/xs:sequence&gt;&#xD;&#xA;            &lt;/xs:complexType&gt;&#xD;&#xA;          &lt;/xs:element&gt;&#xD;&#xA;        &lt;/xs:choice&gt;&#xD;&#xA;      &lt;/xs:complexType&gt;&#xD;&#xA;    &lt;/xs:element&gt;&#xD;&#xA;  &lt;/xs:schema&gt;&#xD;&#xA;&lt;/NewDataSet&gt;" />
-    <ui:ForEachFileX DisplayName="For Each Scan in Work Folder" Filter="*.pdf" Folder="[in_WorkFolder]" IncludeSubDirectories="False" OrderBy="NameAscFirst" SkipFolderWithoutPermission="False" sap2010:WorkflowViewState.IdRef="ForEachFileX_2">
-      <ui:ForEachFileX.Body>
-        <ActivityAction x:TypeArguments="si:FileInfo, x:Int32">
-          <ActivityAction.Argument1>
-            <DelegateInArgument x:TypeArguments="si:FileInfo" Name="CurrentFile" />
-          </ActivityAction.Argument1>
-          <ActivityAction.Argument2>
-            <DelegateInArgument x:TypeArguments="x:Int32" Name="CurrentIndex" />
-          </ActivityAction.Argument2>
+    <ui:ReadTextFile DisplayName="Read Robocopy Log" sap2010:WorkflowViewState.IdRef="ReadTextFile_1" FileName="[logPath]" Content="[logText]" />
+    <Assign x:TypeArguments="s:String[]" DisplayName="Split Log Into Lines" sap2010:WorkflowViewState.IdRef="Assign`1_10" To="[logLines]" Value="[logText.Split({vbCrLf}, StringSplitOptions.RemoveEmptyEntries)]" />
+    <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Line in Log" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[logLines]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:String">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:String" Name="logLine" />
+          </ActivityAction.Argument>
           <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_5">
-            <Sequence.Variables>
-              <Variable x:TypeArguments="s:String[]" Name="nameParts" />
-            </Sequence.Variables>
-            <Assign x:TypeArguments="s:String[]" DisplayName="Split File Name" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[nameParts]" Value="[Path.GetFileNameWithoutExtension(CurrentFile.Name).Split(&quot;_&quot;c)]" />
-            <ui:AddDataRow DataRow="{x:Null}" DisplayName="Add Referral to List" sap2010:WorkflowViewState.IdRef="AddDataRow_1">
-              <ui:AddDataRow.ArrayRow>
-                <InArgument x:TypeArguments="s:Object[]">[New Object() {nameParts(2), nameParts(1), CurrentFile.Name}]</InArgument>
-              </ui:AddDataRow.ArrayRow>
-              <ui:AddDataRow.DataTable>
-                <InOutArgument x:TypeArguments="sd:DataTable">[dt_ReferralList]</InOutArgument>
-              </ui:AddDataRow.DataTable>
-            </ui:AddDataRow>
+            <If Condition="[logLine.Contains(&quot;New File&quot;) OrElse logLine.Contains(&quot;Newer&quot;)]" DisplayName="Copied Scan?" sap2010:WorkflowViewState.IdRef="If_3">
+              <If.Then>
+                <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_7">
+                  <Sequence.Variables>
+                    <Variable x:TypeArguments="x:String" Name="fileName" />
+                  </Sequence.Variables>
+                  <Assign x:TypeArguments="x:String" DisplayName="Get File Name" sap2010:WorkflowViewState.IdRef="Assign`1_11" To="[fileName]" Value="[Path.GetFileName(logLine.Substring(logLine.LastIndexOf(vbTab) + 1).Trim())]" />
+                  <If Condition="[Not listedNames.Contains(fileName)]" DisplayName="Not Listed Yet?" sap2010:WorkflowViewState.IdRef="If_4">
+                    <If.Then>
+                      <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_8">
+                        <Sequence.Variables>
+                          <Variable x:TypeArguments="s:String[]" Name="nameParts" />
+                        </Sequence.Variables>
+                        <InvokeMethod DisplayName="Remember File Name" sap2010:WorkflowViewState.IdRef="InvokeMethod_1" MethodName="Add">
+                          <InvokeMethod.TargetObject>
+                            <InArgument x:TypeArguments="scg:List(x:String)">[listedNames]</InArgument>
+                          </InvokeMethod.TargetObject>
+                          <InArgument x:TypeArguments="x:String">[fileName]</InArgument>
+                        </InvokeMethod>
+                        <Assign x:TypeArguments="s:String[]" DisplayName="Split File Name" sap2010:WorkflowViewState.IdRef="Assign`1_5" To="[nameParts]" Value="[Path.GetFileNameWithoutExtension(fileName).Split(&quot;_&quot;c)]" />
+                        <ui:AddDataRow DataRow="{x:Null}" DisplayName="Add Referral to List" sap2010:WorkflowViewState.IdRef="AddDataRow_1">
+                          <ui:AddDataRow.ArrayRow>
+                            <InArgument x:TypeArguments="s:Object[]">[New Object() {nameParts(2), nameParts(1), fileName}]</InArgument>
+                          </ui:AddDataRow.ArrayRow>
+                          <ui:AddDataRow.DataTable>
+                            <InOutArgument x:TypeArguments="sd:DataTable">[dt_ReferralList]</InOutArgument>
+                          </ui:AddDataRow.DataTable>
+                        </ui:AddDataRow>
+                      </Sequence>
+                    </If.Then>
+                  </If>
+                </Sequence>
+              </If.Then>
+            </If>
           </Sequence>
         </ActivityAction>
-      </ui:ForEachFileX.Body>
-    </ui:ForEachFileX>
+      </ui:ForEach.Body>
+    </ui:ForEach>
     <ui:OutputDataTable DisplayName="Convert List to CSV Text" sap2010:WorkflowViewState.IdRef="OutputDataTable_1">
       <ui:OutputDataTable.DataTable>
         <InArgument x:TypeArguments="sd:DataTable">[dt_ReferralList]</InArgument>

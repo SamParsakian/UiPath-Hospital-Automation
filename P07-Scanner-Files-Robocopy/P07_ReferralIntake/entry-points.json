@@ -23,6 +23,11 @@
             "x-default-expression": "\"C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Lists\"",
             "default": "C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Lists"
           },
+          "in_LogFolder": {
+            "type": "string",
+            "x-default-expression": "\"C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Logs\"",
+            "default": "C:\\Users\\Public\\Documents\\P07_ReferralIntake\\Logs"
+          },
           "in_ListDate": {
             "type": "string",
             "x-default-expression": "\"\"",
