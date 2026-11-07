@@ -16,6 +16,21 @@ The project shows why copying files is a job for Robocopy, a copy tool that is p
 
 On Tuesday, 25 new scans meant that 3,298 files were copied in 1 minute and 27 seconds, and that the list had 3,298 rows.
 
+### 1.2 After - Robocopy Brings Only the New Scans
+
+1. **Scan the referrals:** The reception scans as before, to the same folder with the same file names.
+2. **Copy only the new scans:** The robot runs one PowerShell script with one Robocopy command. Robocopy compares the scanner folder with the work folder and copies only the scans that are not there yet.
+3. **Wait on a network break:** If the share cannot be reached, Robocopy waits 10 seconds and tries again, up to 10 times.
+4. **Keep a log:** Robocopy writes a log for every morning with each copied scan and a summary.
+5. **List only the new scans:** The robot reads the log and adds only the copied scans to the referral list.
+6. **Write the list:** The list is saved as before, with the same file name and the same columns.
+
+![The run of the robot with Robocopy on Tuesday](Screenshots/studio-output-tuesday-after.png)
+
+*Tuesday with Robocopy: the 25 new scans copied in 3 seconds, and a list with the 25 new referrals.*
+
+The old scans stay in the work folder and are not copied again, and a short network break no longer stops the morning list.
+
 ## 2. How the Referrals Reach the Coordination Team Today
 
 Referrals from other clinics arrive on paper. The reception scans each referral, and the scanner saves it as a PDF in the department share. The folder keeps every scan, so it grows every day. On Monday morning, 2 November, it held all scans since 4 May.
@@ -158,3 +173,147 @@ How it should look after the change:
 2. **Robocopy copies the scans:** one command copies only the new scans to the work folder, tries again after a network error, and writes a log.
 3. **UiPath builds the list:** the robot checks the result of Robocopy and adds only the scans that were copied this morning.
 4. **The list is written as today:** the same file name and the same columns for the coordination team.
+
+## 6. Robocopy in the Morning Robot
+
+Each problem from Sections 3 and 4 is solved by one part of the change. The scanner, the share and the list for the coordination team stay the same.
+
+**Problem 1:** Every scan in the folder was copied every morning.
+
+*Solution:* The copy is done by Robocopy, in a short PowerShell script `Scripts\Copy-NewReferrals.ps1` inside the robot project (Figure 9):
+
+1. The script gets three values from the robot: the scanner folder, the work folder and the path of the log.
+2. One Robocopy command copies the PDF files. With `/XO`, a scan that is already in the work folder is skipped, so only the new scans are copied.
+3. The script returns the exit code of Robocopy to the robot.
+
+![The script Copy-NewReferrals.ps1](Screenshots/vscode-copy-new-referrals.png)
+
+*Figure 9. The script with the Robocopy command and a comment for each option.*
+
+**Problem 2:** One network error stopped the whole run.
+
+*Solution:* With `/R:10 /W:10`, Robocopy waits 10 seconds and tries again, up to 10 times, so a break of about one and a half minutes does not stop the copy. The exit code tells the robot how the copy went: 0 to 7 means that the copy is complete, 8 or higher means that some scans could not be copied. Only in that case does the robot stop, with a message that names the log.
+
+**Problem 3:** Nothing showed which scans were copied.
+
+*Solution:* With `/LOG`, Robocopy writes a new log every morning, `robocopy_<date>.log`. The log has a line for each copied scan, every network error with its time, and a summary with the number of copied and skipped files.
+
+**Problem 4:** The list repeated every referral that was ever scanned.
+
+*Solution:* The robot no longer builds the list from the whole work folder. It reads the log of the morning and lists only the scans that Robocopy copied.
+
+The Copy File loop was replaced by these steps (Figure 10):
+
+1. **Run Copy-NewReferrals.ps1** is one Invoke Power Shell activity. It runs the script with the three values and gets the exit code back.
+2. **Copy Failed?** stops the robot when the exit code is 8 or higher.
+3. **Read Robocopy Log** reads the log of the morning.
+4. **For Each Line in Log** goes through the log line by line.
+5. **Write Referral List** saves the list as before.
+
+![The workflow after the change](Screenshots/studio-workflow-after.png)
+
+*Figure 10. The workflow of the robot with the Robocopy step.*
+
+Inside the loop, the robot finds the copied scans in the log (Figure 11):
+
+1. **For Each Line in Log** takes one line of the log at a time.
+2. **Copied Scan?** keeps only the lines where Robocopy wrote "New File" or "Newer". Error lines and the summary are skipped.
+3. **Get File Name** takes the file name from the end of the line.
+4. **Not Listed Yet?** makes sure that each scan is added only once, and then **Add Referral to List** adds the row as before.
+
+![The loop over the lines of the log](Screenshots/studio-for-each-line.png)
+
+*Figure 11. For Each Line in Log, with the check for copied scans.*
+
+## 7. Testing the Change
+
+The robot with Robocopy was run on the same three mornings as in Section 3, with the same scans in the scanner folder.
+
+### 7.1 Monday - The First Run
+
+On Monday, the work folder of the robot was still empty, so all scans were new for Robocopy (Figure 12):
+
+1. The robot starts the list for 2 November.
+2. Robocopy copies all 3,273 scans in 1 minute and 27 seconds, about the same time as Copy File. Exit code 1 means that files were copied without errors.
+3. The list is written with 3,273 referrals.
+
+![The output of the robot on Monday with Robocopy](Screenshots/studio-output-monday-after.png)
+
+*Figure 12. The first run with Robocopy on Monday morning.*
+
+This full copy is needed only once. After it, the old scans are already in the work folder.
+
+### 7.2 Tuesday - Only the New Scans
+
+On Tuesday, the 25 scans from Monday were new. The output in Section 1.2 shows that Robocopy finished in 3 seconds and that the list has 25 referrals. The list itself has only the new referrals (Figure 13):
+
+1. The 25 referrals scanned on Monday, from R-11897 to R-11934. No referral from May or from any other earlier day is in the list.
+
+![The referral list of Tuesday with Robocopy](Screenshots/excel-list-tuesday-after.png)
+
+*Figure 13. The list of Tuesday in Excel.*
+
+The log of the morning shows what Robocopy did (Figure 14):
+
+1. The options from the script, with `/XO /R:10 /W:10`.
+2. One "New File" line for each of the 25 copied scans.
+3. The summary: 3,298 files in the folder, 25 copied and 3,273 skipped.
+
+![The Robocopy log of Tuesday](Screenshots/notepad-robocopy-log-tuesday.png)
+
+*Figure 14. The Robocopy log of Tuesday, robocopy_2026-11-03.log.*
+
+### 7.3 Wednesday - A Network Break
+
+On Wednesday morning, the share could not be reached for about one and a half minutes, just when the robot started. This time, the run did not stop (Figure 15):
+
+1. The robot starts the list for 4 November.
+2. Robocopy finishes with exit code 1 after 1 minute and 23 seconds. Most of this time was spent waiting for the share.
+3. The list is written with the 25 referrals scanned on Tuesday.
+
+![The output of the robot on Wednesday with Robocopy](Screenshots/studio-output-wednesday-after.png)
+
+*Figure 15. The run on Wednesday morning, with a network break.*
+
+The log shows how Robocopy handled the break (Figure 16):
+
+1. Every 10 seconds, Robocopy wrote the error "The specified network name is no longer available" and tried again.
+2. When the share was back, the 25 new scans were copied.
+3. The summary: 3,323 files in the folder, 25 copied, 3,298 skipped and 0 failed.
+
+![The Robocopy log of Wednesday](Screenshots/notepad-robocopy-log-wednesday.png)
+
+*Figure 16. The Robocopy log of Wednesday, with the network errors and the copied scans.*
+
+The list folder now has a list for every morning (Figure 17):
+
+1. The lists of Monday, Tuesday and Wednesday. The lists of Tuesday and Wednesday are small, because they have only the new referrals.
+
+![The list folder after the three mornings](Screenshots/explorer-lists-after.png)
+
+*Figure 17. The list folder with three lists.*
+
+### 7.4 Before and After
+
+| Morning | Before: scans copied | Before: rows in the list | Before: run time | After: scans copied | After: rows in the list | After: run time |
+|---|---|---|---|---|---|---|
+| Monday, 2 November | 3,273 | 3,273 | 1 min 26 s | 3,273 | 3,273 | 1 min 28 s |
+| Tuesday, 3 November | 3,298 | 3,298 | 1 min 27 s | 25 | 25 | 3 s |
+| Wednesday, 4 November (network break) | Stopped | No list | Stopped after 26 s | 25 | 25 | 1 min 23 s |
+
+### 7.5 Goals
+
+| Goal | Result | Shown in |
+|---|---|---|
+| **Only new scans are copied** | 25 scans copied and 3,273 skipped on Tuesday | Figure 14 |
+| **Only new referrals in the list** | The list of Tuesday has the 25 new referrals and no old ones | Figure 13 |
+| **Safe on a network break** | Robocopy waited for the share and finished, and the list of Wednesday was written | Figures 15 and 16 |
+| **Traceable** | A log for every morning with each copied scan, each error and a summary | Figures 14 and 16 |
+| **Fast** | 3 seconds on Tuesday instead of 1 minute and 27 seconds | Section 1.2 |
+| **Same list for the team** | The same file name and the same columns ReferralNumber, ScanDate and FileName | Figure 13 |
+
+## 8. Closing
+
+The morning robot copied the whole scanner folder with Copy File every day. Old referrals came back in every list, and a short network break stopped the run with no list at all.
+
+Now one Robocopy command in a short script copies only the new scans, waits when the network is lost, and writes a log. The robot reads that log and gives the coordination team a list of only the new referrals, in seconds instead of minutes.
