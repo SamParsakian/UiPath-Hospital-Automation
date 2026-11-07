@@ -1,5 +1,7 @@
 # P04 - Hospital RPA Maintenance and Production Support
 
+![Hospital RPA production support: diagnose, fix, monitor and report](Project%20Record/Screenshots/p04-hospital-bot-maintenance.png)
+
 A UiPath support project for a fictional Swedish hospital. Six support tickets are handled from the ticket to the released fix: three on the finished invoice robot P02, and three on a new transfer robot that is built in this project with REFramework and an Orchestrator queue.
 
 All data in this project is fictional.

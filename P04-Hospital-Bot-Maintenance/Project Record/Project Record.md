@@ -1,5 +1,7 @@
 # P04 - Hospital RPA Maintenance and Production Support
 
+![Hospital RPA production support: diagnose, fix, monitor and report](Screenshots/p04-hospital-bot-maintenance.png)
+
 ## 1. Project Goal
 
 The goal of this project is to work as a junior UiPath developer in the support team of a fictional Swedish hospital. The team keeps the hospital robots working in daily use. When a robot fails or behaves differently than before, a support ticket arrives, and the problem is handled from the ticket to the released fix.
