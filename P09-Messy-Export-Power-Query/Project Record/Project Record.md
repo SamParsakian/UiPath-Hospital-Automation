@@ -52,7 +52,7 @@ The solution is to move the cleaning work from the UiPath robot into Power Query
 3. **Columns are found by name, not position:** Power Query finds the headings and uses column names such as "Telefon" instead of fixed positions. It does not matter whether "Telefon" is in column G or H.
 4. **One clean table is ready:** Power Query produces a table called `CleanAppointments`, with one row per appointment and the same eight columns every day.
 5. **The robot has less work:** Instead of running 30 cleaning activities, the UiPath robot refreshes the Excel file and reads `CleanAppointments`. It then creates the same reminder list as before, with the appointment counts per clinic and the patients without a phone number.
-6. **A missing column causes an error:** If a required column is missing, Power Query stops the refresh and shows an error that names the column. The robot no longer continues with a wrong list.
+6. **A missing column stops the robot:** If a required column is missing, the refresh fails and the clean table stays empty. The robot stops with an error instead of making a list, and Excel shows which column is missing.
 
 **What happens with the export for 14 October now?** The new "Bokningstyp" column no longer causes the same problem. Power Query finds "Telefon" in column H and reads the correct phone numbers. All 8 patients without a phone number appear on the list for the reception, and the number of appointments per clinic stays correct, just as before.
 
@@ -62,15 +62,20 @@ The solution is to move the cleaning work from the UiPath robot into Power Query
 
 | | Before (cleanup in the robot) | After (Power Query) |
 |---|---|---|
-| Cleanup activities in the robot | 30 | None, only a refresh of the Excel file |
+| Activities to get a clean table | 30 | 9 (copy the file, refresh it, read the table) |
 | Where the cleanup steps are seen | Inside Assign and Switch activities | As named steps in the Power Query Editor |
 | How the phone number is found | Always column G | The column called "Telefon" |
 | Booked appointments, 13 and 14 October | 83 and 94 | 83 and 94 |
 | Patients without a phone number on the list, 13 October | 8 of 8 | 8 of 8 |
 | Patients without a phone number on the list, 14 October | **0 of 8** | 8 of 8 |
 | When a column is added or moved | A wrong list without any error | The right list, no change needed |
-| When a required column is missing | A wrong list without any error | The refresh stops with an error that names the column |
+| When a required column is missing | A wrong list without any error | The robot stops, and Excel names the missing column |
 | Work for IT support after a layout change | Find the activity, change it, test and publish the robot again | None when a column is only added or moved |
+
+- After the change, the run for 14 October put all 8 booked patients without a phone number on the list. Before, the list was empty.
+- The run for 13 October gave the same result as the old robot: 83 booked, 5 cancelled and 8 patients without a phone number.
+- The same Power Query steps worked for both export layouts, with Telefon in column G and in column H, without any change.
+- On 15 October, "Telefon" was renamed to "Mobilnummer". The robot stopped instead of making a list, and Excel named the missing column.
 
 ## 2. How the Reminder List Is Made Today
 
@@ -207,6 +212,180 @@ The quickest fix would be to change `CurrentRow(6)` to `CurrentRow(7)`. That wou
 | **Same result as before** | 13 October: 83 booked, 5 cancelled, 8 without phone | The same numbers for 13 October, and 94 booked, 6 cancelled, 8 without phone for 14 October |
 | **Cleanup outside the robot** | 30 activities in `ReadAndCleanExport.xaml` | Saved Power Query steps in an Excel file. The robot only refreshes the file and reads one clean table |
 | **Steps that can be checked** | Hidden in Assign and Switch activities | Each step listed by name in the Power Query Editor |
-| **A clear error for a missing column** | A wrong list without any error | The refresh stops with an error that names the missing column |
+| **A clear error for a missing column** | A wrong list without any error | The robot stops instead of making a list, and Excel names the missing column |
 
 In short, the reminder list must be right for both export layouts, and a change in the export must either be handled by the cleanup or stop the robot with a clear error, never give a wrong list.
+
+## 6. Moving the Cleanup to Power Query
+
+Each problem found in Sections 3 and 4 is solved by one part of the fix.
+
+**Problem 1: The columns are taken by position.** The phone number is always read from column G, so a new column moves the data under the robot.
+*Solution: Power Query takes the columns by name.* The heading row is found where column A says "Tid", and every column is chosen by its heading, such as "Telefon".
+
+**Problem 2: The cleanup is hidden in 30 activities.** Every change in the export needs a developer to change the robot.
+*Solution: The cleanup is saved as steps in an Excel file.* Each step has a name and can be checked in the Power Query Editor. The robot only refreshes the file and reads one clean table.
+
+**Problem 3: A wrong list is made without any error.** Nothing stops the robot when the export does not look as expected.
+*Solution: The robot stops when the clean table is empty.* The Excel file is saved with an empty table. If Power Query cannot read the export, the table stays empty, and the robot stops with an error instead of making a list.
+
+### 6.1 The Excel File with Power Query
+
+The Excel file `Templates\Appointments_Clean.xlsx` is part of the UiPath project. It has three sheets.
+
+The sheet "Inställningar" (settings) holds the path of the export that is cleaned (Figure 11):
+
+1. The robot writes the path of the day's export into cell B1 before every refresh.
+
+![The sheet Inställningar](Screenshots/excel-clean-file-settings.png)
+
+*Figure 11. The export file path in the sheet Inställningar.*
+
+The sheet "Mottagningar" (clinics) holds a small table, `ClinicNames`, with every way a clinic is written in the export and the right name for it (Figure 12):
+
+1. "Skrivs som" (written as) is the name in lower case, as it can appear in the export, and "Mottagning" is the right name. A new spelling only needs a new row in this table.
+
+![The clinic names table](Screenshots/excel-clean-file-clinic-names.png)
+
+*Figure 12. The table ClinicNames in the sheet Mottagningar.*
+
+The query `CleanAppointments` holds the cleanup steps. They are shown under Applied Steps in the Power Query Editor (Figure 13):
+
+1. The export file is opened from the path in cell B1, and the sheet "Bokningar" is read.
+2. The row with the heading "Tid" is found, the title rows above it are removed, and that row becomes the headings.
+3. Only the eight needed columns are kept, chosen by name. Only the rows with " kl " in Tid are kept, and spaces are trimmed.
+4. The clinic name is changed to lower case and matched with the table `ClinicNames`. The rows keep the order of the export.
+5. "-", "saknas" and empty text in Telefon are changed to an empty value.
+6. "kl" is removed from Tid, and the text is turned into a real date and time.
+7. The result has 8 columns and 100 rows for 14 October.
+
+![The query CleanAppointments in the Power Query Editor](Screenshots/excel-power-query-editor.png)
+
+*Figure 13. The query CleanAppointments and its Applied Steps.*
+
+The query loads the result into the sheet "CleanAppointments" (Figure 14):
+
+1. Tid is a real date and time.
+2. Every clinic has one name.
+3. The patient P-000073 has an empty phone number. In the export, Telefon was in column H on this day.
+
+![The clean table in Excel](Screenshots/excel-clean-appointments-table.png)
+
+*Figure 14. The table CleanAppointments after the refresh for 14 October.*
+
+### 6.2 The Robot Refreshes the File
+
+The 30 cleanup activities were replaced by the workflow `RefreshCleanTable.xaml` (Figure 15):
+
+1. The Excel file is copied from the project to the report folder, so that every run starts with an empty table.
+2. The copy is opened with Use Excel File.
+3. The path of the export is written into cell B1 of the sheet Inställningar.
+4. Refresh Excel Data Connections runs the Power Query steps.
+5. The table `CleanAppointments` is read into a DataTable.
+6. If the table is empty, the robot stops with the error "Power Query gave no appointments" and the name of the file to check.
+
+![RefreshCleanTable.xaml in UiPath Studio](Screenshots/studio-refresh-clean-table.png)
+
+*Figure 15. The workflow RefreshCleanTable.xaml.*
+
+In `Main.xaml`, only two things changed (Figure 16):
+
+1. Two new paths: the Excel file in the project, and its copy in the report folder.
+2. The workflow "Refresh the Clean Table" is started instead of the old cleanup.
+
+![Main.xaml with the Power Query step](Screenshots/studio-main-power-query.png)
+
+*Figure 16. Main.xaml after the change.*
+
+The workflow `MakeReminderList.xaml` was not changed. It gets a table with the same eight columns as before.
+
+## 7. Testing the Fix
+
+### 7.1 The Export of 14 October
+
+The robot was run again for 14 October, with the same export as in Section 3 (Figure 17):
+
+1. The robot started "Refresh the Clean Table".
+2. 100 appointments are in the clean table.
+3. The numbers per clinic are the same as before.
+4. 94 booked, 6 cancelled and 8 patients without a phone number.
+
+![The run for 14 October after the fix](Screenshots/studio-run-power-query-2026-10-14.png)
+
+*Figure 17. The run for 14 October with Power Query.*
+
+The reminder list now has all the patients (Figure 18):
+
+1. The sheet "Per mottagning", with the same numbers as before.
+2. The sheet "Utan telefon", with the 8 patients that were missing: P-000073, P-000120, P-000078, P-000034, P-000159, P-000068, P-000062 and P-000015.
+
+![The reminder list for 14 October after the fix](Screenshots/excel-reminder-list-power-query-2026-10-14.png)
+
+*Figure 18. The two sheets of `Påminnelser_2026-10-14.xlsx` after the fix.*
+
+### 7.2 The Export of 13 October
+
+The export of 13 October has the old layout, with Telefon in column G. It worked before and had to give the same result (Figure 19):
+
+1. 88 appointments are in the clean table.
+2. 83 booked, 5 cancelled and 8 patients without a phone number, the same as with the old robot.
+
+![The run for 13 October after the fix](Screenshots/studio-run-power-query-2026-10-13.png)
+
+*Figure 19. The run for 13 October with Power Query.*
+
+The same Power Query steps work for both layouts, without any change between the two runs.
+
+### 7.3 A Renamed Column on 15 October
+
+The next day, the booking system was updated again. The export for 15 October has a new heading for the phone number (Figure 20):
+
+1. A new title row, "Version 5.3 - Telefon heter nu Mobilnummer" (Telefon is now called Mobilnummer).
+2. The column that was called "Telefon" is now called "Mobilnummer".
+
+![The export of 15 October in Excel](Screenshots/excel-export-2026-10-15-top.png)
+
+*Figure 20. The top of the export for 15 October 2026.*
+
+Power Query looks for a column called "Telefon", and this export has none. The refresh failed, the clean table stayed empty, and the robot stopped (Figure 21):
+
+1. The robot stopped in the activity "Stop - Power Query Gave No Appointments".
+2. The message names the export and the Excel file to check.
+
+![The robot stops for 15 October](Screenshots/studio-run-power-query-2026-10-15.png)
+
+*Figure 21. The error from the run for 15 October.*
+
+No reminder list was made for 15 October (Figure 22):
+
+1. The Excel file with Power Query for 15 October is there, so the problem can be checked.
+2. There are reminder lists for 13 and 14 October only.
+
+![The reminder list folder after the run for 15 October](Screenshots/explorer-reminder-lists-2026-10-15.png)
+
+*Figure 22. The folder P09 Reminder Lists after the run for 15 October.*
+
+When the file is opened and refreshed in Excel, the cause is shown at once (Figure 23):
+
+1. The path of the export for 15 October.
+2. The error "The column 'Telefon' of the table wasn't found."
+
+![The refresh error in Excel](Screenshots/excel-refresh-error-2026-10-15.png)
+
+*Figure 23. The refresh error for 15 October.*
+
+Before the fix, a change like this gave a wrong list without any error. Now no list is made, and the error names the missing column, so the reception is not given a wrong list and IT support knows exactly what to change.
+
+### 7.4 The Goals After the Fix
+
+| Goal | Before the fix | After the fix |
+|---|---|---|
+| **Right list without phone** | 0 of 8 patients on the list for 14 October | 8 of 8 patients on the list for 14 October |
+| **Columns found by name** | Column G was read as the phone number | "Telefon" was found in column G on 13 October and in column H on 14 October |
+| **Headings found by their content** | Values copied by position | The heading row was found in row 5 and in row 6 |
+| **Same result as before** | 13 October: 83 booked, 5 cancelled, 8 without phone | 13 October: 83, 5 and 8. 14 October: 94, 6 and 8 |
+| **Cleanup outside the robot** | 30 activities in `ReadAndCleanExport.xaml` | 23 named steps in the query and 9 activities in `RefreshCleanTable.xaml` |
+| **Steps that can be checked** | Hidden in Assign and Switch activities | Listed under Applied Steps |
+| **A clear error for a missing column** | A wrong list without any error | 15 October: the robot stopped, no list was made, and Excel named the column "Telefon" |
+
+The robot made a wrong reminder list because it trusted the position of the columns in the export. Now Power Query finds the columns by name, and the robot works with the same clean table every day. The list for 14 October has all 8 patients without a phone number, and the list for 13 October is the same as before. When a needed column is missing, the robot stops with a clear error instead of making a wrong list.
