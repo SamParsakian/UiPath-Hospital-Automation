@@ -1,0 +1,9 @@
+# Keep test files and images byte for byte (no line ending changes)
+*.pdf binary
+*.PDF binary
+*.xlsx binary
+*.png binary
+*.jpg binary
+
+# Task Scheduler exports are UTF-16: keep them byte for byte
+Scheduler/*.xml -text
