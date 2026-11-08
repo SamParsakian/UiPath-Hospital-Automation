@@ -4,3 +4,6 @@
 *.xlsx binary
 *.png binary
 *.jpg binary
+
+# Task Scheduler exports are UTF-16: keep them byte for byte
+Scheduler/*.xml -text
