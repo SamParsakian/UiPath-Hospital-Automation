@@ -1,0 +1,6 @@
+{
+  "Name": "P09_AppointmentReminders",
+  "ProjectType": "Process",
+  "Description": "Reads the booking system's Excel export of tomorrow's appointments and makes the daily reminder list for the clinics: appointments per clinic and patients without a phone number.",
+  "MainFile": "Main.xaml"
+}
