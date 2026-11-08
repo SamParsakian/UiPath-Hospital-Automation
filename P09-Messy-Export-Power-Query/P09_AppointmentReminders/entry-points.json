@@ -22,6 +22,11 @@
             "type": "string",
             "x-default-expression": "\"%PUBLIC%\\Documents\\P09 Reminder Lists\"",
             "default": "%PUBLIC%\\Documents\\P09 Reminder Lists"
+          },
+          "in_TemplateFile": {
+            "type": "string",
+            "x-default-expression": "\"Templates\\Appointments_Clean.xlsx\"",
+            "default": "Templates\\Appointments_Clean.xlsx"
           }
         },
         "required": []

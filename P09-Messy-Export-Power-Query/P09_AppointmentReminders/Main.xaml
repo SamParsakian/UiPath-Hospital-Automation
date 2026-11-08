@@ -1,8 +1,9 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Main" this:Main.in_ExportFolder="\\100.99.72.90\HospitalShare\Exports\Appointments" this:Main.in_AppointmentDate="2026-10-13" this:Main.in_ReportFolder="%PUBLIC%\Documents\P09 Reminder Lists" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:this="clr-namespace:" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Main" this:Main.in_ExportFolder="\\100.99.72.90\HospitalShare\Exports\Appointments" this:Main.in_AppointmentDate="2026-10-13" this:Main.in_ReportFolder="%PUBLIC%\Documents\P09 Reminder Lists" this:Main.in_TemplateFile="Templates\Appointments_Clean.xlsx" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:this="clr-namespace:" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_ExportFolder" Type="InArgument(x:String)" />
     <x:Property Name="in_AppointmentDate" Type="InArgument(x:String)" />
     <x:Property Name="in_ReportFolder" Type="InArgument(x:String)" />
+    <x:Property Name="in_TemplateFile" Type="InArgument(x:String)" />
   </x:Members>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -50,11 +51,13 @@
       <Variable x:TypeArguments="x:String" Name="exportFile" />
       <Variable x:TypeArguments="x:String" Name="reportFolder" />
       <Variable x:TypeArguments="x:String" Name="reportFile" />
+      <Variable x:TypeArguments="x:String" Name="workFile" />
+      <Variable x:TypeArguments="x:String" Name="templateFile" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_Appointments" />
     </Sequence.Variables>
     <ui:MultipleAssign DisplayName="Set File Paths" sap2010:WorkflowViewState.IdRef="MultipleAssign_1">
       <ui:MultipleAssign.AssignOperations>
-        <scg:List x:TypeArguments="ui:AssignOperation" Capacity="4">
+        <scg:List x:TypeArguments="ui:AssignOperation" Capacity="8">
           <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_1">
             <ui:AssignOperation.To>
               <OutArgument x:TypeArguments="x:String">[exportFile]</OutArgument>
@@ -79,14 +82,32 @@
               <InArgument x:TypeArguments="x:String">[Path.Combine(reportFolder, "Påminnelser_" &amp; in_AppointmentDate &amp; ".xlsx")]</InArgument>
             </ui:AssignOperation.Value>
           </ui:AssignOperation>
+          <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_4">
+            <ui:AssignOperation.To>
+              <OutArgument x:TypeArguments="x:String">[templateFile]</OutArgument>
+            </ui:AssignOperation.To>
+            <ui:AssignOperation.Value>
+              <InArgument x:TypeArguments="x:String">[Path.GetFullPath(in_TemplateFile)]</InArgument>
+            </ui:AssignOperation.Value>
+          </ui:AssignOperation>
+          <ui:AssignOperation sap2010:WorkflowViewState.IdRef="AssignOperation_5">
+            <ui:AssignOperation.To>
+              <OutArgument x:TypeArguments="x:String">[workFile]</OutArgument>
+            </ui:AssignOperation.To>
+            <ui:AssignOperation.Value>
+              <InArgument x:TypeArguments="x:String">[Path.Combine(reportFolder, "Appointments_Clean_" &amp; in_AppointmentDate &amp; ".xlsx")]</InArgument>
+            </ui:AssignOperation.Value>
+          </ui:AssignOperation>
         </scg:List>
       </ui:MultipleAssign.AssignOperations>
     </ui:MultipleAssign>
     <ui:LogMessage DisplayName="Log Export File" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Export file: &quot; &amp; exportFile]" />
     <ui:CreateDirectory DisplayName="Create Report Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[reportFolder]" />
-    <ui:InvokeWorkflowFile DisplayName="Read and Clean the Export" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\ReadAndCleanExport.xaml">
+    <ui:InvokeWorkflowFile DisplayName="Refresh the Clean Table" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\RefreshCleanTable.xaml">
       <ui:InvokeWorkflowFile.Arguments>
         <InArgument x:TypeArguments="x:String" x:Key="in_ExportFile">[exportFile]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_TemplateFile">[templateFile]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_WorkFile">[workFile]</InArgument>
         <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dt_Appointments">[dt_Appointments]</OutArgument>
       </ui:InvokeWorkflowFile.Arguments>
     </ui:InvokeWorkflowFile>
