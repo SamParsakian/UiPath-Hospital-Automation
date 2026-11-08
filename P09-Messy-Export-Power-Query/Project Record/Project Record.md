@@ -1,5 +1,7 @@
 # P09 - Power Query Cleans a Messy System Export
 
+![Power Query cleans a messy system export](Screenshots/p09-power-query-messy-export.png)
+
 ## 1. The Project: Making Daily Reminders Reliable
 
 Every day, a UiPath robot makes a reminder list for the hospital clinics from the booking system's export of tomorrow's appointments. The export is made for printing, not for a robot, so it must be cleaned before the list can be made.
