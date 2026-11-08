@@ -13,6 +13,9 @@
     .\Remove-OldRobotFiles.ps1 -WhatIf
     .\Remove-OldRobotFiles.ps1
 #>
+# CmdletBinding   gives the script the standard option -WhatIf
+# param           the settings of the script, each with a default value
+# [string[]]      a list of texts, [string] one text, [int] a whole number
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     # The robot output folders. Only files directly in these folders are checked (no subfolders).
@@ -32,6 +35,9 @@ param(
 $ErrorActionPreference = 'Stop'
 
 # Everything written before this date (midnight) is too old.
+# Get-Date               today, with the time
+# .Date                  the same day at midnight (00:00)
+# .AddDays(-$KeepDays)   go 30 days back
 $limit = (Get-Date).Date.AddDays(-$KeepDays)
 
 # One log file per day. A second run on the same day adds to it.
@@ -59,11 +65,22 @@ foreach ($folder in $Folders) {
     }
 
     # Only CSV reports, only in this folder, only older than the limit.
+    # Get-ChildItem     list what is in the folder
+    # -Filter '*.csv'   only the CSV reports
+    # -File             only files, no folders
+    # Where-Object      keep only the files where the check in { } is true
+    # $_                the file that is being checked
+    # LastWriteTime     the "Date modified" of the file in File Explorer
+    # -lt               "less than": written before the limit date
+    # Sort-Object       oldest file first, so the log reads from old to new
     $allFiles = @(Get-ChildItem -Path $folder -Filter '*.csv' -File)
     $oldFiles = $allFiles |
         Where-Object { $_.LastWriteTime -lt $limit } |
         Sort-Object LastWriteTime
 
+    # $WhatIfPreference   $true when the script was started with -WhatIf (trial run)
+    # Remove-Item -Force  remove the file, also when it is read-only
+    # try / catch         if one file cannot be removed, write ERROR and go on with the next file
     $removed = 0
     foreach ($file in $oldFiles) {
         $written = $file.LastWriteTime.ToString('yyyy-MM-dd')
