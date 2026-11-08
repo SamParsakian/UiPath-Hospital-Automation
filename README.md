@@ -16,6 +16,7 @@ All data in these projects is fictional. The hospital web systems are part of a 
 | [P06 - PowerShell Creates Accounts for New Staff](P06-Staff-Accounts-PowerShell/) | Reads new staff requests from HR, checks the form, creates the Microsoft 365 account with one PowerShell script and Microsoft Graph, and answers HR. | - |
 | [P07 - Robocopy Brings Only the New Scanned Referrals](P07-Scanner-Files-Robocopy/) | Copies only the new scanned referrals from a network share with one Robocopy command that retries on a network break and writes a log, and lists only those referrals for the coordination team. | - |
 | [P08 - Task Scheduler Removes Old Robot Files](P08-Robot-File-Cleanup-Task-Scheduler/) | Removes the robot reports with patient data that are older than 30 days every night with one PowerShell script started by Task Scheduler, and logs every removed file, without a robot or Orchestrator. | - |
+| [P09 - Power Query Cleans a Messy System Export](P09-Messy-Export-Power-Query/) | Cleans the booking system's printed appointment export with saved Power Query steps that find the columns by name, so the robot only refreshes Excel and reads one clean table to make the daily patient reminder list. | - |
 
 ## Technologies
 
@@ -28,6 +29,7 @@ All data in these projects is fictional. The hospital web systems are part of a 
 - Microsoft Entra ID app registration with certificate sign-in
 - Robocopy on an SMB network share, run from UiPath with Invoke Power Shell
 - Windows Task Scheduler running a PowerShell cleanup script as SYSTEM
+- Excel Power Query, refreshed from UiPath with the modern Excel activities
 - Windows Credential Manager for the logins
 - UiPath Orchestrator (assets, queues, packages, triggers and an unattended robot) and UiPath Assistant for attended runs
 
