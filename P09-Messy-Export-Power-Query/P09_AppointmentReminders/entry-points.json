@@ -1,0 +1,31 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "entryPoints": [
+    {
+      "filePath": "Main.xaml",
+      "uniqueId": "eb299e33-9151-4bdf-8ade-72353439e6af",
+      "type": "process",
+      "input": {
+        "type": "object",
+        "properties": {
+          "in_ExportFolder": {
+            "type": "string",
+            "x-default-expression": "\"\\\\100.99.72.90\\HospitalShare\\Exports\\Appointments\"",
+            "default": "\\\\100.99.72.90\\HospitalShare\\Exports\\Appointments"
+          },
+          "in_AppointmentDate": {
+            "type": "string",
+            "x-default-expression": "\"2026-10-13\"",
+            "default": "2026-10-13"
+          },
+          "in_ReportFolder": {
+            "type": "string",
+            "x-default-expression": "\"%PUBLIC%\\Documents\\P09 Reminder Lists\"",
+            "default": "%PUBLIC%\\Documents\\P09 Reminder Lists"
+          }
+        },
+        "required": []
+      }
+    }
+  ]
+}
