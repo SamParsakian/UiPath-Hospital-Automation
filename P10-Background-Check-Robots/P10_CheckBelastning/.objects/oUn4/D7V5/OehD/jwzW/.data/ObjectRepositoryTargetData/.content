@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="A_U1ZWW-iES3qqzHPQEZyQ" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="633, 866, 553, 54" DesignTimeScaleFactor="1.6041666269302368" ElementType="DropDown" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl id='typ-av-utdrag' tag='SELECT' type='' class='' aaname='Typ av utdrag' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="db605458-f454-488b-9faf-52c4843b0f26" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+      <TargetAnchorable.Anchors>
+        <scg:List x:TypeArguments="ITarget" Capacity="1">
+          <Target DesignTimeRectangle="633, 833, 1316, 26" ElementType="Text" FuzzySelectorArgument="&lt;webctrl aaname='Typ av utdrag' tag='LABEL' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Typ av utdrag' /&gt;" Guid="323cc082-34e4-474e-9cd4-49a91f53c9cb" SearchSteps="FuzzySelector" />
+        </scg:List>
+      </TargetAnchorable.Anchors>
+      <imageRef attrName="InformativeScreenshot" originalValue="2b96554acb4f6701bd49c6fadade6c3d.jpg" xmlns="">0gxP-Alj3gkSU9xqy4JvnRQ</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

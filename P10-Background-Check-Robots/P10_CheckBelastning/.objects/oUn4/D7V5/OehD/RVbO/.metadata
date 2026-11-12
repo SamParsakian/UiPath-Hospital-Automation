@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Kontrollera Button",
+  "Description": "Button that sends the check form",
+  "Type": "Element",
+  "TaxonomyType": "Button",
+  "Id": "RVbOW1Jju0G9cd7cOARlDA",
+  "Reference": "Fuc2kvSQfUSeWoFA1kV9sA/RVbOW1Jju0G9cd7cOARlDA",
+  "ParentRef": "Fuc2kvSQfUSeWoFA1kV9sA/OehD4DyQo0OrRGwl036ifA",
+  "Created": "2026-11-12T10:33:23.0692763Z",
+  "Updated": "2026-11-12T10:33:23.0692763Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

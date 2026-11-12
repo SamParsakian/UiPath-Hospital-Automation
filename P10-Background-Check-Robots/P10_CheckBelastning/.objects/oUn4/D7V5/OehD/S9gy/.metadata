@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Kontroll Resultat Text",
+  "Description": "Result text of the check, shown under the form after Kontrollera",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "S9gyWK0lLkuNAqzxiP7i2Q",
+  "Reference": "Fuc2kvSQfUSeWoFA1kV9sA/S9gyWK0lLkuNAqzxiP7i2Q",
+  "ParentRef": "Fuc2kvSQfUSeWoFA1kV9sA/OehD4DyQo0OrRGwl036ifA",
+  "Created": "2026-11-12T10:34:16.3885001Z",
+  "Updated": "2026-11-12T10:34:16.3885001Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

@@ -1,0 +1,151 @@
+<Activity mc:Ignorable="sap2010" x:Class="Workflows_VerifyExtractWithPolice" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Configuration of the process." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property sap2010:Annotation.AnnotationText="Ärendenummer of the extract, for example BU-839380." Name="in_ExtractNumber" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Personnummer on the extract (YYYYMMDD-NNNN)." Name="in_Personnummer" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Date of issue on the extract (YYYY-MM-DD)." Name="in_IssuedDate" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Type of extract, for example Arbete inom hälso- och sjukvård." Name="in_ExtractType" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="The answer of the control service, for example Utdraget är äkta." Name="out_ControlResult" Type="OutArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.UIAutomationNext.Enums</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationNext.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Opens the police control service in Edge, enters the extract details exactly as they are on the PDF, clicks Kontrollera and reads the answer. The browser tab is closed again." DisplayName="Verify Extract with Police" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <uix:NApplicationCard AttachMode="ByInstance" CloseMode="Always" DisplayName="Use Browser Edge: Polisen Kontrolltjänst" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" InteractionMode="Simulate" OpenMode="Always" ScopeGuid="722ad842-7be1-4fa1-a1f2-f1864f2b0b07" Version="V2">
+      <uix:NApplicationCard.Body>
+        <ActivityAction x:TypeArguments="x:Object">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_2">
+            <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="Single" DisplayName="Type Into Ärendenummer" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NTypeInto_1" Text="[in_ExtractNumber]" Version="V5">
+              <uix:NTypeInto.Target>
+                <uix:TargetAnchorable ContentHash="wIfjMA5ENkejXAuvrKdjGQ" DesignTimeRectangle="616, 402, 448, 53" ElementType="InputBox" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl id='arendenummer' tag='INPUT' type='text' class='' aaname='Ärendenummer' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="ea357491-898a-4cc7-82d0-fc3694771970" InformativeScreenshot="fbcf2e4dd86ca187ff2d9a2c9541d2f8.jpg" Reference="Fuc2kvSQfUSeWoFA1kV9sA/LbfhNKC-SkS2y9gnIzkvHg" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+                  <uix:TargetAnchorable.Anchors>
+                    <scg:List x:TypeArguments="uix:ITarget" Capacity="1">
+                      <uix:Target DesignTimeRectangle="616, 370, 1316, 26" ElementType="Text" FuzzySelectorArgument="&lt;webctrl tag='LABEL' type='' class='' aaname='Ärendenummer' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' check:text='Ärendenummer' /&gt;" Guid="cfdf82d6-9227-46c3-a0f6-11fed5c002a7" SearchSteps="FuzzySelector" />
+                    </scg:List>
+                  </uix:TargetAnchorable.Anchors>
+                </uix:TargetAnchorable>
+              </uix:NTypeInto.Target>
+              <uix:NTypeInto.VerifyOptions>
+                <uix:VerifyExecutionTypeIntoOptions Mode="Appears">
+                  <uix:VerifyExecutionTypeIntoOptions.Retry>
+                    <InArgument x:TypeArguments="x:Boolean" />
+                  </uix:VerifyExecutionTypeIntoOptions.Retry>
+                  <uix:VerifyExecutionTypeIntoOptions.Timeout>
+                    <InArgument x:TypeArguments="x:Double" />
+                  </uix:VerifyExecutionTypeIntoOptions.Timeout>
+                </uix:VerifyExecutionTypeIntoOptions>
+              </uix:NTypeInto.VerifyOptions>
+            </uix:NTypeInto>
+            <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="Single" DisplayName="Type Into Personnummer" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NTypeInto_2" Text="[in_Personnummer]" Version="V5">
+              <uix:NTypeInto.Target>
+                <uix:TargetAnchorable ContentHash="Rht465BasUuUXN1mIRCOmA" DesignTimeRectangle="633, 649, 448, 54" ElementType="InputBox" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl id='personnummer' tag='INPUT' type='text' class='' aaname='Personnummer (ÅÅÅÅMMDD-NNNN)' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="369e9188-b22f-485a-a476-5ce895feae50" InformativeScreenshot="b42c48fdb2853fdf9f00633b3ed90df0.jpg" Reference="Fuc2kvSQfUSeWoFA1kV9sA/EgIo1jL_kE-xzgDfXe9kaA" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+                  <uix:TargetAnchorable.Anchors>
+                    <scg:List x:TypeArguments="uix:ITarget" Capacity="1">
+                      <uix:Target DesignTimeRectangle="633, 617, 1316, 26" ElementType="Text" FuzzySelectorArgument="&lt;webctrl aaname='Personnummer (ÅÅÅÅMMDD-NNNN)' tag='LABEL' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Personnummer (ÅÅÅÅMMDD-NNNN)' /&gt;" Guid="2fa8bd64-de90-4be4-bd73-9e492a887aef" SearchSteps="FuzzySelector" />
+                    </scg:List>
+                  </uix:TargetAnchorable.Anchors>
+                </uix:TargetAnchorable>
+              </uix:NTypeInto.Target>
+              <uix:NTypeInto.VerifyOptions>
+                <uix:VerifyExecutionTypeIntoOptions Mode="Appears">
+                  <uix:VerifyExecutionTypeIntoOptions.Retry>
+                    <InArgument x:TypeArguments="x:Boolean" />
+                  </uix:VerifyExecutionTypeIntoOptions.Retry>
+                  <uix:VerifyExecutionTypeIntoOptions.Timeout>
+                    <InArgument x:TypeArguments="x:Double" />
+                  </uix:VerifyExecutionTypeIntoOptions.Timeout>
+                </uix:VerifyExecutionTypeIntoOptions>
+              </uix:NTypeInto.VerifyOptions>
+            </uix:NTypeInto>
+            <uix:NTypeInto ActivateBefore="True" ClickBeforeMode="Single" DisplayName="Type Into Utfärdandedatum" EmptyFieldMode="SingleLine" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NTypeInto_3" Text="[in_IssuedDate]" Version="V5">
+              <uix:NTypeInto.Target>
+                <uix:TargetAnchorable ContentHash="qiBGkqdRUECaGSwlxoz-0w" DesignTimeRectangle="633, 758, 448, 53" ElementType="InputBox" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl id='utfardandedatum' tag='INPUT' type='text' class='' aaname='Utfärdandedatum (ÅÅÅÅ-MM-DD)' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="c90bd71f-a714-4a79-9bb7-1a75fb71d362" InformativeScreenshot="9a9ec8165f8eb1f2e1982571fd8af6df.jpg" Reference="Fuc2kvSQfUSeWoFA1kV9sA/hynKVePptE-Vu6PaaFgDWg" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+                  <uix:TargetAnchorable.Anchors>
+                    <scg:List x:TypeArguments="uix:ITarget" Capacity="1">
+                      <uix:Target DesignTimeRectangle="633, 725, 1316, 26" ElementType="Text" FuzzySelectorArgument="&lt;webctrl aaname='Utfärdandedatum (ÅÅÅÅ-MM-DD)' tag='LABEL' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Utfärdandedatum (ÅÅÅÅ-MM-DD)' /&gt;" Guid="a8f62aa1-addd-44b6-9760-eb957ef4e45b" SearchSteps="FuzzySelector" />
+                    </scg:List>
+                  </uix:TargetAnchorable.Anchors>
+                </uix:TargetAnchorable>
+              </uix:NTypeInto.Target>
+              <uix:NTypeInto.VerifyOptions>
+                <uix:VerifyExecutionTypeIntoOptions Mode="Appears">
+                  <uix:VerifyExecutionTypeIntoOptions.Retry>
+                    <InArgument x:TypeArguments="x:Boolean" />
+                  </uix:VerifyExecutionTypeIntoOptions.Retry>
+                  <uix:VerifyExecutionTypeIntoOptions.Timeout>
+                    <InArgument x:TypeArguments="x:Double" />
+                  </uix:VerifyExecutionTypeIntoOptions.Timeout>
+                </uix:VerifyExecutionTypeIntoOptions>
+              </uix:NTypeInto.VerifyOptions>
+            </uix:NTypeInto>
+            <uix:NSelectItem DisplayName="Select Typ av Utdrag" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NSelectItem_1" Item="[in_ExtractType]" Version="V5">
+              <uix:NSelectItem.Target>
+                <uix:TargetAnchorable ContentHash="A_U1ZWW-iES3qqzHPQEZyQ" DesignTimeRectangle="633, 866, 553, 54" ElementType="DropDown" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl id='typ-av-utdrag' tag='SELECT' type='' class='' aaname='Typ av utdrag' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="db605458-f454-488b-9faf-52c4843b0f26" InformativeScreenshot="2b96554acb4f6701bd49c6fadade6c3d.jpg" Reference="Fuc2kvSQfUSeWoFA1kV9sA/jwzWD8JlMUihzyGP7Eecuw" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+                  <uix:TargetAnchorable.Anchors>
+                    <scg:List x:TypeArguments="uix:ITarget" Capacity="1">
+                      <uix:Target DesignTimeRectangle="633, 833, 1316, 26" ElementType="Text" FuzzySelectorArgument="&lt;webctrl aaname='Typ av utdrag' tag='LABEL' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Typ av utdrag' /&gt;" Guid="323cc082-34e4-474e-9cd4-49a91f53c9cb" SearchSteps="FuzzySelector" />
+                    </scg:List>
+                  </uix:TargetAnchorable.Anchors>
+                </uix:TargetAnchorable>
+              </uix:NSelectItem.Target>
+            </uix:NSelectItem>
+            <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click Kontrollera" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_1" KeyModifiers="None" MouseButton="Left" Version="V5">
+              <uix:NClick.Target>
+                <uix:TargetAnchorable ContentHash="SKsxv8fjZkGBlTFSrNQ4HA" DesignTimeRectangle="633, 946, 186, 57" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='kontrollera' tag='BUTTON' /&gt;" Guid="e53fa744-f92a-4766-8c8c-7abed7068527" InformativeScreenshot="b22ff35f09a6e5a5c80ab21c76867ec1.jpg" Reference="Fuc2kvSQfUSeWoFA1kV9sA/RVbOW1Jju0G9cd7cOARlDA" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NClick.Target>
+            </uix:NClick>
+            <uix:NGetText DisplayName="Get Text Kontrollresultat" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NGetText_1" TextString="[out_ControlResult]" Version="V5">
+              <uix:NGetText.Target>
+                <uix:TargetAnchorable ContentHash="jnnm9HM1rkaU6oHInx0dUw" DesignTimeRectangle="604, 889, 1316, 62" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='resultat' tag='DIV' /&gt;" Guid="c1425674-e1e4-4164-8412-0d8d90be6ad0" InformativeScreenshot="b1354e487dd298bd7025a6ee4aa75d47.jpg" Reference="Fuc2kvSQfUSeWoFA1kV9sA/S9gyWK0lLkuNAqzxiP7i2Q" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NGetText.Target>
+            </uix:NGetText>
+          </Sequence>
+        </ActivityAction>
+      </uix:NApplicationCard.Body>
+      <uix:NApplicationCard.OCREngine>
+        <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
+          <ActivityFunc.Argument>
+            <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
+          </ActivityFunc.Argument>
+        </ActivityFunc>
+      </uix:NApplicationCard.OCREngine>
+      <uix:NApplicationCard.TargetApp>
+        <uix:TargetApp Area="-11, -11, 2582, 1462" BrowserType="Edge" ContentHash="XSbFsnpmr0eyrpKcx-7PWw" InformativeScreenshot="0adf849f82cdc909ed560395c0d09832.jpg" Reference="Fuc2kvSQfUSeWoFA1kV9sA/OehD4DyQo0OrRGwl036ifA" Selector="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" Url="http://100.99.72.90:8085/" Version="V3">
+          <uix:TargetApp.SapInfo>
+            <uix:SAPElementInfo IsSapSubsystem="False" WebAutomationFramework="Default" />
+          </uix:TargetApp.SapInfo>
+        </uix:TargetApp>
+      </uix:NApplicationCard.TargetApp>
+    </uix:NApplicationCard>
+    <ui:LogMessage DisplayName="Log Control Result" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Police control service for extract &quot; &amp; in_ExtractNumber &amp; &quot;: &quot; &amp; out_ControlResult]" />
+  </Sequence>
+</Activity>
