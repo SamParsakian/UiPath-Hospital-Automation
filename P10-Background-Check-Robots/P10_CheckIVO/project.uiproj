@@ -1,0 +1,6 @@
+{
+  "Name": "P10_CheckIVO",
+  "ProjectType": "Process",
+  "Description": "Checks IVO cases for the candidate",
+  "MainFile": "Main.xaml"
+}

@@ -1,0 +1,118 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_CheckIvoAnswer" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:str="clr-namespace:System.Text.RegularExpressions;assembly=System.Text.RegularExpressions" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umaf="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umafe="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umafm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:ummm="clr-namespace:UiPath.MicrosoftOffice365.Mail.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Configuration of the process." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property sap2010:Annotation.AnnotationText="ID of the row in the Background Checks list." Name="in_CheckItemId" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="ID of the new hire in the New Hires list (for the Hire column of the saved PDF)." Name="in_HireItemId" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Full name of the new hire." Name="in_Name" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Personnummer of the new hire (YYYYMMDD-NNNN)." Name="in_Personnummer" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Profession of the new hire, for example Sjuksköterska." Name="in_Profession" Type="InArgument(x:String)" />
+  </x:Members>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text.RegularExpressions</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Mail.Models</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Text.RegularExpressions</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.PDF.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Platform</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Check IVO Answer" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:List(umm:Office365Message)" Name="inboxMails" />
+      <Variable x:TypeArguments="umm:Office365Message" Name="answerMail" />
+    </Sequence.Variables>
+    <umam:GetEmailListConnections ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Get HR Inbox Mails with Attachments" EmailList="[inboxMails]" IncludeAttachments="None" IncludeSubfolders="False" MarkAsRead="False" MaxResults="0" UnreadOnly="False" UseConnectionService="True" WithAttachmentsOnly="True" sap2010:WorkflowViewState.IdRef="GetEmailListConnections_1">
+      <umam:GetEmailListConnections.FilterSelectionBackup>
+        <usau:BackupSlot x:TypeArguments="umame:FilterMode" StoredValue="ConditionBuilder">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umame:FilterMode, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umam:GetEmailListConnections.FilterSelectionBackup>
+      <umam:GetEmailListConnections.MailFolderArgument>
+        <umamm:MailFolderArgument SelectionMode="EnterPath">
+          <umamm:MailFolderArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:ItemSelectionMode" StoredValue="EnterPath">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailFolderArgument.Backup>
+          <umamm:MailFolderArgument.ManualEntryFolder>
+            <InArgument x:TypeArguments="x:String">["Inbox"]</InArgument>
+          </umamm:MailFolderArgument.ManualEntryFolder>
+        </umamm:MailFolderArgument>
+      </umam:GetEmailListConnections.MailFolderArgument>
+      <umam:GetEmailListConnections.MailboxArg>
+        <umamm:MailboxArgument UseSharedMailbox="True">
+          <umamm:MailboxArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umamm:MailboxArgument.Backup>
+          <umamm:MailboxArgument.SharedMailbox>
+            <InArgument x:TypeArguments="x:String">[in_Config("HrMailbox").ToString]</InArgument>
+          </umamm:MailboxArgument.SharedMailbox>
+        </umamm:MailboxArgument>
+      </umam:GetEmailListConnections.MailboxArg>
+    </umam:GetEmailListConnections>
+    <ui:ForEach x:TypeArguments="umm:Office365Message" CurrentIndex="{x:Null}" DisplayName="For Each Inbox Mail" Values="[inboxMails]" sap2010:WorkflowViewState.IdRef="ForEach`1_1">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="umm:Office365Message">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="umm:Office365Message" Name="mail" />
+          </ActivityAction.Argument>
+          <If Condition="[mail.FromAddress.ToLower = in_Config(&quot;IvoMailAddress&quot;).ToString.ToLower AndAlso mail.Subject.StartsWith(&quot;SV:&quot;) AndAlso mail.Subject.Contains(in_Personnummer)]" DisplayName="Is It the IVO Answer for This Person?" sap2010:WorkflowViewState.IdRef="If_1">
+            <If.Then>
+              <Assign x:TypeArguments="umm:Office365Message" DisplayName="Keep the Answer Mail" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[answerMail]" Value="[mail]" />
+            </If.Then>
+          </If>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <If Condition="[answerMail Is Nothing]" DisplayName="Has IVO Answered?" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <Sequence DisplayName="No Answer Yet" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <ui:LogMessage DisplayName="Log No Answer Yet" Level="Info" Message="[&quot;No IVO answer yet for check row &quot; &amp; in_CheckItemId &amp; &quot;. The row stays Waiting for answer.&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+        </Sequence>
+      </If.Then>
+      <If.Else>
+        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke HandleIvoAnswer workflow" UnSafe="False" WorkflowFileName="Workflows\HandleIvoAnswer.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2">
+          <ui:InvokeWorkflowFile.Arguments>
+            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+            <InArgument x:TypeArguments="umm:Office365Message" x:Key="in_AnswerMail">[answerMail]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_CheckItemId">[in_CheckItemId]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_HireItemId">[in_HireItemId]</InArgument>
+            <InArgument x:TypeArguments="x:String" x:Key="in_Profession">[in_Profession]</InArgument>
+          </ui:InvokeWorkflowFile.Arguments>
+        </ui:InvokeWorkflowFile>
+      </If.Else>
+    </If>
+  </Sequence>
+</Activity>
