@@ -253,3 +253,78 @@ Taken together, the cause is not one careless person. The process depends on mem
 - **The same facts are typed many times.** The name and the personnummer are typed into the lists, the two mails, the file details and the police service. Every new place is a new chance for a mistake.
 
 One person handles every request in many places, and nothing in the process says when a step is missing. As the number of requests grows, the risk of a missed check grows with it.
+
+## 5. Defining the Fix: Every Check Done, Traced and Reported Once
+
+Before anything was built, the goals were written down. Each goal answers one of the causes in section 4.
+
+| Goal | Today (manual) | Expected after the fix |
+|---|---|---|
+| No forgotten check | 2 of 122 checks were never created, and nothing warned | Every check in ChecksRequired gets its row automatically |
+| No typing | The name and the personnummer are typed into lists, mails and the police page | The robots copy the values from the list and never type them by hand |
+| Complete rows | Rows were saved without a hire, a name or a date | Every finished row has Status, Result, CheckedBy and CheckedDate |
+| Waiting answers followed | AnswerDueDate is only a date in a column | Waiting checks are looked at again on every run, and HR is told when an answer is late |
+| A person decides the findings | Sanna decides everything | A clean answer is set to Done by the robot. Every finding goes to HR as Needs review |
+| One report per hire | The report is written and marked by hand | The head of department gets exactly one report when the checks are finished |
+| Less time per request | 40 minutes of work by hand | HR only handles the rows in Needs review |
+
+The main goal is simple: no new member of staff starts work with a check that was never made.
+
+**A quick fix that was not chosen.** The fastest idea would be one big robot that does all three checks for a candidate at once. But the three checks do not finish at the same time. HOSP and IVO answer days later, and the candidate sends the extract when it is ready. One robot would have to keep a half-finished candidate in memory, and one error in one check would stop the other two. So the work was split instead: one robot for each register, one Orchestrator queue for each robot, and one row in "Background Checks" for each check. Each robot only needs the row to know what to do next, and each check can fail, wait or finish on its own.
+
+## 6. The First Fix: One Robot for Each Register
+
+Three check robots were built, one for each check. All three are built on the UiPath Robotic Enterprise Framework (REFramework) and work in the same way:
+
+- One item in the robot's queue is one row in "Background Checks".
+- The robot reads the row's Status and does the next step: a **Pending** row is started, a row that is **Waiting for answer** is checked for an answer.
+- A clean answer sets the row to **Done**. Anything else sets it to **Needs review**, with a short reason in the Result.
+- The robot works in Microsoft 365 as the robot account rpa.rekrytering@, so CheckedBy always shows the robot, never a person.
+
+Each robot has its own build guide. The guide starts with two pictures, what was added to the REFramework and what the robot needs around it, and then goes through every changed part with a screenshot and the milestones of the test.
+
+| Robot | What it does | Build guide |
+|---|---|---|
+| HOSP robot | Mails Socialstyrelsen HOSP from the HR mailbox, reads the answer PDF, saves it in Authority Answers | [P10_CheckLegitimation](Robot%20Guides/P10_CheckLegitimation.md) |
+| IVO robot | Mails IVO from the HR mailbox, reads the answer PDF, saves it in Authority Answers | [P10_CheckIVO](Robot%20Guides/P10_CheckIVO.md) |
+| Criminal record robot | Reads the candidate's extract, checks the person, the age and the type, and asks the police control service if it is genuine. The extract is never saved | [P10_CheckBelastning](Robot%20Guides/P10_CheckBelastning.md) |
+
+### 6.1 Three Queues, One for Each Check
+
+Each robot has its own queue in Orchestrator: P10_Legitimation, P10_IVO and P10_Belastning. A queue item holds the IDs of the check row and the hire, the name, the personnummer and the profession. So the robots never type these values: they come from the list. The queues allow one retry, give each item a unique reference and encrypt the item data, because it contains personnummer.
+
+### 6.2 The HOSP and IVO Robots: A Mail Out, an Answer Days Later
+
+**Problem 1: the same request text is typed again for every candidate.** *Solution:* for a Pending row, the robot builds the request from the queue item and sends it from the HR mailbox. The row is set to Waiting for answer with RequestedDate and AnswerDueDate.
+
+**Problem 2: nothing follows a waiting answer.** *Solution:* every run looks for the answer of each waiting row: a mail from the authority, with "SV:" and the person's personnummer in the subject. If it is not there, the row simply stays Waiting for answer.
+
+**Problem 3: results and PDFs are saved by hand, and fields are forgotten.** *Solution:* the robot reads the values from the PDF, writes Status, Result, CheckedBy and CheckedDate in one step, and saves the PDF in Authority Answers with the hire and the check type filled in.
+
+### 6.3 The Criminal Record Robot: Checking the Extract with the Police
+
+**Problem 4: four values are typed from the PDF into the police page.** *Solution:* the robot reads the values from the extract and fills in the police control service itself, in a new Edge window that is closed right after.
+
+**Problem 5: the extract must never be stored.** *Solution:* the PDF is only read in a temporary folder and deleted after every run, also after an error. Nothing is saved in Authority Answers.
+
+### 6.4 The Result for Hugo Palm
+
+The three robots were tested on a new request: Hugo Palm, a nurse for Akutmottagningen, with all three checks. Each robot took its own row from its own queue. The two request mails went out from the HR mailbox, the answers and the extract were read when they came, and all three rows ended as Done, checked by the robot account (Figure 19):
+
+1. **Legitimation:** Done, with the licence result and the diarienummer from HOSP.
+2. **IVO:** Done, with the IVO result and the diarienummer from IVO.
+3. **Belastningsregister:** Done, with the extract number, the police check and "Inga uppgifter".
+
+In all three rows, CheckedBy is RPA Rekrytering, the robot account.
+
+![All three checks of Hugo Palm are Done](Screenshots/sharepoint-hugo-palm-three-checks-done.png)
+
+*Figure 19. The three check rows of Hugo Palm, each finished by its own robot.*
+
+| Check | Result written by the robot |
+|---|---|
+| Legitimation | Legitimerad sjuksköterska sedan 1991-06-29. Giltig, inga begränsningar. Dnr 5.1-41202/2026. |
+| IVO | Inga pågående eller avslutade ärenden. Dnr 3.5.1-18302/2026. |
+| Belastningsregister | Utdrag BU-839380 utfärdat 2026-10-05. Äkta enligt Polisens kontrolltjänst 2026-11-12. Inga uppgifter. |
+
+The three robots now do the typing, the mails and the checks for each row they are given. But someone still has to create the rows, fill the queues and tell the head of department when everything is finished.
