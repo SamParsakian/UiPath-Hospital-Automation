@@ -1,14 +1,21 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_UpdateCheckRow" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umas="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umsm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umsmo="clr-namespace:UiPath.MicrosoftOffice365.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365" xmlns:umsse="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_UpdateCheckRow" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umas="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umase="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umasm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umsm="clr-namespace:UiPath.MicrosoftOffice365.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property sap2010:Annotation.AnnotationText="Configuration of the process (site, list and connection)." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
     <x:Property sap2010:Annotation.AnnotationText="ID of the row in the Background Checks list." Name="in_CheckItemId" Type="InArgument(x:String)" />
     <x:Property sap2010:Annotation.AnnotationText="A row that holds only the columns to change, for example Status and NextCheckDate." Name="in_NewValues" Type="InArgument(sd:DataRow)" />
   </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
-      <x:String>System</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
       <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
       <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
       <x:String>System.Data</x:String>
       <x:String>System.Linq</x:String>
       <x:String>UiPath.Core</x:String>
@@ -28,77 +35,81 @@
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
       <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
       <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="Update Check Row" sap2010:WorkflowViewState.IdRef="Sequence_1">
-    <umas:UpdateListItemConnections x:TypeArguments="sd:DataRow" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DataRow="[in_NewValues]" ItemId="[in_CheckItemId]" ItemSelectionMode="Manually" DisplayName="Update Row in Background Checks" sap2010:WorkflowViewState.IdRef="UpdateListItemConnections_1">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <umas:UpdateListItemConnections x:TypeArguments="sd:DataRow" BrowserListFriendlyName="{x:Null}" BrowserListId="{x:Null}" BrowserSiteUrl="{x:Null}" ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" Result="{x:Null}" AuthScopesInvalid="False" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DataRow="[in_NewValues]" DisplayName="Update Row in Background Checks" sap2010:WorkflowViewState.IdRef="UpdateListItemConnections_1" ItemId="[in_CheckItemId]" ItemSelectionMode="Manually" ListNameOrId="[in_Config(&quot;ChecksListName&quot;).ToString]" SiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]" UseConnectionService="True">
       <umas:UpdateListItemConnections.AllColumns>
-        <x:Array Type="umsmo:Office365SharepointListColumnSlim">
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Title" Guid="fa564e0f-0c70-4ab9-b863-0177e6ddd247" IsRequired="True" Name="Title" ReadOnly="False" Type="Text">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="CheckType" Guid="653713e0-f68b-42f6-afcb-d9c4b74749cf" IsRequired="False" Name="CheckType" ReadOnly="False" Type="Choice">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Status" Guid="f4f5cbb1-a8e5-4ed7-855b-b39b5fa0a00b" IsRequired="False" Name="Status" ReadOnly="False" Type="Choice">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Result" Guid="0670ccfd-ef13-4fda-ab4e-18f0a2dd409d" IsRequired="False" Name="Result" ReadOnly="False" Type="Text">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="CheckedBy" Guid="bf113a7f-06c9-41fb-999e-77e6847d7405" IsRequired="False" Name="CheckedBy" ReadOnly="False" Type="PersonOrGroup">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="CheckedDate" Guid="163cae4a-fdb1-4b9e-a72c-239696284e00" IsRequired="False" Name="CheckedDate" ReadOnly="False" Type="DateTime">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="RequestedDate" Guid="175e517b-08aa-424d-9e2f-2edde420b422" IsRequired="False" Name="RequestedDate" ReadOnly="False" Type="DateTime">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="AnswerDueDate" Guid="6d7c34ea-0a1d-46d8-b346-d42e36d3585d" IsRequired="False" Name="AnswerDueDate" ReadOnly="False" Type="DateTime">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
-          <umsmo:Office365SharepointListColumnSlim Choice="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="NextCheckDate" Guid="c6748f82-3037-4b69-b411-da993d19ef17" IsRequired="False" Name="NextCheckDate" ReadOnly="False" Type="DateTime">
-            <umsmo:Office365SharepointListColumnSlim.Sample>
-              <umsmo:ColumnSample Value="{x:Null}" />
-            </umsmo:Office365SharepointListColumnSlim.Sample>
-          </umsmo:Office365SharepointListColumnSlim>
+        <x:Array Type="umsm:Office365SharepointListColumnSlim">
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Title" Guid="fa564e0f-0c70-4ab9-b863-0177e6ddd247" Hidden="False" IsRequired="True" Name="Title" ReadOnly="False" Type="Text">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="CheckType" Guid="653713e0-f68b-42f6-afcb-d9c4b74749cf" Hidden="False" IsRequired="False" Name="CheckType" ReadOnly="False" Type="Choice">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Status" Guid="f4f5cbb1-a8e5-4ed7-855b-b39b5fa0a00b" Hidden="False" IsRequired="False" Name="Status" ReadOnly="False" Type="Choice">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Result" Guid="0670ccfd-ef13-4fda-ab4e-18f0a2dd409d" Hidden="False" IsRequired="False" Name="Result" ReadOnly="False" Type="Text">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="CheckedBy" Guid="bf113a7f-06c9-41fb-999e-77e6847d7405" Hidden="False" IsRequired="False" Name="CheckedBy" ReadOnly="False" Type="PersonOrGroup">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="CheckedDate" Guid="163cae4a-fdb1-4b9e-a72c-239696284e00" Hidden="False" IsRequired="False" Name="CheckedDate" ReadOnly="False" Type="DateTime">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="RequestedDate" Guid="175e517b-08aa-424d-9e2f-2edde420b422" Hidden="False" IsRequired="False" Name="RequestedDate" ReadOnly="False" Type="DateTime">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="AnswerDueDate" Guid="6d7c34ea-0a1d-46d8-b346-d42e36d3585d" Hidden="False" IsRequired="False" Name="AnswerDueDate" ReadOnly="False" Type="DateTime">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="NextCheckDate" Guid="c6748f82-3037-4b69-b411-da993d19ef17" Hidden="False" IsRequired="False" Name="NextCheckDate" ReadOnly="False" Type="DateTime">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
         </x:Array>
       </umas:UpdateListItemConnections.AllColumns>
       <umas:UpdateListItemConnections.ListArgument>
-        <umsm:ListArgument ItemSelectionMode="Manually">
-          <umsm:ListArgument.Backup>
-            <usau:BackupSlot x:TypeArguments="umsse:ItemSelectionMode" StoredValue="Manually">
-              <usau:BackupSlot.BackupValues>
-                <scg:Dictionary x:TypeArguments="umsse:ItemSelectionMode, scg:List(x:Object)" />
-              </usau:BackupSlot.BackupValues>
-            </usau:BackupSlot>
-          </umsm:ListArgument.Backup>
-          <umsm:ListArgument.ManualEntryListNameOrId>
-            <InArgument x:TypeArguments="x:String">[in_Config("ChecksListName").ToString]</InArgument>
-          </umsm:ListArgument.ManualEntryListNameOrId>
-          <umsm:ListArgument.ManualEntrySiteUrl>
-            <InArgument x:TypeArguments="x:String">[in_Config("SharePointSiteUrl").ToString]</InArgument>
-          </umsm:ListArgument.ManualEntrySiteUrl>
-        </umsm:ListArgument>
+        <umasm:ListArgument Backup="{x:Reference __ReferenceID0}" BrowserListFriendlyName="{x:Null}" BrowserListId="{x:Null}" BrowserSiteUrl="{x:Null}" ConnectionDescriptor="{x:Null}" ConnectionKey="{x:Null}" ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;ChecksListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]" />
       </umas:UpdateListItemConnections.ListArgument>
+      <umas:UpdateListItemConnections.ListItemBackup>
+        <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" x:Name="__ReferenceID0" StoredValue="Manually">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umas:UpdateListItemConnections.ListItemBackup>
+      <umas:UpdateListItemConnections.State>
+        <umas:ActivityState />
+      </umas:UpdateListItemConnections.State>
     </umas:UpdateListItemConnections>
-    <ui:LogMessage DisplayName="Log Row Updated" Level="Info" Message="[&quot;Background Checks row &quot; &amp; in_CheckItemId &amp; &quot; updated.&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage DisplayName="Log Row Updated" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Background Checks row &quot; &amp; in_CheckItemId &amp; &quot; updated.&quot;]" />
   </Sequence>
 </Activity>
