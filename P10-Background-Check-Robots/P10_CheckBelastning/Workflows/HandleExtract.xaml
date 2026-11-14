@@ -1,15 +1,22 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_HandleExtract" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:str="clr-namespace:System.Text.RegularExpressions;assembly=System.Text.RegularExpressions" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:ummm="clr-namespace:UiPath.MicrosoftOffice365.Mail.Models;assembly=UiPath.MicrosoftOffice365" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_HandleExtract" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:ummm="clr-namespace:UiPath.MicrosoftOffice365.Mail.Models;assembly=UiPath.MicrosoftOffice365" xmlns:upap="clr-namespace:UiPath.PDF.Activities.PDF;assembly=UiPath.PDF.Activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property sap2010:Annotation.AnnotationText="Configuration of the process." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
     <x:Property sap2010:Annotation.AnnotationText="The candidate's mail with the extract PDF." Name="in_ExtractMail" Type="InArgument(umm:Office365Message)" />
     <x:Property sap2010:Annotation.AnnotationText="ID of the row in the Background Checks list." Name="in_CheckItemId" Type="InArgument(x:String)" />
     <x:Property sap2010:Annotation.AnnotationText="Personnummer of the new hire (YYYYMMDD-NNNN)." Name="in_Personnummer" Type="InArgument(x:String)" />
   </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
-      <x:String>System</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
       <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
       <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
       <x:String>System.Data</x:String>
       <x:String>System.Globalization</x:String>
       <x:String>System.IO</x:String>
@@ -17,8 +24,8 @@
       <x:String>System.Text.RegularExpressions</x:String>
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
-      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
       <x:String>UiPath.MicrosoftOffice365.Mail.Models</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
     </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -37,6 +44,9 @@
       <AssemblyReference>UiPath.Platform</AssemblyReference>
       <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
       <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence sap2010:Annotation.AnnotationText="Reads the extract PDF, checks personnummer, age and type, and checks the extract in the police control service. The PDF is never saved anywhere: the local copy is deleted at the end, also when something fails." DisplayName="Handle Extract" sap2010:WorkflowViewState.IdRef="Sequence_1">
@@ -56,9 +66,14 @@
       <Variable x:TypeArguments="x:String" Name="checkResult" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_NewValues" />
     </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
     <Assign x:TypeArguments="x:String" DisplayName="Get Temp Folder" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[tempFolder]" Value="[Environment.ExpandEnvironmentVariables(in_Config(&quot;TempFolder&quot;).ToString)]" />
-    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Temp Folder" Path="[tempFolder]" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" />
-    <umam:DownloadEmailAttachments ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" ConflictResolution="Replace" DestinationPath="[tempFolder]" DisplayName="Download Extract PDF" Email="[in_ExtractMail]" ExcludeInlineAttachments="True" NewResult="[attachments]" SearchMode="UseSimple" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="DownloadEmailAttachments_1" />
+    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Temp Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[tempFolder]" />
+    <umam:DownloadEmailAttachments ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" Filter="{x:Null}" FilterByFileNames="{x:Null}" Result="{x:Null}" AuthScopesInvalid="False" ConflictResolution="Replace" ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DestinationPath="[tempFolder]" DisplayName="Download Extract PDF" Email="[in_ExtractMail]" ExcludeInlineAttachments="True" sap2010:WorkflowViewState.IdRef="DownloadEmailAttachments_1" NewResult="[attachments]" SearchMode="UseSimple" UseConnectionService="True" />
     <If Condition="[attachments Is Nothing OrElse attachments.Length = 0]" DisplayName="Is the PDF Missing?" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
         <Throw DisplayName="Throw No PDF in Mail" Exception="[New BusinessRuleException(&quot;Mejlet med utdraget saknar PDF. Kontrollera mejlet &quot; &amp; in_ExtractMail.Subject &amp; &quot; i hr.rekrytering@.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
@@ -67,12 +82,16 @@
     <TryCatch DisplayName="Try Check Extract" sap2010:WorkflowViewState.IdRef="TryCatch_1">
       <TryCatch.Try>
         <Sequence DisplayName="Check Extract" sap2010:WorkflowViewState.IdRef="Sequence_2">
-          <ui:ReadPDFText DisplayName="Read Extract PDF" ResourceFile="[attachments(0)]" Range="All" Text="[pdfText]" sap2010:WorkflowViewState.IdRef="ReadPDFText_1" />
+          <ui:ReadPDFText FileName="{x:Null}" PreserveFormatting="{x:Null}" DisplayName="Read Extract PDF" sap2010:WorkflowViewState.IdRef="ReadPDFText_1" Range="All" ResourceFile="[attachments(0)]" Text="[pdfText]">
+            <ui:ReadPDFText.Item>
+              <upap:ItemArgument x:TypeArguments="upr:IResource" FileName="{x:Null}" ResourceFile="[attachments(0)]" />
+            </ui:ReadPDFText.Item>
+          </ui:ReadPDFText>
           <Assign x:TypeArguments="x:String" DisplayName="Put PDF Text on One Line" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[pdfOneLine]" Value="[Regex.Replace(pdfText, &quot;\s+&quot;, &quot; &quot;)]" />
-          <ui:Matches DisplayName="Find Ärendenummer" FirstMatch="[extractNumber]" Input="[pdfText]" Pattern="(?&lt;=Ärendenummer:\s*)\S+" IsBuilderTabModified="False" RegexOption="IgnoreCase, Compiled" sap2010:WorkflowViewState.IdRef="Matches_1" />
-          <ui:Matches DisplayName="Find Utfärdat" FirstMatch="[issuedText]" Input="[pdfText]" Pattern="(?&lt;=Utfärdat:\s*)\d{4}-\d{2}-\d{2}" IsBuilderTabModified="False" RegexOption="IgnoreCase, Compiled" sap2010:WorkflowViewState.IdRef="Matches_2" />
-          <ui:Matches DisplayName="Find Personnummer" FirstMatch="[extractPnr]" Input="[pdfText]" Pattern="(?&lt;=Personnummer:\s*)\d{8}-\d{4}" IsBuilderTabModified="False" RegexOption="IgnoreCase, Compiled" sap2010:WorkflowViewState.IdRef="Matches_3" />
-          <ui:Matches DisplayName="Find Typ av Utdrag" FirstMatch="[extractType]" Input="[pdfText]" Pattern="(?&lt;=Typ av utdrag:[ \t]*)\S.*" IsBuilderTabModified="False" RegexOption="IgnoreCase, Compiled" sap2010:WorkflowViewState.IdRef="Matches_4" />
+          <ui:Matches DisplayName="Find Ärendenummer" FirstMatch="[extractNumber]" sap2010:WorkflowViewState.IdRef="Matches_1" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Ärendenummer:\s*)\S+" RegexOption="IgnoreCase, Compiled" />
+          <ui:Matches DisplayName="Find Utfärdat" FirstMatch="[issuedText]" sap2010:WorkflowViewState.IdRef="Matches_2" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Utfärdat:\s*)\d{4}-\d{2}-\d{2}" RegexOption="IgnoreCase, Compiled" />
+          <ui:Matches DisplayName="Find Personnummer" FirstMatch="[extractPnr]" sap2010:WorkflowViewState.IdRef="Matches_3" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Personnummer:\s*)\d{8}-\d{4}" RegexOption="IgnoreCase, Compiled" />
+          <ui:Matches DisplayName="Find Typ av Utdrag" FirstMatch="[extractType]" sap2010:WorkflowViewState.IdRef="Matches_4" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Typ av utdrag:[ \t]*)\S.*" RegexOption="IgnoreCase, Compiled" />
           <If Condition="[String.IsNullOrWhiteSpace(extractNumber) OrElse String.IsNullOrWhiteSpace(issuedText) OrElse String.IsNullOrWhiteSpace(extractPnr) OrElse String.IsNullOrWhiteSpace(extractType)]" DisplayName="Are Extract Details Missing?" sap2010:WorkflowViewState.IdRef="If_2">
             <If.Then>
               <Throw DisplayName="Throw Unreadable Extract" Exception="[New BusinessRuleException(&quot;Uppgifterna på utdraget kunde inte läsas. Behöver granskas av HR.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_2" />
@@ -95,7 +114,7 @@
               <Throw DisplayName="Throw Wrong Type" Exception="[New BusinessRuleException(&quot;Fel typ av utdrag (&quot; &amp; extractType &amp; &quot;). Utdraget ska gälla &quot; &amp; in_Config(&quot;ExtractTypeRequired&quot;).ToString &amp; &quot;.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_5" />
             </If.Then>
           </If>
-          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke VerifyExtractWithPolice workflow" UnSafe="False" WorkflowFileName="Workflows\VerifyExtractWithPolice.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke VerifyExtractWithPolice workflow" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\VerifyExtractWithPolice.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
               <InArgument x:TypeArguments="x:String" x:Key="in_ExtractNumber">[extractNumber]</InArgument>
@@ -130,17 +149,17 @@
               </Sequence>
             </If.Else>
           </If>
-          <ui:LogMessage DisplayName="Log Decision" Level="Info" Message="[&quot;Extract for check row &quot; &amp; in_CheckItemId &amp; &quot;: &quot; &amp; checkStatus &amp; &quot; (extract &quot; &amp; extractNumber &amp; &quot;).&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+          <ui:LogMessage DisplayName="Log Decision" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Extract for check row &quot; &amp; in_CheckItemId &amp; &quot;: &quot; &amp; checkStatus &amp; &quot; (extract &quot; &amp; extractNumber &amp; &quot;).&quot;]" />
           <ui:BuildDataTable DataTable="[dt_NewValues]" DisplayName="Build New Values Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;NewValues&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;NewValues&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;Status&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Result&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;CheckedBy&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;CheckedDate&quot; type=&quot;xs:dateTime&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
           <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {checkStatus, checkResult, in_Config(&quot;RobotEmail&quot;).ToString, DateTime.Today}]" DataTable="[dt_NewValues]" DisplayName="Add Check Values" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
-          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke UpdateCheckRow workflow" UnSafe="False" WorkflowFileName="Workflows\UpdateCheckRow.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2">
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke UpdateCheckRow workflow" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\UpdateCheckRow.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
               <InArgument x:TypeArguments="x:String" x:Key="in_CheckItemId">[in_CheckItemId]</InArgument>
               <InArgument x:TypeArguments="sd:DataRow" x:Key="in_NewValues">[dt_NewValues.Rows(0)]</InArgument>
             </ui:InvokeWorkflowFile.Arguments>
           </ui:InvokeWorkflowFile>
-          <umam:MarkAsReadUnreadConnections ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Mark Extract Mail as Read" Email="[in_ExtractMail]" MarkAsReadUnread="Read" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="MarkAsReadUnreadConnections_1" />
+          <umam:MarkAsReadUnreadConnections ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" AuthScopesInvalid="False" ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Mark Extract Mail as Read" Email="[in_ExtractMail]" sap2010:WorkflowViewState.IdRef="MarkAsReadUnreadConnections_1" MarkAsReadUnread="Read" UseConnectionService="True" />
         </Sequence>
       </TryCatch.Try>
       <TryCatch.Catches>
@@ -150,13 +169,13 @@
               <DelegateInArgument x:TypeArguments="s:Exception" Name="checkException" />
             </ActivityAction.Argument>
             <Sequence DisplayName="Remove PDF After Error" sap2010:WorkflowViewState.IdRef="Sequence_6">
-              <ui:DeleteFileX DisplayName="Delete Local PDF Copy After Error" Path="[attachments(0).LocalPath]" sap2010:WorkflowViewState.IdRef="DeleteFileX_2" />
+              <ui:DeleteFileX DisplayName="Delete Local PDF Copy After Error" sap2010:WorkflowViewState.IdRef="DeleteFileX_2" Path="[attachments(0).LocalPath]" />
               <Rethrow DisplayName="Rethrow Check Error" sap2010:WorkflowViewState.IdRef="Rethrow_1" />
             </Sequence>
           </ActivityAction>
         </Catch>
       </TryCatch.Catches>
     </TryCatch>
-    <ui:DeleteFileX DisplayName="Delete Local PDF Copy" Path="[attachments(0).LocalPath]" sap2010:WorkflowViewState.IdRef="DeleteFileX_1" />
+    <ui:DeleteFileX DisplayName="Delete Local PDF Copy" sap2010:WorkflowViewState.IdRef="DeleteFileX_1" Path="[attachments(0).LocalPath]" />
   </Sequence>
 </Activity>
