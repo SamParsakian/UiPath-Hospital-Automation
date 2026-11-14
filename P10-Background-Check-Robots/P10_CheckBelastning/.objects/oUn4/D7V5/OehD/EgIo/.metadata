@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Personnummer Field",
+  "Description": "Text box for the personnummer, in the check form",
+  "Type": "Element",
+  "TaxonomyType": "Input",
+  "Id": "EgIo1jL_kE-xzgDfXe9kaA",
+  "Reference": "Fuc2kvSQfUSeWoFA1kV9sA/EgIo1jL_kE-xzgDfXe9kaA",
+  "ParentRef": "Fuc2kvSQfUSeWoFA1kV9sA/OehD4DyQo0OrRGwl036ifA",
+  "Created": "2026-11-12T10:33:22.864981Z",
+  "Updated": "2026-11-12T10:33:22.864981Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
