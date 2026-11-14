@@ -76,15 +76,15 @@
         <Throw DisplayName="Throw No PDF in Answer" Exception="[New BusinessRuleException(&quot;Svaret från Socialstyrelsen saknar PDF. Kontrollera mejlet &quot; &amp; in_AnswerMail.Subject &amp; &quot; i hr.rekrytering@.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
       </If.Then>
     </If>
-    <ui:ReadPDFText FileName="{x:Null}" PreserveFormatting="{x:Null}" DisplayName="Read Answer PDF" sap2010:WorkflowViewState.IdRef="ReadPDFText_1" Range="All" ResourceFile="[attachments(0)]" Text="[pdfText]">
+    <ui:ReadPDFText FileName="{x:Null}" PreserveFormatting="True" DisplayName="Read Answer PDF" sap2010:WorkflowViewState.IdRef="ReadPDFText_1" Range="All" ResourceFile="[attachments(0)]" Text="[pdfText]">
       <ui:ReadPDFText.Item>
         <upap:ItemArgument x:TypeArguments="upr:IResource" FileName="{x:Null}" ResourceFile="[attachments(0)]" />
       </ui:ReadPDFText.Item>
     </ui:ReadPDFText>
-    <ui:Matches DisplayName="Find Diarienummer" FirstMatch="[dnr]" sap2010:WorkflowViewState.IdRef="Matches_1" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Diarienummer:\s*)\S+" RegexOption="IgnoreCase, Compiled" />
-    <ui:Matches DisplayName="Find Licence Status" FirstMatch="[licenceStatus]" sap2010:WorkflowViewState.IdRef="Matches_2" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Status:\s*)\S.*" RegexOption="IgnoreCase, Compiled" />
-    <ui:Matches DisplayName="Find Restrictions" FirstMatch="[restrictions]" sap2010:WorkflowViewState.IdRef="Matches_3" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Begränsningar:\s*)\S.*" RegexOption="IgnoreCase, Compiled" />
-    <ui:Matches DisplayName="Find Licence Date" FirstMatch="[licenceDate]" sap2010:WorkflowViewState.IdRef="Matches_4" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Legitimationsdatum:\s*)\S+" RegexOption="IgnoreCase, Compiled" />
+    <ui:Matches DisplayName="Find Diarienummer" FirstMatch="[dnr]" sap2010:WorkflowViewState.IdRef="Matches_1" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Diarienummer:[ \t]*)\S+" RegexOption="IgnoreCase, Compiled" />
+    <ui:Matches DisplayName="Find Licence Status" FirstMatch="[licenceStatus]" sap2010:WorkflowViewState.IdRef="Matches_2" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Status:[ \t]*)\S.*" RegexOption="IgnoreCase, Compiled" />
+    <ui:Matches DisplayName="Find Restrictions" FirstMatch="[restrictions]" sap2010:WorkflowViewState.IdRef="Matches_3" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Begränsningar:[ \t]*)\S.*" RegexOption="IgnoreCase, Compiled" />
+    <ui:Matches DisplayName="Find Licence Date" FirstMatch="[licenceDate]" sap2010:WorkflowViewState.IdRef="Matches_4" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Legitimationsdatum:[ \t]*)\S+" RegexOption="IgnoreCase, Compiled" />
     <Assign x:TypeArguments="x:String" DisplayName="Clean Diarienummer" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[dnr]" Value="[If(String.IsNullOrWhiteSpace(dnr), &quot;-&quot;, dnr.Trim)]" />
     <Assign x:TypeArguments="x:String" DisplayName="Clean Licence Status" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[licenceStatus]" Value="[If(String.IsNullOrWhiteSpace(licenceStatus), &quot;&quot;, licenceStatus.Trim)]" />
     <Assign x:TypeArguments="x:String" DisplayName="Clean Restrictions" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[restrictions]" Value="[If(String.IsNullOrWhiteSpace(restrictions), &quot;&quot;, restrictions.Trim)]" />
