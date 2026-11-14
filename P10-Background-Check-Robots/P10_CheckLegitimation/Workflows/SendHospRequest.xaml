@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_SendHospRequest" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_SendHospRequest" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property sap2010:Annotation.AnnotationText="Configuration of the process." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
     <x:Property sap2010:Annotation.AnnotationText="ID of the row in the Background Checks list." Name="in_CheckItemId" Type="InArgument(x:String)" />
@@ -6,11 +6,18 @@
     <x:Property sap2010:Annotation.AnnotationText="Personnummer of the new hire (YYYYMMDD-NNNN)." Name="in_Personnummer" Type="InArgument(x:String)" />
     <x:Property sap2010:Annotation.AnnotationText="Profession of the new hire, for example Sjuksköterska." Name="in_Profession" Type="InArgument(x:String)" />
   </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
-      <x:String>System</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
       <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
       <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
       <x:String>System.Data</x:String>
       <x:String>System.Linq</x:String>
       <x:String>UiPath.Core</x:String>
@@ -30,6 +37,9 @@
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
       <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
       <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="Send HOSP Request" sap2010:WorkflowViewState.IdRef="Sequence_1">
@@ -38,16 +48,14 @@
       <Variable x:TypeArguments="x:String" Name="mailText" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_NewValues" />
     </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
     <Assign x:TypeArguments="x:String" DisplayName="Build Mail Subject" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[mailSubject]" Value="[&quot;Kontroll av legitimation - &quot; &amp; in_Name &amp; &quot;, &quot; &amp; in_Personnummer]" />
     <Assign x:TypeArguments="x:String" DisplayName="Build Mail Text" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[mailText]" Value="[&quot;Hej,&quot; &amp; vbCrLf &amp; vbCrLf &amp; &quot;Vi ber om uppgifter ur HOSP-registret för &quot; &amp; in_Name &amp; &quot;, personnummer &quot; &amp; in_Personnummer &amp; &quot;, inför anställning som &quot; &amp; in_Profession.ToLower &amp; &quot; vid Stockholm Demo Hospital.&quot; &amp; vbCrLf &amp; vbCrLf &amp; &quot;Med vänlig hälsning&quot; &amp; vbCrLf &amp; &quot;HR-enheten, rekrytering&quot; &amp; vbCrLf &amp; &quot;Stockholm Demo Hospital&quot;]" />
-    <umam:SendMailConnections ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Send Request to Socialstyrelsen HOSP" Importance="Normal" InputType="TEXT" IsDeliveryReceiptRequested="False" IsReadReceiptRequested="False" SaveAsDraft="False" Subject="[mailSubject]" TextBody="[mailText]" To="[New String() {in_Config(&quot;HospMailAddress&quot;).ToString}]" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="SendMailConnections_1">
-      <umam:SendMailConnections.InputTypeBackup>
-        <usau:BackupSlot x:TypeArguments="umame:BodyInputType" StoredValue="TEXT">
-          <usau:BackupSlot.BackupValues>
-            <scg:Dictionary x:TypeArguments="umame:BodyInputType, scg:List(x:Object)" />
-          </usau:BackupSlot.BackupValues>
-        </usau:BackupSlot>
-      </umam:SendMailConnections.InputTypeBackup>
+    <umam:SendMailConnections ArgumentAttachmentPaths="{x:Null}" AttachmentList="{x:Null}" AttachmentPaths="{x:Null}" Attachments="{x:Null}" Bcc="{x:Null}" Body="{x:Null}" Cc="{x:Null}" ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" MailboxBackup="{x:Reference __ReferenceID0}" ReplyTo="{x:Null}" SensitivityLabelId="{x:Null}" AttachmentInputMode="Existing" AuthScopesInvalid="False" ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Send Request to Socialstyrelsen HOSP" sap2010:WorkflowViewState.IdRef="SendMailConnections_1" Importance="Normal" InputType="TEXT" IsDeliveryReceiptRequested="False" IsReadReceiptRequested="False" Mailbox="[in_Config(&quot;HrMailbox&quot;).ToString]" SaveAsDraft="False" Subject="[mailSubject]" TextBody="[mailText]" To="[New String() {in_Config(&quot;HospMailAddress&quot;).ToString}]" UseConnectionService="True" UseSharedMailbox="True">
       <umam:SendMailConnections.AttachmentsBackup>
         <usau:BackupSlot x:TypeArguments="umame:AttachmentInputMode" StoredValue="Existing">
           <usau:BackupSlot.BackupValues>
@@ -55,25 +63,29 @@
           </usau:BackupSlot.BackupValues>
         </usau:BackupSlot>
       </umam:SendMailConnections.AttachmentsBackup>
+      <umam:SendMailConnections.InputTypeBackup>
+        <usau:BackupSlot x:TypeArguments="umame:BodyInputType" StoredValue="TEXT">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umame:BodyInputType, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umam:SendMailConnections.InputTypeBackup>
       <umam:SendMailConnections.MailboxArg>
-        <umamm:MailboxArgument UseSharedMailbox="True">
+        <umamm:MailboxArgument SharedMailbox="[in_Config(&quot;HrMailbox&quot;).ToString]" UseSharedMailbox="True">
           <umamm:MailboxArgument.Backup>
-            <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" StoredValue="NoMailbox">
+            <usau:BackupSlot x:TypeArguments="umame:MailboxSelectionMode" x:Name="__ReferenceID0" StoredValue="NoMailbox">
               <usau:BackupSlot.BackupValues>
                 <scg:Dictionary x:TypeArguments="umame:MailboxSelectionMode, scg:List(x:Object)" />
               </usau:BackupSlot.BackupValues>
             </usau:BackupSlot>
           </umamm:MailboxArgument.Backup>
-          <umamm:MailboxArgument.SharedMailbox>
-            <InArgument x:TypeArguments="x:String">[in_Config("HrMailbox").ToString]</InArgument>
-          </umamm:MailboxArgument.SharedMailbox>
         </umamm:MailboxArgument>
       </umam:SendMailConnections.MailboxArg>
     </umam:SendMailConnections>
-    <ui:LogMessage DisplayName="Log Request Sent" Level="Info" Message="[&quot;HOSP request sent for check row &quot; &amp; in_CheckItemId &amp; &quot;.&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
+    <ui:LogMessage DisplayName="Log Request Sent" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;HOSP request sent for check row &quot; &amp; in_CheckItemId &amp; &quot;.&quot;]" />
     <ui:BuildDataTable DataTable="[dt_NewValues]" DisplayName="Build New Values Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;NewValues&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;NewValues&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;Status&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;RequestedDate&quot; type=&quot;xs:dateTime&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;AnswerDueDate&quot; type=&quot;xs:dateTime&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
     <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {&quot;Waiting for answer&quot;, DateTime.Today, DateTime.Today.AddDays(CInt(in_Config(&quot;AnswerDueDays&quot;)))}]" DataTable="[dt_NewValues]" DisplayName="Add Waiting for Answer Values" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
-    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke UpdateCheckRow workflow" UnSafe="False" WorkflowFileName="Workflows\UpdateCheckRow.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1">
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke UpdateCheckRow workflow" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\UpdateCheckRow.xaml">
       <ui:InvokeWorkflowFile.Arguments>
         <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
         <InArgument x:TypeArguments="x:String" x:Key="in_CheckItemId">[in_CheckItemId]</InArgument>

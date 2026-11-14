@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_HandleHospAnswer" VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="ActivityBuilder_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:str="clr-namespace:System.Text.RegularExpressions;assembly=System.Text.RegularExpressions" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umaf="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umafe="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umafm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:ummm="clr-namespace:UiPath.MicrosoftOffice365.Mail.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_HandleHospAnswer" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umaf="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umafe="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umafm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Files.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:ummm="clr-namespace:UiPath.MicrosoftOffice365.Mail.Models;assembly=UiPath.MicrosoftOffice365" xmlns:upap="clr-namespace:UiPath.PDF.Activities.PDF;assembly=UiPath.PDF.Activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property sap2010:Annotation.AnnotationText="Configuration of the process." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
     <x:Property sap2010:Annotation.AnnotationText="The answer mail from Socialstyrelsen HOSP (SV: ... with one PDF)." Name="in_AnswerMail" Type="InArgument(umm:Office365Message)" />
@@ -6,19 +6,26 @@
     <x:Property sap2010:Annotation.AnnotationText="ID of the new hire in the New Hires list (for the Hire column of the saved PDF)." Name="in_HireItemId" Type="InArgument(x:String)" />
     <x:Property sap2010:Annotation.AnnotationText="Profession of the new hire, for example Sjuksköterska." Name="in_Profession" Type="InArgument(x:String)" />
   </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
-      <x:String>System</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
       <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
       <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
       <x:String>System.Data</x:String>
       <x:String>System.IO</x:String>
       <x:String>System.Linq</x:String>
       <x:String>System.Text.RegularExpressions</x:String>
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
-      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
       <x:String>UiPath.MicrosoftOffice365.Mail.Models</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
     </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -37,6 +44,9 @@
       <AssemblyReference>UiPath.Platform</AssemblyReference>
       <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
       <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="Handle HOSP Answer" sap2010:WorkflowViewState.IdRef="Sequence_1">
@@ -53,19 +63,28 @@
       <Variable x:TypeArguments="sd:DataTable" Name="dt_PdfMetadata" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_NewValues" />
     </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
     <Assign x:TypeArguments="x:String" DisplayName="Get Temp Folder" sap2010:WorkflowViewState.IdRef="Assign`1_1" To="[tempFolder]" Value="[Environment.ExpandEnvironmentVariables(in_Config(&quot;TempFolder&quot;).ToString)]" />
-    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Temp Folder" Path="[tempFolder]" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" />
-    <umam:DownloadEmailAttachments ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" ConflictResolution="Replace" DestinationPath="[tempFolder]" DisplayName="Download Answer PDF" Email="[in_AnswerMail]" ExcludeInlineAttachments="True" NewResult="[attachments]" SearchMode="UseSimple" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="DownloadEmailAttachments_1" />
+    <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Create Temp Folder" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[tempFolder]" />
+    <umam:DownloadEmailAttachments ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" Filter="{x:Null}" FilterByFileNames="{x:Null}" Result="{x:Null}" AuthScopesInvalid="False" ConflictResolution="Replace" ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DestinationPath="[tempFolder]" DisplayName="Download Answer PDF" Email="[in_AnswerMail]" ExcludeInlineAttachments="True" sap2010:WorkflowViewState.IdRef="DownloadEmailAttachments_1" NewResult="[attachments]" SearchMode="UseSimple" UseConnectionService="True" />
     <If Condition="[attachments Is Nothing OrElse attachments.Length = 0]" DisplayName="Is the PDF Missing?" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
         <Throw DisplayName="Throw No PDF in Answer" Exception="[New BusinessRuleException(&quot;Svaret från Socialstyrelsen saknar PDF. Kontrollera mejlet &quot; &amp; in_AnswerMail.Subject &amp; &quot; i hr.rekrytering@.&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_1" />
       </If.Then>
     </If>
-    <ui:ReadPDFText DisplayName="Read Answer PDF" ResourceFile="[attachments(0)]" Range="All" Text="[pdfText]" sap2010:WorkflowViewState.IdRef="ReadPDFText_1" />
-    <ui:Matches DisplayName="Find Diarienummer" FirstMatch="[dnr]" Input="[pdfText]" Pattern="(?&lt;=Diarienummer:\s*)\S+" IsBuilderTabModified="False" RegexOption="IgnoreCase, Compiled" sap2010:WorkflowViewState.IdRef="Matches_1" />
-    <ui:Matches DisplayName="Find Licence Status" FirstMatch="[licenceStatus]" Input="[pdfText]" Pattern="(?&lt;=Status:\s*)\S.*" IsBuilderTabModified="False" RegexOption="IgnoreCase, Compiled" sap2010:WorkflowViewState.IdRef="Matches_2" />
-    <ui:Matches DisplayName="Find Restrictions" FirstMatch="[restrictions]" Input="[pdfText]" Pattern="(?&lt;=Begränsningar:\s*)\S.*" IsBuilderTabModified="False" RegexOption="IgnoreCase, Compiled" sap2010:WorkflowViewState.IdRef="Matches_3" />
-    <ui:Matches DisplayName="Find Licence Date" FirstMatch="[licenceDate]" Input="[pdfText]" Pattern="(?&lt;=Legitimationsdatum:\s*)\S+" IsBuilderTabModified="False" RegexOption="IgnoreCase, Compiled" sap2010:WorkflowViewState.IdRef="Matches_4" />
+    <ui:ReadPDFText FileName="{x:Null}" PreserveFormatting="{x:Null}" DisplayName="Read Answer PDF" sap2010:WorkflowViewState.IdRef="ReadPDFText_1" Range="All" ResourceFile="[attachments(0)]" Text="[pdfText]">
+      <ui:ReadPDFText.Item>
+        <upap:ItemArgument x:TypeArguments="upr:IResource" FileName="{x:Null}" ResourceFile="[attachments(0)]" />
+      </ui:ReadPDFText.Item>
+    </ui:ReadPDFText>
+    <ui:Matches DisplayName="Find Diarienummer" FirstMatch="[dnr]" sap2010:WorkflowViewState.IdRef="Matches_1" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Diarienummer:\s*)\S+" RegexOption="IgnoreCase, Compiled" />
+    <ui:Matches DisplayName="Find Licence Status" FirstMatch="[licenceStatus]" sap2010:WorkflowViewState.IdRef="Matches_2" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Status:\s*)\S.*" RegexOption="IgnoreCase, Compiled" />
+    <ui:Matches DisplayName="Find Restrictions" FirstMatch="[restrictions]" sap2010:WorkflowViewState.IdRef="Matches_3" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Begränsningar:\s*)\S.*" RegexOption="IgnoreCase, Compiled" />
+    <ui:Matches DisplayName="Find Licence Date" FirstMatch="[licenceDate]" sap2010:WorkflowViewState.IdRef="Matches_4" Input="[pdfText]" IsBuilderTabModified="False" Pattern="(?&lt;=Legitimationsdatum:\s*)\S+" RegexOption="IgnoreCase, Compiled" />
     <Assign x:TypeArguments="x:String" DisplayName="Clean Diarienummer" sap2010:WorkflowViewState.IdRef="Assign`1_2" To="[dnr]" Value="[If(String.IsNullOrWhiteSpace(dnr), &quot;-&quot;, dnr.Trim)]" />
     <Assign x:TypeArguments="x:String" DisplayName="Clean Licence Status" sap2010:WorkflowViewState.IdRef="Assign`1_3" To="[licenceStatus]" Value="[If(String.IsNullOrWhiteSpace(licenceStatus), &quot;&quot;, licenceStatus.Trim)]" />
     <Assign x:TypeArguments="x:String" DisplayName="Clean Restrictions" sap2010:WorkflowViewState.IdRef="Assign`1_4" To="[restrictions]" Value="[If(String.IsNullOrWhiteSpace(restrictions), &quot;&quot;, restrictions.Trim)]" />
@@ -91,36 +110,40 @@
         </Sequence>
       </If.Else>
     </If>
-    <ui:LogMessage DisplayName="Log Decision" Level="Info" Message="[&quot;HOSP answer for check row &quot; &amp; in_CheckItemId &amp; &quot;: &quot; &amp; checkStatus &amp; &quot; (Dnr &quot; &amp; dnr &amp; &quot;).&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_1" />
-    <ui:BuildDataTable DataTable="[dt_PdfMetadata]" sap2010:Annotation.AnnotationText="One row per library column: Field = column name, Value = value. The Hire lookup takes the New Hires item ID." DisplayName="Build PDF Metadata Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;PdfMetadata&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;PdfMetadata&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;Field&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Value&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <ui:LogMessage DisplayName="Log Decision" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;HOSP answer for check row &quot; &amp; in_CheckItemId &amp; &quot;: &quot; &amp; checkStatus &amp; &quot; (Dnr &quot; &amp; dnr &amp; &quot;).&quot;]" />
+    <ui:BuildDataTable sap2010:Annotation.AnnotationText="One row per library column: Field = column name, Value = value. The Hire lookup takes the New Hires item ID." DataTable="[dt_PdfMetadata]" DisplayName="Build PDF Metadata Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;PdfMetadata&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;PdfMetadata&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;Field&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Value&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
     <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {&quot;Hire&quot;, in_HireItemId}]" DataTable="[dt_PdfMetadata]" DisplayName="Add Hire Field" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
     <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {&quot;CheckType&quot;, &quot;Legitimation&quot;}]" DataTable="[dt_PdfMetadata]" DisplayName="Add Check Type Field" sap2010:WorkflowViewState.IdRef="AddDataRow_3" />
-    <umaf:UploadFilesConnections ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" ConflictResolution="Replace" DisplayName="Save PDF in Authority Answers" FilesInputMode="Single" ItemSelectionMode="ItemUrl" Metadata="[dt_PdfMetadata]" SingleFileToUpload="[attachments(0)]" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="UploadFilesConnections_1">
+    <umaf:UploadFilesConnections AllResults="{x:Null}" BrowserDriveName="{x:Null}" BrowserItemFriendlyName="{x:Null}" BrowserItemId="{x:Null}" BrowserParentItemId="{x:Null}" BrowserSiteUrl="{x:Null}" ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" FilesList="{x:Null}" FirstResult="{x:Null}" ItemIdBackup="{x:Reference __ReferenceID0}" ManualEntryDriveName="{x:Null}" ManualEntryItemFullPath="{x:Null}" ManualEntryItemId="{x:Null}" ManualEntryItemRelativePath="{x:Null}" ManualEntrySiteUrl="{x:Null}" MultipleFilesToUpload="{x:Null}" AuthScopesInvalid="False" ConflictResolution="Replace" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DisplayName="Save PDF in Authority Answers" FilesInputMode="Single" sap2010:WorkflowViewState.IdRef="UploadFilesConnections_1" ItemSelectionMode="ItemUrl" ManualEntryItemUrl="[in_Config(&quot;AnswersLibraryUrl&quot;).ToString]" Metadata="[dt_PdfMetadata]" SingleFileToUpload="[attachments(0)]" UseConnectionService="True">
       <umaf:UploadFilesConnections.DriveItemArgument>
-        <umafm:DriveItemArgument ItemSelectionMode="ItemUrl">
+        <umafm:DriveItemArgument BrowserDriveId="{x:Null}" BrowserDriveName="{x:Null}" BrowserItemFriendlyName="{x:Null}" BrowserItemId="{x:Null}" BrowserParentDriveId="{x:Null}" BrowserParentDriveName="{x:Null}" BrowserParentItemFriendlyName="{x:Null}" BrowserParentItemId="{x:Null}" BrowserParentPath="{x:Null}" BrowserSiteUrl="{x:Null}" BrowserSpecificUrl="{x:Null}" ConnectionDescriptor="{x:Null}" ConnectionKey="{x:Null}" Item="{x:Null}" ManualEntryDriveName="{x:Null}" ManualEntryItemFullPath="{x:Null}" ManualEntryItemId="{x:Null}" ManualEntryItemRelativePath="{x:Null}" ManualEntrySiteUrl="{x:Null}" ReferenceId="{x:Null}" FullPathHint="" ItemSelectionMode="ItemUrl" ManualEntryItemUrl="[in_Config(&quot;AnswersLibraryUrl&quot;).ToString]" ParentFullPathHint="">
           <umafm:DriveItemArgument.ItemIdBackup>
-            <usau:BackupSlot x:TypeArguments="umafe:EDriveItemMode" StoredValue="ItemUrl">
+            <usau:BackupSlot x:TypeArguments="umafe:EDriveItemMode" x:Name="__ReferenceID0" StoredValue="ItemUrl">
               <usau:BackupSlot.BackupValues>
                 <scg:Dictionary x:TypeArguments="umafe:EDriveItemMode, scg:List(x:Object)" />
               </usau:BackupSlot.BackupValues>
             </usau:BackupSlot>
           </umafm:DriveItemArgument.ItemIdBackup>
-          <umafm:DriveItemArgument.ManualEntryItemUrl>
-            <InArgument x:TypeArguments="x:String">[in_Config("AnswersLibraryUrl").ToString]</InArgument>
-          </umafm:DriveItemArgument.ManualEntryItemUrl>
         </umafm:DriveItemArgument>
       </umaf:UploadFilesConnections.DriveItemArgument>
+      <umaf:UploadFilesConnections.FilesBackup>
+        <usau:BackupSlot x:TypeArguments="umafe:FilesInputMode" StoredValue="{x:Null}">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umafe:FilesInputMode, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umaf:UploadFilesConnections.FilesBackup>
     </umaf:UploadFilesConnections>
     <ui:BuildDataTable DataTable="[dt_NewValues]" DisplayName="Build New Values Table" sap2010:WorkflowViewState.IdRef="BuildDataTable_2" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;NewValues&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;NewValues&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;Status&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Result&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;CheckedBy&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;CheckedDate&quot; type=&quot;xs:dateTime&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
     <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {checkStatus, checkResult, in_Config(&quot;RobotEmail&quot;).ToString, DateTime.Today}]" DataTable="[dt_NewValues]" DisplayName="Add Answer Values" sap2010:WorkflowViewState.IdRef="AddDataRow_2" />
-    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke UpdateCheckRow workflow" UnSafe="False" WorkflowFileName="Workflows\UpdateCheckRow.xaml" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1">
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke UpdateCheckRow workflow" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\UpdateCheckRow.xaml">
       <ui:InvokeWorkflowFile.Arguments>
         <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
         <InArgument x:TypeArguments="x:String" x:Key="in_CheckItemId">[in_CheckItemId]</InArgument>
         <InArgument x:TypeArguments="sd:DataRow" x:Key="in_NewValues">[dt_NewValues.Rows(0)]</InArgument>
       </ui:InvokeWorkflowFile.Arguments>
     </ui:InvokeWorkflowFile>
-    <umam:MarkAsReadUnreadConnections ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Mark Answer Mail as Read" Email="[in_AnswerMail]" MarkAsReadUnread="Read" UseConnectionService="True" sap2010:WorkflowViewState.IdRef="MarkAsReadUnreadConnections_1" />
-    <ui:DeleteFileX DisplayName="Delete Local PDF Copy" Path="[attachments(0).LocalPath]" sap2010:WorkflowViewState.IdRef="DeleteFileX_1" />
+    <umam:MarkAsReadUnreadConnections ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" AuthScopesInvalid="False" ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Mark Answer Mail as Read" Email="[in_AnswerMail]" sap2010:WorkflowViewState.IdRef="MarkAsReadUnreadConnections_1" MarkAsReadUnread="Read" UseConnectionService="True" />
+    <ui:DeleteFileX DisplayName="Delete Local PDF Copy" sap2010:WorkflowViewState.IdRef="DeleteFileX_1" Path="[attachments(0).LocalPath]" />
   </Sequence>
 </Activity>
