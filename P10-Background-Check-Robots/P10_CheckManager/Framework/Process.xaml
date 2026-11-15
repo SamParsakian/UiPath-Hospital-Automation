@@ -163,8 +163,21 @@
                 </If.Then>
                 <If.Else>
                   <Sequence DisplayName="Checks Still Open">
+                    <Sequence.Variables>
+                      <Variable x:TypeArguments="x:Boolean" Name="mailSentToday" />
+                    </Sequence.Variables>
                     <If Condition="[reviewLines &lt;&gt; &quot;&quot;]" DisplayName="Does a Check Need Review?">
                       <If.Then>
+                        <Sequence DisplayName="Send the Review Mail Once a Day">
+                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke WasMailSentToday workflow (needs review)" UnSafe="False" WorkflowFileName="Workflows\WasMailSentToday.xaml">
+                          <ui:InvokeWorkflowFile.Arguments>
+                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[&quot;Behöver granskas - &quot; &amp; hireName]</InArgument>
+                            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_SentToday">[mailSentToday]</OutArgument>
+                          </ui:InvokeWorkflowFile.Arguments>
+                        </ui:InvokeWorkflowFile>
+                        <If Condition="[Not mailSentToday]" DisplayName="Review Mail Not Sent Today?">
+                          <If.Then>
                         <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke SendHrMail workflow (needs review)" UnSafe="False" WorkflowFileName="Workflows\SendHrMail.xaml">
                           <ui:InvokeWorkflowFile.Arguments>
                             <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
@@ -174,10 +187,26 @@
                             <InArgument x:TypeArguments="x:String" x:Key="in_Text">["Hej," &amp; vbLf &amp; vbLf &amp; "En kontroll för " &amp; hireName &amp; " behöver granskas av en person:" &amp; vbLf &amp; vbLf &amp; reviewLines &amp; vbLf &amp; "Sätt raden i Background Checks till Done eller Failed när den är granskad. Rapporten till verksamhetschefen skickas sedan automatiskt."]</InArgument>
                           </ui:InvokeWorkflowFile.Arguments>
                         </ui:InvokeWorkflowFile>
+                          </If.Then>
+                          <If.Else>
+                            <ui:LogMessage DisplayName="Log Review Mail Already Sent Today" Level="Info" Message="[&quot;Mail already sent today: &quot; &amp; &quot;Behöver granskas - &quot; &amp; hireName]" />
+                          </If.Else>
+                        </If>
+                        </Sequence>
                       </If.Then>
                     </If>
                     <If Condition="[overdueLines &lt;&gt; &quot;&quot;]" DisplayName="Is an Answer Late?">
                       <If.Then>
+                        <Sequence DisplayName="Send the Late Answer Mail Once a Day">
+                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke WasMailSentToday workflow (late answer)" UnSafe="False" WorkflowFileName="Workflows\WasMailSentToday.xaml">
+                          <ui:InvokeWorkflowFile.Arguments>
+                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[&quot;Svar dröjer - &quot; &amp; hireName]</InArgument>
+                            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_SentToday">[mailSentToday]</OutArgument>
+                          </ui:InvokeWorkflowFile.Arguments>
+                        </ui:InvokeWorkflowFile>
+                        <If Condition="[Not mailSentToday]" DisplayName="Late Answer Mail Not Sent Today?">
+                          <If.Then>
                         <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke SendHrMail workflow (late answer)" UnSafe="False" WorkflowFileName="Workflows\SendHrMail.xaml">
                           <ui:InvokeWorkflowFile.Arguments>
                             <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
@@ -187,6 +216,12 @@
                             <InArgument x:TypeArguments="x:String" x:Key="in_Text">["Hej," &amp; vbLf &amp; vbLf &amp; "Svaret har inte kommit i tid för " &amp; hireName &amp; " (planerad start " &amp; CDate(hireRow("StartDate")).ToLocalTime.ToString("yyyy-MM-dd") &amp; "):" &amp; vbLf &amp; vbLf &amp; overdueLines &amp; vbLf &amp; "Robotarna fortsätter att leta efter svaret varje morgon. Kontakta gärna myndigheten eller kandidaten."]</InArgument>
                           </ui:InvokeWorkflowFile.Arguments>
                         </ui:InvokeWorkflowFile>
+                          </If.Then>
+                          <If.Else>
+                            <ui:LogMessage DisplayName="Log Late Answer Mail Already Sent Today" Level="Info" Message="[&quot;Mail already sent today: &quot; &amp; &quot;Svar dröjer - &quot; &amp; hireName]" />
+                          </If.Else>
+                        </If>
+                        </Sequence>
                       </If.Then>
                     </If>
                     <If Condition="[hireRow(&quot;OverallStatus&quot;).ToString = &quot;Pending&quot;]" DisplayName="Is the Hire Still Pending?">
