@@ -102,7 +102,7 @@
                       <umsm:ColumnSample Value="{x:Null}" />
                     </umsm:Office365SharepointListColumnSlim.Sample>
                   </umsm:Office365SharepointListColumnSlim>
-                  <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Hire" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" LookupListId="4323bd71-7c88-49c0-814f-c1129ae3cadb" Name="Hire" ReadOnly="False" Type="Lookup">
+                  <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Hire" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" LookupListId="9969a298-9f5d-459d-9851-89e9b0a58e2c" Name="Hire" ReadOnly="False" Type="Lookup">
                     <umsm:Office365SharepointListColumnSlim.LookupColumn>
                       <umsmc:LookupColumnMetadata ColumnName="Title" MultiSelect="False" />
                     </umsm:Office365SharepointListColumnSlim.LookupColumn>
