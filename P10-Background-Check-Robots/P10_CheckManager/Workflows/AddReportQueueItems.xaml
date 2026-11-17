@@ -1,0 +1,114 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_AddReportQueueItems" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umas="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umase="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umasm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Configuration of the process (list and queue names)." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Step 3 of every run: work for this robot.&#xA;Every New Hires row without a sent report gets one item in P10_Reports. The robot then handles these items one by one in Process.xaml.&#xA;The reference is &quot;row id - date and time of this run&quot;. Process.xaml reads the row again and never sends a second report." DisplayName="Add Report Queue Items">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_Hires" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="itemsAdded" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <umas:GetListItemsConnections x:TypeArguments="sd:DataTable" ColumnsToRetrieveByName="[New String() {&quot;ID&quot;, &quot;Title&quot;, &quot;ReportSent&quot;}]" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DisplayName="Get New Hires" Result="[dt_Hires]" UseConnectionService="True">
+      <umas:GetListItemsConnections.ListArgument>
+        <umasm:ListArgument ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;HiresListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]">
+          <umasm:ListArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" StoredValue="Manually">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umasm:ListArgument.Backup>
+        </umasm:ListArgument>
+      </umas:GetListItemsConnections.ListArgument>
+    </umas:GetListItemsConnections>
+    <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[dt_Hires]" DisplayName="For Each Row in New Hires">
+      <ui:ForEachRow.Body>
+        <ActivityAction x:TypeArguments="sd:DataRow">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="sd:DataRow" Name="hireRow" />
+          </ActivityAction.Argument>
+          <If Condition="[hireRow(&quot;ReportSent&quot;).ToString &lt;&gt; &quot;True&quot;]" DisplayName="Is the Report Not Sent Yet?">
+            <If.Then>
+              <Sequence DisplayName="Add One Report Item">
+                <Sequence.Variables>
+                  <Variable x:TypeArguments="x:String" Name="reference" />
+                </Sequence.Variables>
+                <Assign x:TypeArguments="x:String" DisplayName="Build Reference (Row Id and Run Time)" To="[reference]" Value="[hireRow(&quot;ID&quot;).ToString &amp; &quot;-&quot; &amp; Now.ToString(&quot;yyyy-MM-dd-HHmm&quot;)]" />
+                <TryCatch DisplayName="Try Add Report Item">
+                  <TryCatch.Try>
+                    <Sequence DisplayName="Add Report Item">
+                      <ui:AddQueueItem DisplayName="Add Hire to P10_Reports" FolderPath="[If(String.IsNullOrEmpty(in_Config(&quot;OrchestratorQueueFolder&quot;).ToString), Nothing, in_Config(&quot;OrchestratorQueueFolder&quot;).ToString)]" Priority="Normal" QueueType="[in_Config(&quot;OrchestratorQueueName&quot;).ToString]" Reference="[reference]" TimeoutMS="{x:Null}">
+                        <ui:AddQueueItem.ItemInformation>
+                          <InArgument x:TypeArguments="x:String" x:Key="HireItemId">[hireRow("ID").ToString]</InArgument>
+                          <InArgument x:TypeArguments="x:String" x:Key="Name">[hireRow("Title").ToString]</InArgument>
+                        </ui:AddQueueItem.ItemInformation>
+                      </ui:AddQueueItem>
+                      <Assign x:TypeArguments="x:Int32" DisplayName="Count Added Item" To="[itemsAdded]" Value="[itemsAdded + 1]" />
+                    </Sequence>
+                  </TryCatch.Try>
+                  <TryCatch.Catches>
+                    <Catch x:TypeArguments="s:Exception">
+                      <ActivityAction x:TypeArguments="s:Exception">
+                        <ActivityAction.Argument>
+                          <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                        </ActivityAction.Argument>
+                        <If Condition="[exception.Message.ToLower.Contains(&quot;reference&quot;)]" DisplayName="Is the Item Already in the Queue?">
+                          <If.Then>
+                            <ui:LogMessage DisplayName="Log Already Queued" Level="Info" Message="[&quot;Report item &quot; &amp; reference &amp; &quot; is already in the queue. Nothing added.&quot;]" />
+                          </If.Then>
+                          <If.Else>
+                            <Rethrow DisplayName="Rethrow Other Errors" />
+                          </If.Else>
+                        </If>
+                      </ActivityAction>
+                    </Catch>
+                  </TryCatch.Catches>
+                </TryCatch>
+              </Sequence>
+            </If.Then>
+          </If>
+        </ActivityAction>
+      </ui:ForEachRow.Body>
+    </ui:ForEachRow>
+    <ui:LogMessage DisplayName="Log Report Items Added" Level="Info" Message="[itemsAdded.ToString &amp; &quot; new report items added to &quot; &amp; in_Config(&quot;OrchestratorQueueName&quot;).ToString &amp; &quot;.&quot;]" />
+  </Sequence>
+</Activity>

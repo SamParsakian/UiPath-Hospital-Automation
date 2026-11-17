@@ -1,0 +1,352 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_RegisterNewHire" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umas="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umase="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umasm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:umsm="clr-namespace:UiPath.MicrosoftOffice365.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365" xmlns:umsmc="clr-namespace:UiPath.MicrosoftOffice365.Sharepoint.Models.Columns;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Configuration of the process." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property sap2010:Annotation.AnnotationText="The request mail from a head of department." Name="in_Mail" Type="InArgument(umm:Office365Message)" />
+    <x:Property sap2010:Annotation.AnnotationText="Full name of the head of department who sent the mail." Name="in_HeadName" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="The New Hires list (ID and IdentityNumber), to find requests that are already registered." Name="in_dt_Hires" Type="InArgument(sd:DataTable)" />
+    <x:Property sap2010:Annotation.AnnotationText="The site users (ID, Title, EMail). RequestedBy is written with the user ID of the sender." Name="in_dt_SiteUsers" Type="InArgument(sd:DataTable)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Globalization</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Text.RegularExpressions</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="One request mail = one new hire.&#xA;1. Read the details from the mail text with simple rules.&#xA;2. If a detail is missing, ask the head of department in a reply.&#xA;3. If the personnummer is already in New Hires, do nothing.&#xA;4. Otherwise add the hire and one Pending row per required check.&#xA;The mail is marked as read at the end." DisplayName="Register New Hire">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="requestText" />
+      <Variable x:TypeArguments="x:String" Name="candidateName" />
+      <Variable x:TypeArguments="x:String" Name="personnummer" />
+      <Variable x:TypeArguments="x:String" Default="" Name="profession" />
+      <Variable x:TypeArguments="x:String" Default="" Name="department" />
+      <Variable x:TypeArguments="x:String" Name="startDateText" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="checksRequired" />
+      <Variable x:TypeArguments="x:String" Name="missingFields" />
+      <Variable x:TypeArguments="x:Boolean" Default="False" Name="alreadyRegistered" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_HireValues" />
+      <Variable x:TypeArguments="sd:DataRow" Name="newHireRow" />
+      <Variable x:TypeArguments="x:String" Name="newHireId" />
+      <Variable x:TypeArguments="x:String" Default="" Name="requesterId" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Sequence DisplayName="Read the Details from the Mail">
+      <Assign x:TypeArguments="x:String" DisplayName="Get Subject and Text" To="[requestText]" Value="[in_Mail.Subject &amp; vbLf &amp; in_Mail.Body]" />
+      <ui:Matches DisplayName="Find Personnummer" FirstMatch="[personnummer]" Input="[requestText]" IsBuilderTabModified="False" Pattern="(19|20)\d{6}-\d{4}" RegexOption="Compiled" />
+      <ui:Matches DisplayName="Find Name (Words Before the Personnummer)" FirstMatch="[candidateName]" Input="[requestText]" IsBuilderTabModified="False" Pattern="[A-ZÅÄÖ][a-zåäöé\-]+( [A-ZÅÄÖ][a-zåäöé\-]+)+(?=(, personnummer |, | \(|\s+Personnummer: )(19|20)\d{6}-\d{4})" RegexOption="Compiled" />
+      <ui:Matches DisplayName="Find Start Date" FirstMatch="[startDateText]" Input="[requestText]" IsBuilderTabModified="False" Pattern="20\d{2}-\d{2}-\d{2}" RegexOption="Compiled" />
+      <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Profession in Config" Values="[in_Config(&quot;Professions&quot;).ToString.Split(&quot;;&quot;c)]">
+        <ui:ForEach.Body>
+          <ActivityAction x:TypeArguments="x:String">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="x:String" Name="professionName" />
+            </ActivityAction.Argument>
+            <If Condition="[requestText.ToLower.Contains(professionName.ToLower)]" DisplayName="Is This Profession in the Mail?">
+              <If.Then>
+                <Assign x:TypeArguments="x:String" DisplayName="Keep Profession" To="[profession]" Value="[professionName]" />
+              </If.Then>
+            </If>
+          </ActivityAction>
+        </ui:ForEach.Body>
+      </ui:ForEach>
+      <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Department in Config" Values="[in_Config(&quot;Departments&quot;).ToString.Split(&quot;;&quot;c)]">
+        <ui:ForEach.Body>
+          <ActivityAction x:TypeArguments="x:String">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="x:String" Name="departmentName" />
+            </ActivityAction.Argument>
+            <If Condition="[requestText.ToLower.Contains(departmentName.ToLower)]" DisplayName="Is This Department in the Mail?">
+              <If.Then>
+                <Assign x:TypeArguments="x:String" DisplayName="Keep Department" To="[department]" Value="[departmentName]" />
+              </If.Then>
+            </If>
+          </ActivityAction>
+        </ui:ForEach.Body>
+      </ui:ForEach>
+      <If Condition="[department = &quot;&quot; AndAlso requestText.ToLower.Contains(&quot;akuten&quot;)]" DisplayName="Is &quot;akuten&quot; Used for the Emergency Department?">
+        <If.Then>
+          <Assign x:TypeArguments="x:String" DisplayName="Department Akutmottagningen" To="[department]" Value="Akutmottagningen" />
+        </If.Then>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="Decide the Required Checks">
+      <Assign x:TypeArguments="scg:List(x:String)" DisplayName="Start an Empty Check List" To="[checksRequired]" Value="[New List(Of String)]" />
+      <If Condition="[requestText.ToLower.Contains(&quot;legitimation&quot;) AndAlso Not requestText.ToLower.Contains(&quot;ingen legitimation&quot;)]" DisplayName="Does the Mail Ask for Legitimation?">
+        <If.Then>
+          <AddToCollection x:TypeArguments="x:String" Collection="[checksRequired]" DisplayName="Add Legitimation" Item="Legitimation" />
+        </If.Then>
+      </If>
+      <If Condition="[requestText.Contains(&quot;IVO&quot;)]" DisplayName="Does the Mail Ask for IVO?">
+        <If.Then>
+          <AddToCollection x:TypeArguments="x:String" Collection="[checksRequired]" DisplayName="Add IVO" Item="IVO" />
+        </If.Then>
+      </If>
+      <If Condition="[requestText.ToLower.Contains(&quot;belastningsregist&quot;) OrElse requestText.ToLower.Contains(&quot;utdrag&quot;)]" DisplayName="Does the Mail Ask for the Criminal Record?">
+        <If.Then>
+          <AddToCollection x:TypeArguments="x:String" Collection="[checksRequired]" DisplayName="Add Belastningsregister" Item="Belastningsregister" />
+        </If.Then>
+      </If>
+      <If Condition="[checksRequired.Count = 0]" DisplayName="No Checks Named? Use the Profession">
+        <If.Then>
+          <Sequence DisplayName="Checks from the Profession">
+            <If Condition="[profession &lt;&gt; &quot;Undersköterska&quot;]" DisplayName="Does the Profession Need a Licence?">
+              <If.Then>
+                <AddToCollection x:TypeArguments="x:String" Collection="[checksRequired]" DisplayName="Add Legitimation" Item="Legitimation" />
+              </If.Then>
+            </If>
+            <AddToCollection x:TypeArguments="x:String" Collection="[checksRequired]" DisplayName="Add IVO" Item="IVO" />
+            <AddToCollection x:TypeArguments="x:String" Collection="[checksRequired]" DisplayName="Add Belastningsregister" Item="Belastningsregister" />
+          </Sequence>
+        </If.Then>
+      </If>
+    </Sequence>
+    <Sequence DisplayName="List Missing Details">
+      <Assign x:TypeArguments="x:String" DisplayName="Nothing Missing Yet" To="[missingFields]" Value="" />
+      <If Condition="[String.IsNullOrWhiteSpace(candidateName)]" DisplayName="Is the Name Missing?">
+        <If.Then>
+          <Assign x:TypeArguments="x:String" DisplayName="Name Missing" To="[missingFields]" Value="[missingFields &amp; &quot;- namn&quot; &amp; vbLf]" />
+        </If.Then>
+      </If>
+      <If Condition="[String.IsNullOrWhiteSpace(personnummer)]" DisplayName="Is the Personnummer Missing?">
+        <If.Then>
+          <Assign x:TypeArguments="x:String" DisplayName="Personnummer Missing" To="[missingFields]" Value="[missingFields &amp; &quot;- personnummer&quot; &amp; vbLf]" />
+        </If.Then>
+      </If>
+      <If Condition="[profession = &quot;&quot;]" DisplayName="Is the Profession Missing?">
+        <If.Then>
+          <Assign x:TypeArguments="x:String" DisplayName="Profession Missing" To="[missingFields]" Value="[missingFields &amp; &quot;- yrke&quot; &amp; vbLf]" />
+        </If.Then>
+      </If>
+      <If Condition="[department = &quot;&quot;]" DisplayName="Is the Department Missing?">
+        <If.Then>
+          <Assign x:TypeArguments="x:String" DisplayName="Department Missing" To="[missingFields]" Value="[missingFields &amp; &quot;- avdelning&quot; &amp; vbLf]" />
+        </If.Then>
+      </If>
+      <If Condition="[String.IsNullOrWhiteSpace(startDateText)]" DisplayName="Is the Start Date Missing?">
+        <If.Then>
+          <Assign x:TypeArguments="x:String" DisplayName="Start Date Missing" To="[missingFields]" Value="[missingFields &amp; &quot;- startdatum&quot; &amp; vbLf]" />
+        </If.Then>
+      </If>
+    </Sequence>
+    <If Condition="[missingFields &lt;&gt; &quot;&quot;]" DisplayName="Is a Detail Missing?">
+      <If.Then>
+        <Sequence DisplayName="Ask the Head of Department">
+          <ui:LogMessage DisplayName="Log Missing Details" Level="Warn" Message="[&quot;Request '&quot; &amp; in_Mail.Subject &amp; &quot;' is missing: &quot; &amp; missingFields.Replace(vbLf, &quot; &quot;)]" />
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke SendHrMail workflow (ask for the missing details)" UnSafe="False" WorkflowFileName="Workflows\SendHrMail.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+              <InArgument x:TypeArguments="s:String[]" x:Key="in_To">[New String() {in_Mail.FromAddress}]</InArgument>
+              <InArgument x:TypeArguments="s:String[]" x:Key="in_Cc">[Nothing]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Subject">["SV: " &amp; in_Mail.Subject]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Text">["Hej " &amp; in_HeadName.Split(" "c)(0) &amp; "," &amp; vbLf &amp; vbLf &amp; "Tack för ditt mejl. Bakgrundskontrollen kan inte startas ännu, eftersom de här uppgifterna saknas:" &amp; vbLf &amp; vbLf &amp; missingFields &amp; vbLf &amp; "Svara gärna på det här mejlet med uppgifterna, så startar kontrollen direkt."]</InArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+        </Sequence>
+      </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Register the Hire">
+          <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[in_dt_Hires]" DisplayName="For Each Row in New Hires">
+            <ui:ForEachRow.Body>
+              <ActivityAction x:TypeArguments="sd:DataRow">
+                <ActivityAction.Argument>
+                  <DelegateInArgument x:TypeArguments="sd:DataRow" Name="hireRow" />
+                </ActivityAction.Argument>
+                <If Condition="[hireRow(&quot;IdentityNumber&quot;).ToString = personnummer]" DisplayName="Is This Personnummer Already Registered?">
+                  <If.Then>
+                    <Assign x:TypeArguments="x:Boolean" DisplayName="Already Registered" To="[alreadyRegistered]" Value="True" />
+                  </If.Then>
+                </If>
+              </ActivityAction>
+            </ui:ForEachRow.Body>
+          </ui:ForEachRow>
+          <If Condition="[alreadyRegistered]" DisplayName="Is the Hire Already in New Hires?">
+            <If.Then>
+              <ui:LogMessage DisplayName="Log Already Registered" Level="Info" Message="[candidateName &amp; &quot; is already in New Hires. Nothing new is added.&quot;]" />
+            </If.Then>
+            <If.Else>
+              <Sequence DisplayName="Add the Hire and the Check Rows">
+                <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[in_dt_SiteUsers]" DisplayName="For Each Site User">
+                  <ui:ForEachRow.Body>
+                    <ActivityAction x:TypeArguments="sd:DataRow">
+                      <ActivityAction.Argument>
+                        <DelegateInArgument x:TypeArguments="sd:DataRow" Name="userRow" />
+                      </ActivityAction.Argument>
+                      <If Condition="[userRow(&quot;EMail&quot;).ToString.ToLower = in_Mail.FromAddress.ToLower]" DisplayName="Is This User the Sender?">
+                        <If.Then>
+                          <Assign x:TypeArguments="x:String" DisplayName="Keep the Sender's User Id" To="[requesterId]" Value="[userRow(&quot;ID&quot;).ToString]" />
+                        </If.Then>
+                      </If>
+                    </ActivityAction>
+                  </ui:ForEachRow.Body>
+                </ui:ForEachRow>
+                <If Condition="[requesterId = &quot;&quot;]" DisplayName="Is the Sender Missing on the Site?">
+                  <If.Then>
+                    <Throw DisplayName="Throw Sender Not a Site User" Exception="[New Exception(in_Mail.FromAddress &amp; &quot; is not a user of the SharePoint site, so RequestedBy cannot be set.&quot;)]" />
+                  </If.Then>
+                </If>
+                <ui:BuildDataTable DataTable="[dt_HireValues]" DisplayName="Build Hire Values Table" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;HireValues&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;HireValues&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;Title&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;IdentityNumber&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Profession&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Department&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;StartDate&quot; type=&quot;xs:dateTime&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;RequestedBy&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ChecksRequired&quot; type=&quot;xs:anyType&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;OverallStatus&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ReportSent&quot; type=&quot;xs:boolean&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+                <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {candidateName, personnummer, profession, department, DateTime.ParseExact(startDateText, &quot;yyyy-MM-dd&quot;, CultureInfo.InvariantCulture), requesterId, checksRequired.ToArray, &quot;Pending&quot;, False}]" DataTable="[dt_HireValues]" DisplayName="Add Hire Values" />
+                <umas:AddListItemConnections x:TypeArguments="sd:DataRow" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DataRow="[dt_HireValues.Rows(0)]" DisplayName="Add Row to New Hires" Result="[newHireRow]" UseConnectionService="True">
+                  <umas:AddListItemConnections.AllColumns>
+                    <x:Array Type="umsm:Office365SharepointListColumnSlim">
+                      <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Title" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="Title" ReadOnly="False" Type="Text">
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                      <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="IdentityNumber" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="IdentityNumber" ReadOnly="False" Type="Text">
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                      <umsm:Office365SharepointListColumnSlim ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Profession" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="Profession" ReadOnly="False" Type="Choice">
+                        <umsm:Office365SharepointListColumnSlim.Choice>
+                          <umsmc:ChoiceColumnMetadata AllowTextEntry="False" MultiSelect="False">
+                            <umsmc:ChoiceColumnMetadata.Choices>
+                              <x:Array Type="x:String">
+                                <x:String>Läkare</x:String>
+                                <x:String>Sjuksköterska</x:String>
+                                <x:String>Undersköterska</x:String>
+                                <x:String>Psykolog</x:String>
+                              </x:Array>
+                            </umsmc:ChoiceColumnMetadata.Choices>
+                          </umsmc:ChoiceColumnMetadata>
+                        </umsm:Office365SharepointListColumnSlim.Choice>
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                      <umsm:Office365SharepointListColumnSlim ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="Department" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="Department" ReadOnly="False" Type="Choice">
+                        <umsm:Office365SharepointListColumnSlim.Choice>
+                          <umsmc:ChoiceColumnMetadata AllowTextEntry="False" MultiSelect="False">
+                            <umsmc:ChoiceColumnMetadata.Choices>
+                              <x:Array Type="x:String">
+                                <x:String>Akutmottagningen</x:String>
+                                <x:String>Medicinkliniken</x:String>
+                                <x:String>Kirurgkliniken</x:String>
+                                <x:String>Psykiatriska kliniken</x:String>
+                                <x:String>Barn- och ungdomskliniken</x:String>
+                              </x:Array>
+                            </umsmc:ChoiceColumnMetadata.Choices>
+                          </umsmc:ChoiceColumnMetadata>
+                        </umsm:Office365SharepointListColumnSlim.Choice>
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                      <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="StartDate" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="StartDate" ReadOnly="False" Type="DateTime">
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                      <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="RequestedBy" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="RequestedBy" ReadOnly="False" Type="PersonOrGroup">
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                      <umsm:Office365SharepointListColumnSlim ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="ChecksRequired" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="ChecksRequired" ReadOnly="False" Type="Choice">
+                        <umsm:Office365SharepointListColumnSlim.Choice>
+                          <umsmc:ChoiceColumnMetadata AllowTextEntry="False" MultiSelect="True">
+                            <umsmc:ChoiceColumnMetadata.Choices>
+                              <x:Array Type="x:String">
+                                <x:String>Legitimation</x:String>
+                                <x:String>IVO</x:String>
+                                <x:String>Belastningsregister</x:String>
+                              </x:Array>
+                            </umsmc:ChoiceColumnMetadata.Choices>
+                          </umsmc:ChoiceColumnMetadata>
+                        </umsm:Office365SharepointListColumnSlim.Choice>
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                      <umsm:Office365SharepointListColumnSlim ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="OverallStatus" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="OverallStatus" ReadOnly="False" Type="Choice">
+                        <umsm:Office365SharepointListColumnSlim.Choice>
+                          <umsmc:ChoiceColumnMetadata AllowTextEntry="False" MultiSelect="False">
+                            <umsmc:ChoiceColumnMetadata.Choices>
+                              <x:Array Type="x:String">
+                                <x:String>Pending</x:String>
+                                <x:String>In progress</x:String>
+                                <x:String>Done</x:String>
+                                <x:String>Failed</x:String>
+                              </x:Array>
+                            </umsmc:ChoiceColumnMetadata.Choices>
+                          </umsmc:ChoiceColumnMetadata>
+                        </umsm:Office365SharepointListColumnSlim.Choice>
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                      <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="ReportSent" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="ReportSent" ReadOnly="False" Type="Boolean">
+                        <umsm:Office365SharepointListColumnSlim.Sample>
+                          <umsm:ColumnSample Value="{x:Null}" />
+                        </umsm:Office365SharepointListColumnSlim.Sample>
+                      </umsm:Office365SharepointListColumnSlim>
+                    </x:Array>
+                  </umas:AddListItemConnections.AllColumns>
+                  <umas:AddListItemConnections.ListArgument>
+                    <umasm:ListArgument ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;HiresListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]">
+                      <umasm:ListArgument.Backup>
+                        <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" StoredValue="Manually">
+                          <usau:BackupSlot.BackupValues>
+                            <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+                          </usau:BackupSlot.BackupValues>
+                        </usau:BackupSlot>
+                      </umasm:ListArgument.Backup>
+                    </umasm:ListArgument>
+                  </umas:AddListItemConnections.ListArgument>
+                </umas:AddListItemConnections>
+                <Assign x:TypeArguments="x:String" DisplayName="Get the New Hire Id" To="[newHireId]" Value="[newHireRow(&quot;ID&quot;).ToString]" />
+                <ui:LogMessage DisplayName="Log Hire Added" Level="Info" Message="[&quot;New Hires row &quot; &amp; newHireId &amp; &quot; added: &quot; &amp; candidateName &amp; &quot;, &quot; &amp; profession &amp; &quot;, &quot; &amp; department &amp; &quot;, checks: &quot; &amp; String.Join(&quot;, &quot;, checksRequired)]" />
+                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke AddCheckRows workflow" UnSafe="False" WorkflowFileName="Workflows\AddCheckRows.xaml">
+                  <ui:InvokeWorkflowFile.Arguments>
+                    <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_HireItemId">[newHireId]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_Name">[candidateName]</InArgument>
+                    <InArgument x:TypeArguments="s:String[]" x:Key="in_Checks">[checksRequired.ToArray]</InArgument>
+                  </ui:InvokeWorkflowFile.Arguments>
+                </ui:InvokeWorkflowFile>
+              </Sequence>
+            </If.Else>
+          </If>
+        </Sequence>
+      </If.Else>
+    </If>
+    <umam:MarkAsReadUnreadConnections ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" AuthScopesInvalid="False" ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Mark Request Mail as Read" Email="[in_Mail]" MarkAsReadUnread="Read" UseConnectionService="True" />
+  </Sequence>
+</Activity>

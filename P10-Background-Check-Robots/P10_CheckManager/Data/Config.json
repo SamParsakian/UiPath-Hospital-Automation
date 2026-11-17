@@ -1,0 +1,35 @@
+{
+  "Settings": {
+    "logF_BusinessProcessName": "P10_BackgroundChecks",
+    "OrchestratorQueueName": "P10_Reports",
+    "OrchestratorQueueFolder": "",
+    "SharePointSiteUrl": "https://stockholmdemohospital.sharepoint.com/sites/rekrytering",
+    "HiresListName": "New Hires",
+    "ChecksListName": "Background Checks",
+    "SiteUsersListName": "User Information List",
+    "HrMailbox": "hr.rekrytering@stockholmdemohospital.onmicrosoft.com",
+    "HrCoordinatorEmail": "sanna.holmgren@stockholmdemohospital.onmicrosoft.com",
+    "RobotName": "RPA Rekrytering",
+    "MailSignature": "Med vänlig hälsning\nHR - Rekrytering\nStockholm Demo Hospital",
+    "DepartmentHeads": "Göran Ekdahl=goran.ekdahl@stockholmdemohospital.onmicrosoft.com;Helena Strand=helena.strand@stockholmdemohospital.onmicrosoft.com",
+    "Professions": "Läkare;Sjuksköterska;Undersköterska;Psykolog",
+    "Departments": "Akutmottagningen;Medicinkliniken;Kirurgkliniken;Psykiatriska kliniken;Barn- och ungdomskliniken",
+    "LegitimationQueue": "P10_Legitimation",
+    "IvoQueue": "P10_IVO",
+    "BelastningQueue": "P10_Belastning"
+  },
+  "Constants": {
+    "MaxRetryNumber": 0,
+    "MaxConsecutiveSystemExceptions": 0,
+    "ExScreenshotsFolderPath": "Exceptions_Screenshots",
+    "LogMessage_GetTransactionData": "Processing Transaction Number: ",
+    "LogMessage_GetTransactionDataError": "Error getting transaction data for Transaction Number: ",
+    "LogMessage_Success": "Transaction Successful.",
+    "LogMessage_BusinessRuleException": "Business rule exception.",
+    "LogMessage_ApplicationException": "System exception.",
+    "ExceptionMessage_ConsecutiveErrors": "The maximum number of consecutive system exceptions was reached. ",
+    "RetryNumberGetTransactionItem": 2,
+    "RetryNumberSetTransactionStatus": 2,
+    "ShouldMarkJobAsFaulted": false
+  }
+}

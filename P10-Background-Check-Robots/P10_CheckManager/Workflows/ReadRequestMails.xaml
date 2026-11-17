@@ -1,0 +1,150 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadRequestMails" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umam="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umame="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umamm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Mail.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umas="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umase="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umasm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umm="clr-namespace:UiPath.MicrosoftOffice365.Models;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Configuration of the process." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Models</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Step 1 of every run: new requests.&#xA;Reads the unread mails in the HR Inbox and the site users (to find the SharePoint user of the sender). A mail from a head of department (listed in Config.json) is a request for a new hire.&#xA;Other mails (answers from the authorities, extracts from candidates) are left unread for the check robots." DisplayName="Read Request Mails">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:List(umm:Office365Message)" Name="unreadMails" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_Hires" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_SiteUsers" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <umam:GetEmailListConnections BrowserFolder="{x:Null}" BrowserFolderId="{x:Null}" ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" Filter="{x:Null}" FreeTextFilter="{x:Null}" QueryFilter="{x:Null}" AuthScopesInvalid="False" BodyAsHtml="False" ConnectionId="1dcdbe64-f5a8-42e5-9677-5e90d10e7ec1" DisplayName="Get Unread Mails in the HR Inbox" EmailList="[unreadMails]" FilterSelectionMode="ConditionBuilder" Importance="Any" IncludeAttachments="None" IncludeSubfolders="False" Mailbox="[in_Config(&quot;HrMailbox&quot;).ToString]" ManualEntryFolder="[&quot;Inbox&quot;]" MarkAsRead="False" MaxResults="0" OrderByDate="OldestFirst" SelectionMode="EnterPath" UnreadOnly="True" UseConnectionService="True" UseSharedMailbox="True" WithAttachmentsOnly="False">
+      <umam:GetEmailListConnections.FilterSelectionBackup>
+        <usau:BackupSlot x:TypeArguments="umame:FilterMode" StoredValue="ConditionBuilder">
+          <usau:BackupSlot.BackupValues>
+            <scg:Dictionary x:TypeArguments="umame:FilterMode, scg:List(x:Object)" />
+          </usau:BackupSlot.BackupValues>
+        </usau:BackupSlot>
+      </umam:GetEmailListConnections.FilterSelectionBackup>
+      <umam:GetEmailListConnections.MailFolderArgument>
+        <umamm:MailFolderArgument BrowserFolder="{x:Null}" BrowserFolderId="{x:Null}" ConnectionDescriptor="{x:Null}" ConnectionKey="{x:Null}" ManualEntryFolder="[&quot;Inbox&quot;]" SelectionMode="EnterPath" />
+      </umam:GetEmailListConnections.MailFolderArgument>
+      <umam:GetEmailListConnections.MailboxArg>
+        <umamm:MailboxArgument SharedMailbox="[in_Config(&quot;HrMailbox&quot;).ToString]" UseSharedMailbox="True" />
+      </umam:GetEmailListConnections.MailboxArg>
+    </umam:GetEmailListConnections>
+    <umas:GetListItemsConnections x:TypeArguments="sd:DataTable" ColumnsToRetrieveByName="[New String() {&quot;ID&quot;, &quot;Title&quot;, &quot;IdentityNumber&quot;}]" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DisplayName="Get New Hires" Result="[dt_Hires]" UseConnectionService="True">
+      <umas:GetListItemsConnections.ListArgument>
+        <umasm:ListArgument ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;HiresListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]">
+          <umasm:ListArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" StoredValue="Manually">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umasm:ListArgument.Backup>
+        </umasm:ListArgument>
+      </umas:GetListItemsConnections.ListArgument>
+    </umas:GetListItemsConnections>
+    <umas:GetListItemsConnections x:TypeArguments="sd:DataTable" ColumnsToRetrieveByName="[New String() {&quot;ID&quot;, &quot;Title&quot;, &quot;EMail&quot;}]" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DisplayName="Get Site Users" Result="[dt_SiteUsers]" UseConnectionService="True">
+      <umas:GetListItemsConnections.ListArgument>
+        <umasm:ListArgument ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;SiteUsersListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]">
+          <umasm:ListArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" StoredValue="Manually">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umasm:ListArgument.Backup>
+        </umasm:ListArgument>
+      </umas:GetListItemsConnections.ListArgument>
+    </umas:GetListItemsConnections>
+    <ui:LogMessage DisplayName="Log Unread Mails" Level="Info" Message="[unreadMails.Count.ToString &amp; &quot; unread mails in the HR Inbox.&quot;]" />
+    <ui:ForEach x:TypeArguments="umm:Office365Message" CurrentIndex="{x:Null}" DisplayName="For Each Unread Mail" Values="[unreadMails]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="umm:Office365Message">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="umm:Office365Message" Name="mail" />
+          </ActivityAction.Argument>
+          <Sequence DisplayName="Check One Mail">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:String" Default="" Name="headName" />
+            </Sequence.Variables>
+            <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Head of Department in Config" Values="[in_Config(&quot;DepartmentHeads&quot;).ToString.Split(&quot;;&quot;c)]">
+              <ui:ForEach.Body>
+                <ActivityAction x:TypeArguments="x:String">
+                  <ActivityAction.Argument>
+                    <DelegateInArgument x:TypeArguments="x:String" Name="headEntry" />
+                  </ActivityAction.Argument>
+                  <If Condition="[headEntry.ToLower.EndsWith(&quot;=&quot; &amp; mail.FromAddress.ToLower)]" DisplayName="Is the Sender This Head of Department?">
+                    <If.Then>
+                      <Assign x:TypeArguments="x:String" DisplayName="Keep the Head's Name" To="[headName]" Value="[headEntry.Split(&quot;=&quot;c)(0)]" />
+                    </If.Then>
+                  </If>
+                </ActivityAction>
+              </ui:ForEach.Body>
+            </ui:ForEach>
+            <If Condition="[headName &lt;&gt; &quot;&quot;]" DisplayName="Is It a Request from a Head of Department?">
+              <If.Then>
+                <TryCatch DisplayName="Try Register the Request">
+                  <TryCatch.Try>
+                    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke RegisterNewHire workflow" UnSafe="False" WorkflowFileName="Workflows\RegisterNewHire.xaml">
+                      <ui:InvokeWorkflowFile.Arguments>
+                        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                        <InArgument x:TypeArguments="umm:Office365Message" x:Key="in_Mail">[mail]</InArgument>
+                        <InArgument x:TypeArguments="x:String" x:Key="in_HeadName">[headName]</InArgument>
+                        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dt_Hires">[dt_Hires]</InArgument>
+                        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dt_SiteUsers">[dt_SiteUsers]</InArgument>
+                      </ui:InvokeWorkflowFile.Arguments>
+                    </ui:InvokeWorkflowFile>
+                  </TryCatch.Try>
+                  <TryCatch.Catches>
+                    <Catch x:TypeArguments="s:Exception">
+                      <ActivityAction x:TypeArguments="s:Exception">
+                        <ActivityAction.Argument>
+                          <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                        </ActivityAction.Argument>
+                        <ui:LogMessage DisplayName="Log Request Not Registered" Level="Error" Message="[&quot;The request '&quot; &amp; mail.Subject &amp; &quot;' could not be registered and stays unread for the next run: &quot; &amp; exception.Message]" />
+                      </ActivityAction>
+                    </Catch>
+                  </TryCatch.Catches>
+                </TryCatch>
+              </If.Then>
+            </If>
+          </Sequence>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+  </Sequence>
+</Activity>
