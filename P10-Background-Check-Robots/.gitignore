@@ -59,3 +59,6 @@ Output/
 
 # REFramework exception screenshots
 **/Exceptions_Screenshots/*.png
+
+# Local copies of published robot packages
+_Releases/
