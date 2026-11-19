@@ -100,9 +100,9 @@ Dispatch is in Initialization, not in Process Transaction, because it is not wor
 
 The second part makes the decision (Figure 8):
 
-1. **A check is Failed:** SendFinalReport sends the report that the person cannot be approved.
-2. **All checks are Done:** SendFinalReport sends the report that the employment can start.
-3. **A check is in Needs review:** SendHrMail sends "Behöver granskas" to the HR coordinator, at most once a day.
+1. **A check is Failed:** SendFinalReport sends the report that the person cannot be approved. *Seen in [Case 5](../Running%20the%20Robots%20Unattended.md#87-round-4-report-cannot-be-approved-sent): HR set the extract check to Failed.*
+2. **All checks are Done:** SendFinalReport sends the report that the employment can start. *Seen in [Case 1](../Running%20the%20Robots%20Unattended.md#45-round-3-final-report-sent) to Case 4.*
+3. **A check is in Needs review:** SendHrMail sends "Behöver granskas" to the HR coordinator, at most once a day. *Seen in [Case 4](../Running%20the%20Robots%20Unattended.md#76-round-3-review-mail-to-the-hr-coordinator) and [Case 5](../Running%20the%20Robots%20Unattended.md#85-round-3-review-mail-to-the-hr-coordinator).*
 4. **An answer is late:** SendHrMail sends "Svar dröjer" to the HR coordinator, at most once a day.
 5. **The hire is still Pending:** OverallStatus is set to In progress.
 
@@ -134,7 +134,7 @@ The heads of department write their mails in their own way, as a sentence or as 
 2. **The name:** the words with capital letters just before the personnummer.
 3. **The start date:** a date in the form 2026-12-14.
 4. **The job and the department:** each value in Config.json is looked for in the mail. "Akuten" is understood as Akutmottagningen.
-5. **The checks:** the words "legitimation", "IVO" and "belastningsregister" or "utdrag". If no check is named, the job decides.
+5. **The checks:** the words "legitimation", "IVO" and "belastningsregister" or "utdrag". If no check is named, the job decides. *Seen in [Case 1](../Running%20the%20Robots%20Unattended.md#43-round-1-request-registered-check-queued) (one check) and [Case 2](../Running%20the%20Robots%20Unattended.md#5-case-2-all-three-checks-licence-ivo-and-criminal-record) (three checks).*
 
 ![RegisterNewHire.xaml, part 1](../Screenshots/manager-register-new-hire-xaml-1.png)
 
@@ -142,7 +142,7 @@ The heads of department write their mails in their own way, as a sentence or as 
 
 Then the hire is registered (Figure 11):
 
-1. **A detail is missing?** The robot replies to the head of department and asks for it. No row is created.
+1. **A detail is missing?** The robot replies to the head of department and asks for it. No row is created. *Seen in [Case 3](../Running%20the%20Robots%20Unattended.md#63-round-1-question-mail-about-the-missing-details): the personnummer was missing.*
 2. **The personnummer already exists?** The mail is a repeat, and nothing new is created.
 3. Add List Item: one row in New Hires, with RequestedBy set to the sender.
 4. Invoke AddCheckRows: one row for each check.
@@ -171,7 +171,7 @@ The same workflow is used in two places: when a hire is registered, and in Proce
 This workflow puts every open check into the queue of its check robot (Figure 13):
 
 1. Get List Items: all rows in Background Checks.
-2. Only rows that are Pending or Waiting for answer.
+2. Only rows that are Pending or Waiting for answer. *Seen in [Case 1](../Running%20the%20Robots%20Unattended.md#44-round-2-extract-verified-with-the-police-service): an open check gets a new item at every run.*
 3. The queue is chosen by the CheckType: Legitimation, IVO or Belastningsregister.
 4. The reference: the row ID, the date and the time of the run.
 5. Add Queue Item: the check goes to its queue, with the fields CheckItemId, HireItemId, Name, Personnummer and Profession.
@@ -210,7 +210,7 @@ This workflow goes through the check rows of one hire and gives Process.xaml a s
 This workflow sends the report and marks it in one place (Figure 16):
 
 1. The e-mail of the head of department, found by the name in RequestedBy.
-2. The subject: "Bakgrundskontroll klar" or "kan inte godkännas". A report that cannot be approved also goes to HR as a copy.
+2. The subject: "Bakgrundskontroll klar" or "kan inte godkännas". A report that cannot be approved also goes to HR as a copy. *Seen in [Case 5](../Running%20the%20Robots%20Unattended.md#87-round-4-report-cannot-be-approved-sent): "kan inte godkännas", with a copy to Sanna Holmgren.*
 3. Invoke SendHrMail: the report, with one line for each check and the decision.
 4. Update List Item: OverallStatus, ReportSent, ReportSentBy and ReportSentDate.
 

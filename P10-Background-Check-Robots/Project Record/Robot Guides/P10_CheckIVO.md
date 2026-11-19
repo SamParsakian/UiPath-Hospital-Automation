@@ -173,11 +173,11 @@ The workflow runs in this order (the numbers match the red boxes in Figures 12 a
 3. **Finds the diarienummer** with "Matches" (Find Matching Patterns). The pattern looks for the shape of an IVO diarienummer, for example 3.5.1-18302/2026 (section 8.3 explains why).
 4. **Decides the result:**
 
-   | Answer | Status | Result |
-   |---|---|---|
-   | "IVO har inga pågående eller avslutade ärenden" | Done | "Inga pågående eller avslutade ärenden. Dnr 3.5.1-18302/2026." |
-   | The personnummer is not known to IVO | Needs review | "Personnumret finns inte i IVO:s uppgifter. Kontrollera personnumret. Dnr X." |
-   | IVO lists one or more cases | Needs review | "IVO har ett eller flera ärenden för personen, se PDF i Authority Answers. Behöver granskas av HR. Dnr X." |
+   | Answer | Status | Result | Seen in |
+   |---|---|---|---|
+   | "IVO har inga pågående eller avslutade ärenden" | Done | "Inga pågående eller avslutade ärenden. Dnr 3.5.1-18302/2026." | [Case 2](../Running%20the%20Robots%20Unattended.md#56-round-4-ivo-answer-read) |
+   | The personnummer is not known to IVO | Needs review | "Personnumret finns inte i IVO:s uppgifter. Kontrollera personnumret. Dnr X." | |
+   | IVO lists one or more cases | Needs review | "IVO har ett eller flera ärenden för personen, se PDF i Authority Answers. Behöver granskas av HR. Dnr X." | |
 
 5. **Saves the PDF** in Authority Answers with "Upload Files", with **Hire** (the hire in New Hires) and **CheckType** = IVO.
 6. **Updates the row** with Status, Result, CheckedBy (the robot account) and CheckedDate.

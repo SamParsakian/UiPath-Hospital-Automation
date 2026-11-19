@@ -378,7 +378,7 @@ The build guide shows the robot part by part: [P10_CheckManager](Robot%20Guides/
 
 ### 7.1 Reading the Request Mails and Creating the Checks
 
-**Problem 6: every request is read and typed into the lists by hand.** *Solution:* the manager robot reads the unread mails in the HR mailbox. It only accepts mails from a known head of department. In the mail, it finds the personnummer, the name, the start date, the job and the department, and the checks that are asked for. If no check is named, the job decides: a doctor, a nurse or a psychologist gets all three, an assistant nurse gets IVO and the criminal record. If the personnummer or another detail is missing, the robot answers the head of department and asks for it.
+**Problem 6: every request is read and typed into the lists by hand.** *Solution:* the manager robot reads the unread mails in the HR mailbox. It only accepts mails from a known head of department. In the mail, it finds the personnummer, the name, the start date, the job and the department, and the checks that are asked for. If no check is named, the job decides: a doctor, a nurse or a psychologist gets all three, an assistant nurse gets IVO and the criminal record. If the personnummer or another detail is missing, the robot answers the head of department and asks for it ([Case 3](Running%20the%20Robots%20Unattended.md#63-round-1-question-mail-about-the-missing-details) of the unattended runs shows this).
 
 The heads of department write their mails in their own way. Helena Strand wrote Omar Kvist's request as one sentence (Figure 21):
 
@@ -448,8 +448,8 @@ The robots are started by the RPA operator in UiPath Assistant (Figure 26):
 **Problem 9: the report is written and marked by hand, and sometimes too late.** *Solution:* for each item in P10_Reports, the robot reads the hire and its check rows again and decides:
 
 - **All checks Done:** a report "Bakgrundskontroll klar" goes to the head of department in RequestedBy.
-- **One check Failed:** a report says that the person cannot be approved, with a copy to HR.
-- **A check in Needs review:** no report yet. Sanna gets a mail "Behöver granskas" with the reason from the row.
+- **One check Failed:** a report says that the person cannot be approved, with a copy to HR. *Seen in [Case 5](Running%20the%20Robots%20Unattended.md#87-round-4-report-cannot-be-approved-sent).*
+- **A check in Needs review:** no report yet. Sanna gets a mail "Behöver granskas" with the reason from the row. *Seen in [Case 4](Running%20the%20Robots%20Unattended.md#76-round-3-review-mail-to-the-hr-coordinator) and [Case 5](Running%20the%20Robots%20Unattended.md#85-round-3-review-mail-to-the-hr-coordinator).*
 - **An answer after its AnswerDueDate:** Sanna gets a mail "Svar dröjer" with the late checks.
 
 After a report, the robot sets OverallStatus, ReportSent, ReportSentBy and ReportSentDate in one step. A hire with ReportSent is never reported again, so each head of department gets exactly one report for each new hire.
@@ -481,7 +481,7 @@ On November 14, the RPA operator started the robots in UiPath Assistant, one at 
 | 4 | P10_CheckBelastning | Checks the two extracts with the police control service (8.4) |
 | 4 | P10_CheckManager | Sends the report for Wilma Vall, and a review mail for Omar Kvist to HR (8.4) |
 
-These are attended robots. The work inside each job is fully automated: no mail is read and no row is typed by hand. But a person still starts every job, in the right order. This was chosen on purpose, so that every robot could be tested and followed step by step. The same robots can also run unattended, started by a schedule and by their queues, so that nobody has to start a robot by hand. That is the next level of this project.
+These are attended robots. The work inside each job is fully automated: no mail is read and no row is typed by hand. But a person still starts every job, in the right order. This was chosen on purpose, so that every robot could be tested and followed step by step. The same robots can also run unattended, started by a schedule and by their queues, so that nobody has to start a robot by hand. How this is set up, and five real cases from request to report, are shown in [Running the Robots Unattended](Running%20the%20Robots%20Unattended.md).
 
 ### 8.1 Round 1: Hugo Palm's Report
 
