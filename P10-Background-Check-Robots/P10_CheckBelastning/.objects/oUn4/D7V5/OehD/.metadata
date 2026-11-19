@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Kontrolltjanst",
+  "Description": "The check form and result page of the police control service (demo)",
+  "Type": "Screen",
+  "Id": "OehD4DyQo0OrRGwl036ifA",
+  "Reference": "Fuc2kvSQfUSeWoFA1kV9sA/OehD4DyQo0OrRGwl036ifA",
+  "ParentRef": "Fuc2kvSQfUSeWoFA1kV9sA/D7V5h4JgwkSrlHpp4hK_cg",
+  "Created": "2026-11-12T10:32:53.1715794Z",
+  "Updated": "2026-11-12T10:32:53.1715794Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

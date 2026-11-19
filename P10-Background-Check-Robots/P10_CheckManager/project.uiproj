@@ -1,0 +1,6 @@
+{
+  "Name": "P10_CheckManager",
+  "ProjectType": "Process",
+  "Description": "Creates the checks, runs the check robots and reports the result",
+  "MainFile": "Main.xaml"
+}

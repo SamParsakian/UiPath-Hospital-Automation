@@ -1,0 +1,279 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Process" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umas="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umase="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umasm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umsm="clr-namespace:UiPath.MicrosoftOffice365.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365" xmlns:umsmc="clr-namespace:UiPath.MicrosoftOffice365.Sharepoint.Models.Columns;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Transaction item to be processed." Name="in_TransactionItem" Type="InArgument(ui:QueueItem)" />
+    <x:Property sap2010:Annotation.AnnotationText="Dictionary structure to store configuration data of the process (settings, constants and assets)." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ProcessTransaction_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="50">
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="40">
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="One queue item = one hire in New Hires whose report is not sent yet.&#xA;All required checks Done: report to the head of department. A check Failed: report to the head and HR.&#xA;Checks still open: tell HR about checks that need review or answers that are late.&#xA;A report is never sent twice (ReportSent)." DisplayName="Process">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="hireItemId" />
+      <Variable x:TypeArguments="x:String" Name="hireName" />
+      <Variable x:TypeArguments="sd:DataRow" Name="hireRow" />
+      <Variable x:TypeArguments="s:String[]" Name="requiredChecks" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_Checks" />
+      <Variable x:TypeArguments="x:Int32" Name="doneCount" />
+      <Variable x:TypeArguments="x:Int32" Name="failedCount" />
+      <Variable x:TypeArguments="x:String" Name="resultLines" />
+      <Variable x:TypeArguments="x:String" Name="reviewLines" />
+      <Variable x:TypeArguments="x:String" Name="overdueLines" />
+      <Variable x:TypeArguments="s:String[]" Name="missingChecks" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_StatusValues" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:LogMessage DisplayName="Log Message Process Start" Level="Info" Message="[&quot;Started Process&quot;]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Hire Item Id" To="[hireItemId]" Value="[in_TransactionItem.SpecificContent(&quot;HireItemId&quot;).ToString]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Name" To="[hireName]" Value="[in_TransactionItem.SpecificContent(&quot;Name&quot;).ToString]" />
+    <umas:GetSingleSharepointListItemConnections x:TypeArguments="sd:DataRow" ColumnsToRetrieveByName="[New String() {&quot;ID&quot;, &quot;Title&quot;, &quot;Profession&quot;, &quot;Department&quot;, &quot;StartDate&quot;, &quot;RequestedBy&quot;, &quot;ChecksRequired&quot;, &quot;OverallStatus&quot;, &quot;ReportSent&quot;, &quot;ReportSentBy&quot;}]" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DisplayName="Get Hire Row" ItemId="[hireItemId]" ItemSelectionMode="Manually" Result="[hireRow]" WorkById="True">
+      <umas:GetSingleSharepointListItemConnections.ListArgument>
+        <umasm:ListArgument ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;HiresListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]">
+          <umasm:ListArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" StoredValue="Manually">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umasm:ListArgument.Backup>
+        </umasm:ListArgument>
+      </umas:GetSingleSharepointListItemConnections.ListArgument>
+    </umas:GetSingleSharepointListItemConnections>
+    <If Condition="[hireRow(&quot;ReportSent&quot;).ToString = &quot;True&quot;]" DisplayName="Is the Report Already Sent?">
+      <If.Then>
+        <ui:LogMessage DisplayName="Log Report Already Sent" Level="Info" Message="[&quot;The report for &quot; &amp; hireName &amp; &quot; was already sent by &quot; &amp; hireRow(&quot;ReportSentBy&quot;).ToString &amp; &quot;. Nothing is sent again.&quot;]" />
+      </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Check the Hire and Report">
+          <If Condition="[IsDBNull(hireRow(&quot;ChecksRequired&quot;))]" DisplayName="Is ChecksRequired Empty?">
+            <If.Then>
+              <Throw DisplayName="Throw No Required Checks" Exception="[New BusinessRuleException(&quot;ChecksRequired är tomt för &quot; &amp; hireName &amp; &quot;. Fyll i kolumnen i New Hires.&quot;)]" />
+            </If.Then>
+          </If>
+          <Assign x:TypeArguments="s:String[]" DisplayName="Get Required Checks" To="[requiredChecks]" Value="[CType(hireRow(&quot;ChecksRequired&quot;), String())]" />
+          <umas:GetListItemsConnections x:TypeArguments="sd:DataTable" ColumnsToRetrieveByName="[New String() {&quot;ID&quot;, &quot;Title&quot;, &quot;Hire&quot;, &quot;CheckType&quot;, &quot;Status&quot;, &quot;Result&quot;, &quot;AnswerDueDate&quot;}]" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DisplayName="Get Background Checks" Result="[dt_Checks]" UseConnectionService="True">
+            <umas:GetListItemsConnections.ListArgument>
+              <umasm:ListArgument ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;ChecksListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]">
+                <umasm:ListArgument.Backup>
+                  <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" StoredValue="Manually">
+                    <usau:BackupSlot.BackupValues>
+                      <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+                    </usau:BackupSlot.BackupValues>
+                  </usau:BackupSlot>
+                </umasm:ListArgument.Backup>
+              </umasm:ListArgument>
+            </umas:GetListItemsConnections.ListArgument>
+          </umas:GetListItemsConnections>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke ReadHireChecks workflow" UnSafe="False" WorkflowFileName="Workflows\ReadHireChecks.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dt_Checks">[dt_Checks]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_HireItemId">[hireItemId]</InArgument>
+              <InArgument x:TypeArguments="s:String[]" x:Key="in_RequiredChecks">[requiredChecks]</InArgument>
+              <OutArgument x:TypeArguments="x:Int32" x:Key="out_DoneCount">[doneCount]</OutArgument>
+              <OutArgument x:TypeArguments="x:Int32" x:Key="out_FailedCount">[failedCount]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_ResultLines">[resultLines]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_ReviewLines">[reviewLines]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_OverdueLines">[overdueLines]</OutArgument>
+              <OutArgument x:TypeArguments="s:String[]" x:Key="out_MissingChecks">[missingChecks]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <If Condition="[missingChecks.Length &gt; 0]" DisplayName="Is a Required Check Row Missing?">
+            <If.Then>
+              <Sequence DisplayName="Add the Forgotten Check Rows">
+                <ui:LogMessage DisplayName="Log Missing Check Rows" Level="Warn" Message="[hireName &amp; &quot; has no row for: &quot; &amp; String.Join(&quot;, &quot;, missingChecks) &amp; &quot;. The rows are added now.&quot;]" />
+                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke AddCheckRows workflow" UnSafe="False" WorkflowFileName="Workflows\AddCheckRows.xaml">
+                  <ui:InvokeWorkflowFile.Arguments>
+                    <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_HireItemId">[hireItemId]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_Name">[hireName]</InArgument>
+                    <InArgument x:TypeArguments="s:String[]" x:Key="in_Checks">[missingChecks]</InArgument>
+                  </ui:InvokeWorkflowFile.Arguments>
+                </ui:InvokeWorkflowFile>
+              </Sequence>
+            </If.Then>
+          </If>
+          <If Condition="[failedCount &gt; 0]" DisplayName="Did a Check Fail?">
+            <If.Then>
+              <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke SendFinalReport workflow (failed)" UnSafe="False" WorkflowFileName="Workflows\SendFinalReport.xaml">
+                <ui:InvokeWorkflowFile.Arguments>
+                  <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_HireItemId">[hireItemId]</InArgument>
+                  <InArgument x:TypeArguments="sd:DataRow" x:Key="in_HireRow">[hireRow]</InArgument>
+                  <InArgument x:TypeArguments="x:Boolean" x:Key="in_Failed">[True]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_ResultLines">[resultLines]</InArgument>
+                </ui:InvokeWorkflowFile.Arguments>
+              </ui:InvokeWorkflowFile>
+            </If.Then>
+            <If.Else>
+              <If Condition="[missingChecks.Length = 0 AndAlso doneCount &gt;= requiredChecks.Length]" DisplayName="Are All Required Checks Done?">
+                <If.Then>
+                  <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke SendFinalReport workflow (cleared)" UnSafe="False" WorkflowFileName="Workflows\SendFinalReport.xaml">
+                    <ui:InvokeWorkflowFile.Arguments>
+                      <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                      <InArgument x:TypeArguments="x:String" x:Key="in_HireItemId">[hireItemId]</InArgument>
+                      <InArgument x:TypeArguments="sd:DataRow" x:Key="in_HireRow">[hireRow]</InArgument>
+                      <InArgument x:TypeArguments="x:Boolean" x:Key="in_Failed">[False]</InArgument>
+                      <InArgument x:TypeArguments="x:String" x:Key="in_ResultLines">[resultLines]</InArgument>
+                    </ui:InvokeWorkflowFile.Arguments>
+                  </ui:InvokeWorkflowFile>
+                </If.Then>
+                <If.Else>
+                  <Sequence DisplayName="Checks Still Open">
+                    <Sequence.Variables>
+                      <Variable x:TypeArguments="x:Boolean" Name="mailSentToday" />
+                    </Sequence.Variables>
+                    <If Condition="[reviewLines &lt;&gt; &quot;&quot;]" DisplayName="Does a Check Need Review?">
+                      <If.Then>
+                        <Sequence DisplayName="Send the Review Mail Once a Day">
+                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke WasMailSentToday workflow (needs review)" UnSafe="False" WorkflowFileName="Workflows\WasMailSentToday.xaml">
+                          <ui:InvokeWorkflowFile.Arguments>
+                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[&quot;Behöver granskas - &quot; &amp; hireName]</InArgument>
+                            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_SentToday">[mailSentToday]</OutArgument>
+                          </ui:InvokeWorkflowFile.Arguments>
+                        </ui:InvokeWorkflowFile>
+                        <If Condition="[Not mailSentToday]" DisplayName="Review Mail Not Sent Today?">
+                          <If.Then>
+                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke SendHrMail workflow (needs review)" UnSafe="False" WorkflowFileName="Workflows\SendHrMail.xaml">
+                          <ui:InvokeWorkflowFile.Arguments>
+                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                            <InArgument x:TypeArguments="s:String[]" x:Key="in_To">[New String() {in_Config("HrCoordinatorEmail").ToString}]</InArgument>
+                            <InArgument x:TypeArguments="s:String[]" x:Key="in_Cc">[Nothing]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_Subject">["Behöver granskas - " &amp; hireName]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_Text">["Hej," &amp; vbLf &amp; vbLf &amp; "En kontroll för " &amp; hireName &amp; " behöver granskas av en person:" &amp; vbLf &amp; vbLf &amp; reviewLines &amp; vbLf &amp; "Sätt raden i Background Checks till Done eller Failed när den är granskad. Rapporten till verksamhetschefen skickas sedan automatiskt."]</InArgument>
+                          </ui:InvokeWorkflowFile.Arguments>
+                        </ui:InvokeWorkflowFile>
+                          </If.Then>
+                          <If.Else>
+                            <ui:LogMessage DisplayName="Log Review Mail Already Sent Today" Level="Info" Message="[&quot;Mail already sent today: &quot; &amp; &quot;Behöver granskas - &quot; &amp; hireName]" />
+                          </If.Else>
+                        </If>
+                        </Sequence>
+                      </If.Then>
+                    </If>
+                    <If Condition="[overdueLines &lt;&gt; &quot;&quot;]" DisplayName="Is an Answer Late?">
+                      <If.Then>
+                        <Sequence DisplayName="Send the Late Answer Mail Once a Day">
+                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke WasMailSentToday workflow (late answer)" UnSafe="False" WorkflowFileName="Workflows\WasMailSentToday.xaml">
+                          <ui:InvokeWorkflowFile.Arguments>
+                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[&quot;Svar dröjer - &quot; &amp; hireName]</InArgument>
+                            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_SentToday">[mailSentToday]</OutArgument>
+                          </ui:InvokeWorkflowFile.Arguments>
+                        </ui:InvokeWorkflowFile>
+                        <If Condition="[Not mailSentToday]" DisplayName="Late Answer Mail Not Sent Today?">
+                          <If.Then>
+                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke SendHrMail workflow (late answer)" UnSafe="False" WorkflowFileName="Workflows\SendHrMail.xaml">
+                          <ui:InvokeWorkflowFile.Arguments>
+                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+                            <InArgument x:TypeArguments="s:String[]" x:Key="in_To">[New String() {in_Config("HrCoordinatorEmail").ToString}]</InArgument>
+                            <InArgument x:TypeArguments="s:String[]" x:Key="in_Cc">[Nothing]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_Subject">["Svar dröjer - " &amp; hireName]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_Text">["Hej," &amp; vbLf &amp; vbLf &amp; "Svaret har inte kommit i tid för " &amp; hireName &amp; " (planerad start " &amp; CDate(hireRow("StartDate")).ToLocalTime.ToString("yyyy-MM-dd") &amp; "):" &amp; vbLf &amp; vbLf &amp; overdueLines &amp; vbLf &amp; "Robotarna fortsätter att leta efter svaret varje morgon. Kontakta gärna myndigheten eller kandidaten."]</InArgument>
+                          </ui:InvokeWorkflowFile.Arguments>
+                        </ui:InvokeWorkflowFile>
+                          </If.Then>
+                          <If.Else>
+                            <ui:LogMessage DisplayName="Log Late Answer Mail Already Sent Today" Level="Info" Message="[&quot;Mail already sent today: &quot; &amp; &quot;Svar dröjer - &quot; &amp; hireName]" />
+                          </If.Else>
+                        </If>
+                        </Sequence>
+                      </If.Then>
+                    </If>
+                    <If Condition="[hireRow(&quot;OverallStatus&quot;).ToString = &quot;Pending&quot;]" DisplayName="Is the Hire Still Pending?">
+                      <If.Then>
+                        <Sequence DisplayName="Set the Hire In Progress">
+                          <ui:BuildDataTable DataTable="[dt_StatusValues]" DisplayName="Build Status Values Table" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;StatusValues&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;StatusValues&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;OverallStatus&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+                          <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {&quot;In progress&quot;}]" DataTable="[dt_StatusValues]" DisplayName="Add Status In Progress" />
+                          <umas:UpdateListItemConnections x:TypeArguments="sd:DataRow" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DataRow="[dt_StatusValues.Rows(0)]" DisplayName="Set OverallStatus In Progress" ItemId="[hireItemId]" ItemSelectionMode="Manually" ListNameOrId="[in_Config(&quot;HiresListName&quot;).ToString]" SiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]" UseConnectionService="True">
+                            <umas:UpdateListItemConnections.AllColumns>
+                              <x:Array Type="umsm:Office365SharepointListColumnSlim">
+                                <umsm:Office365SharepointListColumnSlim ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="OverallStatus" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="OverallStatus" ReadOnly="False" Type="Choice">
+                                  <umsm:Office365SharepointListColumnSlim.Choice>
+                                    <umsmc:ChoiceColumnMetadata AllowTextEntry="False" MultiSelect="False">
+                                      <umsmc:ChoiceColumnMetadata.Choices>
+                                        <x:Array Type="x:String">
+                                          <x:String>Pending</x:String>
+                                          <x:String>In progress</x:String>
+                                          <x:String>Done</x:String>
+                                          <x:String>Failed</x:String>
+                                        </x:Array>
+                                      </umsmc:ChoiceColumnMetadata.Choices>
+                                    </umsmc:ChoiceColumnMetadata>
+                                  </umsm:Office365SharepointListColumnSlim.Choice>
+                                  <umsm:Office365SharepointListColumnSlim.Sample>
+                                    <umsm:ColumnSample Value="{x:Null}" />
+                                  </umsm:Office365SharepointListColumnSlim.Sample>
+                                </umsm:Office365SharepointListColumnSlim>
+                              </x:Array>
+                            </umas:UpdateListItemConnections.AllColumns>
+                            <umas:UpdateListItemConnections.ListArgument>
+                              <umasm:ListArgument ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;HiresListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]">
+                                <umasm:ListArgument.Backup>
+                                  <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" StoredValue="Manually">
+                                    <usau:BackupSlot.BackupValues>
+                                      <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+                                    </usau:BackupSlot.BackupValues>
+                                  </usau:BackupSlot>
+                                </umasm:ListArgument.Backup>
+                              </umasm:ListArgument>
+                            </umas:UpdateListItemConnections.ListArgument>
+                          </umas:UpdateListItemConnections>
+                        </Sequence>
+                      </If.Then>
+                    </If>
+                    <ui:LogMessage DisplayName="Log Checks Still Open" Level="Info" Message="[hireName &amp; &quot;: &quot; &amp; doneCount.ToString &amp; &quot; of &quot; &amp; requiredChecks.Length.ToString &amp; &quot; required checks done. No final report yet.&quot;]" />
+                  </Sequence>
+                </If.Else>
+              </If>
+            </If.Else>
+          </If>
+        </Sequence>
+      </If.Else>
+    </If>
+  </Sequence>
+</Activity>

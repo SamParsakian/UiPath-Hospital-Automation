@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="SKsxv8fjZkGBlTFSrNQ4HA" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="633, 946, 186, 57" DesignTimeScaleFactor="1.6041666269302368" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='kontrollera' tag='BUTTON' /&gt;" Guid="e53fa744-f92a-4766-8c8c-7abed7068527" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <TargetAnchorable.Anchors>
+        <scg:List x:TypeArguments="ITarget" Capacity="0" />
+      </TargetAnchorable.Anchors>
+      <imageRef attrName="InformativeScreenshot" originalValue="b22ff35f09a6e5a5c80ab21c76867ec1.jpg" xmlns="">0M7OC-CumFEyDR35KQotIOA</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

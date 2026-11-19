@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Arendenummer Field",
+  "Description": "Text box for the case number of the extract, in the check form",
+  "Type": "Element",
+  "TaxonomyType": "Input",
+  "Id": "LbfhNKC-SkS2y9gnIzkvHg",
+  "Reference": "Fuc2kvSQfUSeWoFA1kV9sA/LbfhNKC-SkS2y9gnIzkvHg",
+  "ParentRef": "Fuc2kvSQfUSeWoFA1kV9sA/OehD4DyQo0OrRGwl036ifA",
+  "Created": "2026-11-12T10:33:22.8025018Z",
+  "Updated": "2026-11-12T10:33:22.8025018Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

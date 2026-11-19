@@ -1,0 +1,162 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_SendFinalReport" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:umas="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umase="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Enums;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umasm="clr-namespace:UiPath.MicrosoftOffice365.Activities.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:umsm="clr-namespace:UiPath.MicrosoftOffice365.Sharepoint.Models;assembly=UiPath.MicrosoftOffice365" xmlns:umsmc="clr-namespace:UiPath.MicrosoftOffice365.Sharepoint.Models.Columns;assembly=UiPath.MicrosoftOffice365" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.MicrosoftOffice365.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="Configuration of the process." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property sap2010:Annotation.AnnotationText="ID of the hire in the New Hires list." Name="in_HireItemId" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="The New Hires row of the hire." Name="in_HireRow" Type="InArgument(sd:DataRow)" />
+    <x:Property sap2010:Annotation.AnnotationText="True if a check failed; False if all required checks are Done." Name="in_Failed" Type="InArgument(x:Boolean)" />
+    <x:Property sap2010:Annotation.AnnotationText="One line per check with its result." Name="in_ResultLines" Type="InArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Sharepoint.Models.Fields</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365.Activities</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Sends the final result to the head of department who asked for the checks (RequestedBy).&#xA;A failed result also goes to the HR coordinator.&#xA;Then the hire row gets OverallStatus, ReportSent = Yes, ReportSentBy and ReportSentDate, so nobody sends the report a second time." DisplayName="Send Final Report">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="hireName" />
+      <Variable x:TypeArguments="x:String" Name="headName" />
+      <Variable x:TypeArguments="x:String" Default="" Name="headEmail" />
+      <Variable x:TypeArguments="x:String" Name="mailSubject" />
+      <Variable x:TypeArguments="x:String" Name="decisionText" />
+      <Variable x:TypeArguments="s:String[]" Name="copyTo" />
+      <Variable x:TypeArguments="x:String" Name="overallStatus" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_HireValues" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Assign x:TypeArguments="x:String" DisplayName="Get Hire Name" To="[hireName]" Value="[in_HireRow(&quot;Title&quot;).ToString]" />
+    <Assign x:TypeArguments="x:String" DisplayName="Get Head of Department (RequestedBy)" To="[headName]" Value="[in_HireRow(&quot;RequestedBy&quot;).ToString]" />
+    <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Head of Department in Config" Values="[in_Config(&quot;DepartmentHeads&quot;).ToString.Split(&quot;;&quot;c)]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:String">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:String" Name="headEntry" />
+          </ActivityAction.Argument>
+          <If Condition="[headEntry.StartsWith(headName &amp; &quot;=&quot;)]" DisplayName="Is It This Head of Department?">
+            <If.Then>
+              <Assign x:TypeArguments="x:String" DisplayName="Keep the Head's Mail Address" To="[headEmail]" Value="[headEntry.Split(&quot;=&quot;c)(1)]" />
+            </If.Then>
+          </If>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <If Condition="[headEmail = &quot;&quot;]" DisplayName="Is the Mail Address Missing?">
+      <If.Then>
+        <Throw DisplayName="Throw Unknown Head of Department" Exception="[New BusinessRuleException(headName &amp; &quot; finns inte i DepartmentHeads i Config.json. Rapporten skickades inte.&quot;)]" />
+      </If.Then>
+    </If>
+    <If Condition="[in_Failed]" DisplayName="Did a Check Fail?">
+      <If.Then>
+        <Sequence DisplayName="Failed Result">
+          <Assign x:TypeArguments="x:String" DisplayName="Status Failed" To="[overallStatus]" Value="Failed" />
+          <Assign x:TypeArguments="x:String" DisplayName="Subject Cannot Be Approved" To="[mailSubject]" Value="[&quot;Bakgrundskontroll &quot; &amp; hireName &amp; &quot; - kan inte godkännas&quot;]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Decision Do Not Start" To="[decisionText]" Value="Enligt vår rutin kan anställningen inte påbörjas. Beslutet behöver tas av dig som verksamhetschef, hör av dig så tar vi det tillsammans med HR-chefen." />
+          <Assign x:TypeArguments="s:String[]" DisplayName="Copy to the HR Coordinator" To="[copyTo]" Value="[New String() {in_Config(&quot;HrCoordinatorEmail&quot;).ToString}]" />
+        </Sequence>
+      </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Cleared Result">
+          <Assign x:TypeArguments="x:String" DisplayName="Status Done" To="[overallStatus]" Value="Done" />
+          <Assign x:TypeArguments="x:String" DisplayName="Subject Done" To="[mailSubject]" Value="[&quot;Bakgrundskontroll klar - &quot; &amp; hireName]" />
+          <Assign x:TypeArguments="x:String" DisplayName="Decision Start as Planned" To="[decisionText]" Value="Anställningen kan påbörjas enligt plan." />
+          <Assign x:TypeArguments="s:String[]" DisplayName="No Copy" To="[copyTo]" Value="[Nothing]" />
+        </Sequence>
+      </If.Else>
+    </If>
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke SendHrMail workflow (final report)" UnSafe="False" WorkflowFileName="Workflows\SendHrMail.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
+        <InArgument x:TypeArguments="s:String[]" x:Key="in_To">[New String() {headEmail}]</InArgument>
+        <InArgument x:TypeArguments="s:String[]" x:Key="in_Cc">[copyTo]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[mailSubject]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Text">["Hej " &amp; headName.Split(" "c)(0) &amp; "," &amp; vbLf &amp; vbLf &amp; "Bakgrundskontrollen för " &amp; hireName &amp; " (" &amp; in_HireRow("Profession").ToString.ToLower &amp; ", " &amp; in_HireRow("Department").ToString &amp; ", planerad start " &amp; CDate(in_HireRow("StartDate")).ToLocalTime.ToString("yyyy-MM-dd") &amp; ") är klar:" &amp; vbLf &amp; vbLf &amp; in_ResultLines &amp; vbLf &amp; decisionText]</InArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:BuildDataTable DataTable="[dt_HireValues]" DisplayName="Build Report Values Table" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;ReportValues&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;ReportValues&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;OverallStatus&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ReportSent&quot; type=&quot;xs:boolean&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ReportSentBy&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ReportSentDate&quot; type=&quot;xs:dateTime&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[New Object() {overallStatus, True, in_Config(&quot;RobotName&quot;).ToString, DateTime.Today}]" DataTable="[dt_HireValues]" DisplayName="Add Report Values" />
+    <umas:UpdateListItemConnections x:TypeArguments="sd:DataRow" ConnectionId="6ca5372c-9b89-4f23-9741-3d8071f20af9" DataRow="[dt_HireValues.Rows(0)]" DisplayName="Mark Report as Sent in New Hires" ItemId="[in_HireItemId]" ItemSelectionMode="Manually" ListNameOrId="[in_Config(&quot;HiresListName&quot;).ToString]" SiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]" UseConnectionService="True">
+      <umas:UpdateListItemConnections.AllColumns>
+        <x:Array Type="umsm:Office365SharepointListColumnSlim">
+          <umsm:Office365SharepointListColumnSlim ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="OverallStatus" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="OverallStatus" ReadOnly="False" Type="Choice">
+            <umsm:Office365SharepointListColumnSlim.Choice>
+              <umsmc:ChoiceColumnMetadata AllowTextEntry="False" MultiSelect="False">
+                <umsmc:ChoiceColumnMetadata.Choices>
+                  <x:Array Type="x:String">
+                    <x:String>Pending</x:String>
+                    <x:String>In progress</x:String>
+                    <x:String>Done</x:String>
+                    <x:String>Failed</x:String>
+                  </x:Array>
+                </umsmc:ChoiceColumnMetadata.Choices>
+              </umsmc:ChoiceColumnMetadata>
+            </umsm:Office365SharepointListColumnSlim.Choice>
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="ReportSent" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="ReportSent" ReadOnly="False" Type="Boolean">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="ReportSentBy" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="ReportSentBy" ReadOnly="False" Type="Text">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+          <umsm:Office365SharepointListColumnSlim Choice="{x:Null}" ColumnGroup="{x:Null}" LookupColumn="{x:Null}" LookupListId="{x:Null}" PersonOrGroup="{x:Null}" DisplayName="ReportSentDate" Guid="00000000-0000-0000-0000-000000000000" Hidden="False" IsRequired="False" Name="ReportSentDate" ReadOnly="False" Type="DateTime">
+            <umsm:Office365SharepointListColumnSlim.Sample>
+              <umsm:ColumnSample Value="{x:Null}" />
+            </umsm:Office365SharepointListColumnSlim.Sample>
+          </umsm:Office365SharepointListColumnSlim>
+        </x:Array>
+      </umas:UpdateListItemConnections.AllColumns>
+      <umas:UpdateListItemConnections.ListArgument>
+        <umasm:ListArgument ItemSelectionMode="Manually" ManualEntryListNameOrId="[in_Config(&quot;HiresListName&quot;).ToString]" ManualEntrySiteUrl="[in_Config(&quot;SharePointSiteUrl&quot;).ToString]">
+          <umasm:ListArgument.Backup>
+            <usau:BackupSlot x:TypeArguments="umase:ItemSelectionMode" StoredValue="Manually">
+              <usau:BackupSlot.BackupValues>
+                <scg:Dictionary x:TypeArguments="umase:ItemSelectionMode, scg:List(x:Object)" />
+              </usau:BackupSlot.BackupValues>
+            </usau:BackupSlot>
+          </umasm:ListArgument.Backup>
+        </umasm:ListArgument>
+      </umas:UpdateListItemConnections.ListArgument>
+    </umas:UpdateListItemConnections>
+    <ui:LogMessage DisplayName="Log Report Sent" Level="Info" Message="[&quot;Final report (&quot; &amp; overallStatus &amp; &quot;) for &quot; &amp; hireName &amp; &quot; sent to &quot; &amp; headName &amp; &quot;. New Hires row &quot; &amp; in_HireItemId &amp; &quot; updated.&quot;]" />
+  </Sequence>
+</Activity>

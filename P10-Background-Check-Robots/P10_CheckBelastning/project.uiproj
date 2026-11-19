@@ -1,0 +1,6 @@
+{
+  "Name": "P10_CheckBelastning",
+  "ProjectType": "Process",
+  "Description": "Checks the criminal record extract with the police",
+  "MainFile": "Main.xaml"
+}

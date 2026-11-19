@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="Rht465BasUuUXN1mIRCOmA" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="633, 649, 448, 54" DesignTimeScaleFactor="1.6041666269302368" ElementType="InputBox" ElementVisibilityArgument="Interactive" FuzzySelectorArgument="&lt;webctrl id='personnummer' tag='INPUT' type='text' class='' aaname='Personnummer (ÅÅÅÅMMDD-NNNN)' matching:id='fuzzy' fuzzylevel:id='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' /&gt;" Guid="369e9188-b22f-485a-a476-5ce895feae50" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="FuzzySelector" Version="V6" WaitForReadyArgument="Interactive">
+      <TargetAnchorable.Anchors>
+        <scg:List x:TypeArguments="ITarget" Capacity="1">
+          <Target DesignTimeRectangle="633, 617, 1316, 26" ElementType="Text" FuzzySelectorArgument="&lt;webctrl aaname='Personnummer (ÅÅÅÅMMDD-NNNN)' tag='LABEL' type='' class='' matching:aaname='fuzzy' fuzzylevel:aaname='0.0' matching:class='fuzzy' fuzzylevel:class='0.0' check:text='Personnummer (ÅÅÅÅMMDD-NNNN)' /&gt;" Guid="2fa8bd64-de90-4be4-bd73-9e492a887aef" SearchSteps="FuzzySelector" />
+        </scg:List>
+      </TargetAnchorable.Anchors>
+      <imageRef attrName="InformativeScreenshot" originalValue="b42c48fdb2853fdf9f00633b3ed90df0.jpg" xmlns="">0hYTBdqw57ECHwSe9lzUYRQ</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

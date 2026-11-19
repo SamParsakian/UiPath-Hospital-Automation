@@ -1,0 +1,136 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Workflows_ReadHireChecks" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property sap2010:Annotation.AnnotationText="All rows of the Background Checks list." Name="in_dt_Checks" Type="InArgument(sd:DataTable)" />
+    <x:Property sap2010:Annotation.AnnotationText="ID of the hire in the New Hires list." Name="in_HireItemId" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="The checks the head of department asked for (ChecksRequired)." Name="in_RequiredChecks" Type="InArgument(s:String[])" />
+    <x:Property sap2010:Annotation.AnnotationText="Number of the hire's checks that are Done." Name="out_DoneCount" Type="OutArgument(x:Int32)" />
+    <x:Property sap2010:Annotation.AnnotationText="Number of the hire's checks that are Failed." Name="out_FailedCount" Type="OutArgument(x:Int32)" />
+    <x:Property sap2010:Annotation.AnnotationText="One line per check: the check type and its result (or that it is still open)." Name="out_ResultLines" Type="OutArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="One line per check that needs review by a person." Name="out_ReviewLines" Type="OutArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="One line per check whose answer is late (past AnswerDueDate)." Name="out_OverdueLines" Type="OutArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Required checks that have no row in Background Checks." Name="out_MissingChecks" Type="OutArgument(s:String[])" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.MicrosoftOffice365.Sharepoint.Models.Fields</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.MicrosoftOffice365</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Looks at every check row of one hire and counts what it finds.&#xA;Also finds required checks that have no row (a forgotten check)." DisplayName="Read Hire Checks">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:List(x:String)" Name="foundChecks" />
+      <Variable x:TypeArguments="scg:List(x:String)" Name="missingChecks" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <Sequence DisplayName="Start Empty">
+      <Assign x:TypeArguments="x:Int32" DisplayName="Done Count 0" To="[out_DoneCount]" Value="0" />
+      <Assign x:TypeArguments="x:Int32" DisplayName="Failed Count 0" To="[out_FailedCount]" Value="0" />
+      <Assign x:TypeArguments="x:String" DisplayName="No Result Lines" To="[out_ResultLines]" Value="" />
+      <Assign x:TypeArguments="x:String" DisplayName="No Review Lines" To="[out_ReviewLines]" Value="" />
+      <Assign x:TypeArguments="x:String" DisplayName="No Overdue Lines" To="[out_OverdueLines]" Value="" />
+      <Assign x:TypeArguments="scg:List(x:String)" DisplayName="No Found Checks" To="[foundChecks]" Value="[New List(Of String)]" />
+      <Assign x:TypeArguments="scg:List(x:String)" DisplayName="No Missing Checks" To="[missingChecks]" Value="[New List(Of String)]" />
+    </Sequence>
+    <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[in_dt_Checks]" DisplayName="For Each Check Row">
+      <ui:ForEachRow.Body>
+        <ActivityAction x:TypeArguments="sd:DataRow">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="sd:DataRow" Name="checkRow" />
+          </ActivityAction.Argument>
+          <If Condition="[Not IsDBNull(checkRow(&quot;Hire&quot;)) AndAlso CType(checkRow(&quot;Hire&quot;), SharepointLookupValue).LookupId.ToString = in_HireItemId]" DisplayName="Is It a Check of This Hire?">
+            <If.Then>
+              <Sequence DisplayName="Count One Check">
+                <Sequence.Variables>
+                  <Variable x:TypeArguments="x:String" Name="checkStatus" />
+                  <Variable x:TypeArguments="x:String" Name="checkResult" />
+                </Sequence.Variables>
+                <Assign x:TypeArguments="x:String" DisplayName="Get Status" To="[checkStatus]" Value="[checkRow(&quot;Status&quot;).ToString]" />
+                <Assign x:TypeArguments="x:String" DisplayName="Get Result" To="[checkResult]" Value="[checkRow(&quot;Result&quot;).ToString]" />
+                <AddToCollection x:TypeArguments="x:String" Collection="[foundChecks]" DisplayName="Remember the Check Type" Item="[checkRow(&quot;CheckType&quot;).ToString]" />
+                <If Condition="[checkStatus = &quot;Done&quot;]" DisplayName="Is the Check Done?">
+                  <If.Then>
+                    <Sequence DisplayName="Done">
+                      <Assign x:TypeArguments="x:Int32" DisplayName="Count Done" To="[out_DoneCount]" Value="[out_DoneCount + 1]" />
+                      <Assign x:TypeArguments="x:String" DisplayName="Add Result Line" To="[out_ResultLines]" Value="[out_ResultLines &amp; &quot;- &quot; &amp; checkRow(&quot;CheckType&quot;).ToString &amp; &quot;: &quot; &amp; checkResult &amp; vbLf]" />
+                    </Sequence>
+                  </If.Then>
+                </If>
+                <If Condition="[checkStatus = &quot;Failed&quot;]" DisplayName="Has the Check Failed?">
+                  <If.Then>
+                    <Sequence DisplayName="Failed">
+                      <Assign x:TypeArguments="x:Int32" DisplayName="Count Failed" To="[out_FailedCount]" Value="[out_FailedCount + 1]" />
+                      <Assign x:TypeArguments="x:String" DisplayName="Add Result Line" To="[out_ResultLines]" Value="[out_ResultLines &amp; &quot;- &quot; &amp; checkRow(&quot;CheckType&quot;).ToString &amp; &quot;: &quot; &amp; checkResult &amp; vbLf]" />
+                    </Sequence>
+                  </If.Then>
+                </If>
+                <If Condition="[checkStatus &lt;&gt; &quot;Done&quot; AndAlso checkStatus &lt;&gt; &quot;Failed&quot;]" DisplayName="Is the Check Still Open?">
+                  <If.Then>
+                    <Assign x:TypeArguments="x:String" DisplayName="Add Open Line" To="[out_ResultLines]" Value="[out_ResultLines &amp; &quot;- &quot; &amp; checkRow(&quot;CheckType&quot;).ToString &amp; &quot;: inte klar ännu&quot; &amp; vbLf]" />
+                  </If.Then>
+                </If>
+                <If Condition="[checkStatus = &quot;Needs review&quot;]" DisplayName="Does the Check Need Review?">
+                  <If.Then>
+                    <Assign x:TypeArguments="x:String" DisplayName="Add Review Line" To="[out_ReviewLines]" Value="[out_ReviewLines &amp; &quot;- &quot; &amp; checkRow(&quot;Title&quot;).ToString &amp; &quot;: &quot; &amp; checkResult &amp; vbLf]" />
+                  </If.Then>
+                </If>
+                <If Condition="[checkStatus = &quot;Waiting for answer&quot; AndAlso Not IsDBNull(checkRow(&quot;AnswerDueDate&quot;)) AndAlso CDate(checkRow(&quot;AnswerDueDate&quot;)).ToLocalTime.Date &lt; Today]" DisplayName="Is the Answer Late?">
+                  <If.Then>
+                    <Assign x:TypeArguments="x:String" DisplayName="Add Overdue Line" To="[out_OverdueLines]" Value="[out_OverdueLines &amp; &quot;- &quot; &amp; checkRow(&quot;Title&quot;).ToString &amp; &quot; (svar väntat senast &quot; &amp; CDate(checkRow(&quot;AnswerDueDate&quot;)).ToLocalTime.ToString(&quot;yyyy-MM-dd&quot;) &amp; &quot;)&quot; &amp; vbLf]" />
+                  </If.Then>
+                </If>
+              </Sequence>
+            </If.Then>
+          </If>
+        </ActivityAction>
+      </ui:ForEachRow.Body>
+    </ui:ForEachRow>
+    <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="For Each Required Check" Values="[in_RequiredChecks]">
+      <ui:ForEach.Body>
+        <ActivityAction x:TypeArguments="x:String">
+          <ActivityAction.Argument>
+            <DelegateInArgument x:TypeArguments="x:String" Name="requiredCheck" />
+          </ActivityAction.Argument>
+          <If Condition="[Not foundChecks.Contains(requiredCheck)]" DisplayName="Is the Required Check Missing?">
+            <If.Then>
+              <AddToCollection x:TypeArguments="x:String" Collection="[missingChecks]" DisplayName="Remember the Missing Check" Item="[requiredCheck]" />
+            </If.Then>
+          </If>
+        </ActivityAction>
+      </ui:ForEach.Body>
+    </ui:ForEach>
+    <Assign x:TypeArguments="s:String[]" DisplayName="Return Missing Checks" To="[out_MissingChecks]" Value="[missingChecks.ToArray]" />
+  </Sequence>
+</Activity>

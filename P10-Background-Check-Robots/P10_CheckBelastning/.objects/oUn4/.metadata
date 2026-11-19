@@ -1,0 +1,13 @@
+﻿{
+  "Name": "Polisen Kontrolltjanst",
+  "Description": "Police control service (demo) that checks if a digital criminal record extract is genuine",
+  "Type": "App",
+  "Id": "oUn45FcVSkai0-CZBgx_5Q",
+  "Reference": "Fuc2kvSQfUSeWoFA1kV9sA/oUn45FcVSkai0-CZBgx_5Q",
+  "Created": "2026-11-12T10:32:49.9873159Z",
+  "Updated": "2026-11-12T10:32:49.9873159Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
