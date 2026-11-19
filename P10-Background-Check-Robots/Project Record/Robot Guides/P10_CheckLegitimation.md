@@ -185,11 +185,11 @@ This is the main workflow of the robot. It runs in this order (the numbers match
 
 4. **Decides the result:**
 
-   | Answer | Status | Result |
-   |---|---|---|
-   | Status Giltig and Begränsningar Inga | Done | "Legitimerad sjuksköterska sedan 1991-06-29. Giltig, inga begränsningar. Dnr 5.1-41202/2026." |
-   | The PDF says "Personen finns inte i registret" | Needs review | "Personen finns inte i HOSP-registret enligt Socialstyrelsen. Kontrollera personnummer och legitimation. Dnr X." |
-   | Anything else (revoked, restrictions) | Needs review | "HOSP: status X, begränsningar: Y. Behöver granskas av HR. Dnr X." |
+   | Answer | Status | Result | Seen in |
+   |---|---|---|---|
+   | Status Giltig and Begränsningar Inga | Done | "Legitimerad sjuksköterska sedan 1991-06-29. Giltig, inga begränsningar. Dnr 5.1-41202/2026." | [Case 2](../Running%20the%20Robots%20Unattended.md#55-round-3-hosp-answer-read) |
+   | The PDF says "Personen finns inte i registret" | Needs review | "Personen finns inte i HOSP-registret enligt Socialstyrelsen. Kontrollera personnummer och legitimation. Dnr X." | |
+   | Anything else (revoked, restrictions) | Needs review | "HOSP: status X, begränsningar: Y. Behöver granskas av HR. Dnr X." | [Case 4](../Running%20the%20Robots%20Unattended.md#75-round-2-check-set-to-needs-review): probation |
 
 5. **Saves the PDF** in the library Authority Answers with "Upload Files", with two columns filled: **Hire** (the hire in New Hires) and **CheckType** = Legitimation.
 6. **Updates the row** with Status, Result, CheckedBy (the robot account) and CheckedDate.

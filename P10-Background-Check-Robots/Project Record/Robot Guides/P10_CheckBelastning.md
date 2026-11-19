@@ -117,7 +117,7 @@ In the template, `Process.xaml` is almost empty. Everything in Figures 7 and 8 w
 2. **Checks the data.** A missing name or personnummer is a *business rule exception*.
 3. **Reads the check row** in Background Checks with "Get Single SharePoint List Item".
 4. **Picks the branch** from the row's Status:
-   - **Pending:** no mail. The row is set to **Waiting for answer** with RequestedDate and AnswerDueDate, through `UpdateCheckRow.xaml`.
+   - **Pending:** no mail. The row is set to **Waiting for answer** with RequestedDate and AnswerDueDate, through `UpdateCheckRow.xaml`. *Seen in [Case 1](../Running%20the%20Robots%20Unattended.md#43-round-1-request-registered-check-queued), round 1.*
    - **Waiting for answer:** invoke `CheckExtractMail.xaml`.
    - **Any other Status:** only a log line.
 5. **Catches business rule exceptions:** the row is set to **Needs review** with the exception text as the Result, and the exception is thrown again.
@@ -183,11 +183,11 @@ The workflow runs in this order. The numbers match the red boxes in the three pi
 5. **Asks the police page** by invoking `VerifyExtractWithPolice.xaml` with the four values.
 6. **Decides the result:**
 
-   | Police answer and PDF | Status | Result |
-   |---|---|---|
-   | "Utdraget är äkta" and "Inga uppgifter" | Done | "Utdrag BU-839380 utfärdat 2026-10-05. Äkta enligt Polisens kontrolltjänst 2026-11-12. Inga uppgifter." |
-   | "Utdraget är äkta" and "Uppgifter finns" | Needs review | "Utdrag X utfärdat Y. Äkta enligt Polisens kontrolltjänst Z. Uppgifter finns i registret. Behöver granskas av HR." |
-   | Any other police answer | Needs review | "Polisens kontrolltjänst Z: <the answer>. Utdrag X. Behöver granskas av HR." |
+   | Police answer and PDF | Status | Result | Seen in |
+   |---|---|---|---|
+   | "Utdraget är äkta" and "Inga uppgifter" | Done | "Utdrag BU-839380 utfärdat 2026-10-05. Äkta enligt Polisens kontrolltjänst 2026-11-12. Inga uppgifter." | [Case 1](../Running%20the%20Robots%20Unattended.md#44-round-2-extract-verified-with-the-police-service) to Case 3 |
+   | "Utdraget är äkta" and "Uppgifter finns" | Needs review | "Utdrag X utfärdat Y. Äkta enligt Polisens kontrolltjänst Z. Uppgifter finns i registret. Behöver granskas av HR." | |
+   | Any other police answer | Needs review | "Polisens kontrolltjänst Z: <the answer>. Utdrag X. Behöver granskas av HR." | [Case 5](../Running%20the%20Robots%20Unattended.md#84-round-2-extract-not-confirmed-by-the-police-service): not genuine |
 
 7. **Updates the row** with Status, Result, CheckedBy and CheckedDate, and **marks the mail as read**.
 8. **Deletes the local copy** of the PDF. It is deleted in two places: after a normal run, and in a Catch for any error, before the error is thrown again. So the extract never stays on the laptop, also when a step fails.
