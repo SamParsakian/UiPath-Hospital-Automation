@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Utfardandedatum Field",
+  "Description": "Text box for the issue date of the extract, in the check form",
+  "Type": "Element",
+  "TaxonomyType": "Input",
+  "Id": "hynKVePptE-Vu6PaaFgDWg",
+  "Reference": "Fuc2kvSQfUSeWoFA1kV9sA/hynKVePptE-Vu6PaaFgDWg",
+  "ParentRef": "Fuc2kvSQfUSeWoFA1kV9sA/OehD4DyQo0OrRGwl036ifA",
+  "Created": "2026-11-12T10:33:22.9336439Z",
+  "Updated": "2026-11-12T10:33:22.9336439Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

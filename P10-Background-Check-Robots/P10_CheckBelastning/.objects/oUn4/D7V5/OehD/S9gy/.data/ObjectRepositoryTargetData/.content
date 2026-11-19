@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="jnnm9HM1rkaU6oHInx0dUw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="604, 889, 1316, 62" DesignTimeScaleFactor="1.6041666269302368" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='resultat' tag='DIV' /&gt;" Guid="c1425674-e1e4-4164-8412-0d8d90be6ad0" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Polisen - Kontrolltjänst för digitala registerutdrag (demo)' url='http://100.99.72.90:8085/*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <TargetAnchorable.Anchors>
+        <scg:List x:TypeArguments="ITarget" Capacity="0" />
+      </TargetAnchorable.Anchors>
+      <imageRef attrName="InformativeScreenshot" originalValue="b1354e487dd298bd7025a6ee4aa75d47.jpg" xmlns="">04u4lfUirHkWEclpMOvSbjw</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

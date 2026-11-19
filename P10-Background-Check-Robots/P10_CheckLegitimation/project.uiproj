@@ -1,0 +1,6 @@
+{
+  "Name": "P10_CheckLegitimation",
+  "ProjectType": "Process",
+  "Description": " Checks the licence with Socialstyrelsen HOSP",
+  "MainFile": "Main.xaml"
+}
