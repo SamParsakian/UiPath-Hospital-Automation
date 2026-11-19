@@ -13,6 +13,20 @@ Before a hospital can hire a doctor, a nurse or an assistant nurse, HR must chec
 
 A clean answer sets a check to Done. Anything else goes to the HR coordinator as Needs review, and the robots never reject a person on their own.
 
+## The Big Picture
+
+### Attended: The Whole Process with the Four Robots
+
+The head of department mails the request, the manager robot registers it and gives each check to its own robot, the check robots ask HOSP, IVO and the police, and HR decides every finding. In the attended setup, the RPA operator starts the robots in UiPath Assistant.
+
+![The process with the four robots](Project%20Record/Screenshots/robots-overview.png)
+
+### Unattended: The Same Robots, Started by Orchestrator
+
+The robots and their results stay the same. Only what starts them changes: a time trigger starts the manager robot every 15 minutes, and a queue trigger starts each check robot when new work arrives.
+
+![Attended and unattended side by side](Project%20Record/Screenshots/unattended-overview.png)
+
 ## Requirements
 
 - UiPath Studio and Orchestrator (Automation Cloud), with one Production (Unattended) licence for unattended runs.
